@@ -87,6 +87,50 @@ button:hover {
     }
 }
 
+.ghd-container {
+  font-family: Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+
+.ghd-diff {
+  overflow-y: hidden;
+}
+
+.ghd-line-number {
+  position: absolute;
+  width: 60px;
+  background-color: white;
+  display: flex;
+}
+
+.ghd-line-type-add {
+  background-color: rgb(144, 255, 144);
+}
+
+.ghd-line-type-add .ghd-line-number {
+  background-color: rgb(144, 255, 144);
+}
+
+.ghd-line-type-remove {
+  background-color: rgb(255, 144, 144);
+}
+
+.ghd-line-type-remove .ghd-line-number {
+  background-color: rgb(255, 144, 144);
+}
+
+.ghd-line-number div {
+  width: 30px;
+}
+
+.ghd-text {
+  white-space: pre;
+}
+
+.ghd-text-internal {
+  padding: 0 70px;
+}
+
 .spinner {
   margin: 100px auto 0;
   width: 70px;

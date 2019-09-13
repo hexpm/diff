@@ -25,7 +25,7 @@
     <header>
       <section class="container header">
         <h1 class="logo">
-          <a href="/">hex diff</a>
+          <a href="/">diff.hex.pm</a>
         </h1>
       </section>
     </header>
