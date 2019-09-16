@@ -24,9 +24,10 @@ defmodule Diff.HexClient do
   def unpack_tarball(tarball, path) when is_binary(path) do
     path = to_charlist(path)
 
-    with {:ok, %{outer_checksum: _checksum, metadata: _metadata}} <-
-           :hex_tarball.unpack(tarball, path) do
+    with {:ok, _} <- :hex_tarball.unpack(tarball, path) do
       :ok
+    else
+      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -41,17 +42,7 @@ defmodule Diff.HexClient do
       :ok = unpack_tarball(tarball_from, path_from)
       :ok = unpack_tarball(tarball_to, path_to)
 
-      case System.cmd("git", ["diff", "--no-index", path_from, path_to]) do
-        {"", 1} ->
-          {:error, :not_found}
-
-        {result, 1} ->
-          cleaned = String.replace(result, [path_from, path_to], "")
-          {:ok, cleaned}
-
-        other ->
-          {:error, other}
-      end
+      git_diff(path_from, path_to)
     rescue
       MatchError ->
         {:error, :not_found}
@@ -62,6 +53,20 @@ defmodule Diff.HexClient do
     after
       File.rm_rf!(path_from)
       File.rm_rf!(path_to)
+    end
+  end
+
+  defp git_diff(path_from, path_to) do
+    case System.cmd("git", ["diff", "--no-index", path_from, path_to]) do
+      {"", 1} ->
+        {:error, :not_found}
+
+      {result, 1} ->
+        cleaned = String.replace(result, [path_from, path_to], "")
+        {:ok, cleaned}
+
+      other ->
+        {:error, other}
     end
   end
 

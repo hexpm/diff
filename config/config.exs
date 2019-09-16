@@ -12,7 +12,8 @@ config :diff, DiffWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "sCQPp27jGUACmECgpI4vEwAJUrryxT7+d2IzxkbUv/57paSo723fbsED+EmRcvfj",
   render_errors: [view: DiffWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: Diff.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: Diff.PubSub, adapter: Phoenix.PubSub.PG2],
+  live_view: [signing_salt: "Bmk5Cupu"]
 
 # Configures Elixir's Logger
 config :logger, :console,

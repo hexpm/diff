@@ -35,3 +35,4 @@ npm-debug.log
 
 /.elixir_ls/
 /.vscode/
+/tmp/
