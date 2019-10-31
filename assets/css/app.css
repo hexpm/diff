@@ -1,4 +1,3 @@
-/* This file is for your main application css. */
 .header {
   display: flex;
   align-items: center;
@@ -90,10 +89,16 @@ button:hover {
 .ghd-container {
   font-family: Menlo, Consolas, monospace;
   font-size: 13px;
+  color: #333;
 }
 
 .ghd-diff {
   overflow-y: hidden;
+}
+
+.ghd-chunk-header {
+  background-color: #f8fafd;
+  color: rgba(0,0,0,.3);
 }
 
 .ghd-line-number {
@@ -101,22 +106,23 @@ button:hover {
   width: 60px;
   background-color: white;
   display: flex;
+  color: rgba(0,0,0,.3);
 }
 
 .ghd-line-type-add {
-  background-color: rgb(144, 255, 144);
+  background-color: #dfd;
 }
 
 .ghd-line-type-add .ghd-line-number {
-  background-color: rgb(144, 255, 144);
+  background-color: #dfd;
 }
 
 .ghd-line-type-remove {
-  background-color: rgb(255, 144, 144);
+  background-color: #fee8e9;
 }
 
 .ghd-line-type-remove .ghd-line-number {
-  background-color: rgb(255, 144, 144);
+  background-color: #fee8e9;
 }
 
 .ghd-line-number div {
