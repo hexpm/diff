@@ -1,0 +1,11 @@
+<div style="display: none" id="diff-content">
+  <%= @diff %>
+</div>
+<div id="diff-area"></div>
+<script>
+  $(document).ready(function() {
+    var diff2htmlUi = new Diff2HtmlUI({diff: document.getElementById("diff-content").innerText});
+    diff2htmlUi.draw('#diff-area', {});
+    diff2htmlUi.highlightCode('#diff-area');
+  });
+</script>
