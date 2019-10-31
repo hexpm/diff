@@ -92,6 +92,16 @@ button:hover {
   color: #333;
 }
 
+.ghd-file {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-bottom: 1em;
+}
+
+.ghd-file-header {
+  padding: 10px;
+}
+
 .ghd-diff {
   overflow-y: hidden;
 }
@@ -103,10 +113,18 @@ button:hover {
 
 .ghd-line-number {
   position: absolute;
-  width: 60px;
+  width: 80px;
   background-color: white;
   display: flex;
   color: rgba(0,0,0,.3);
+}
+
+.ghd-line-number-from {
+  padding-left: 10px;
+}
+
+.ghd-line-number-to {
+  padding: 0 10px;
 }
 
 .ghd-line-type-add {
@@ -126,7 +144,7 @@ button:hover {
 }
 
 .ghd-line-number div {
-  width: 30px;
+  width: 35px;
 }
 
 .ghd-text-internal {
@@ -134,7 +152,7 @@ button:hover {
 }
 
 .ghd-text-internal {
-  padding: 0 70px;
+  padding: 0 80px;
 }
 
 .spinner {
