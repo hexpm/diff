@@ -58,10 +58,7 @@ defmodule DiffWeb.SearchView do
     """
   end
 
-  def mount(
-        _session,
-        socket
-      ) do
+  def mount(_session, socket) do
     {:ok, reset_state(socket)}
   end
 
