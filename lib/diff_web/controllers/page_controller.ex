@@ -10,7 +10,7 @@ defmodule DiffWeb.PageController do
         render(conn, "diff.html", diff: diff)
 
       {:error, :not_found} ->
-        case Diff.Differ.diff(package, from, to) do
+        case Diff.HexClient.diff(package, from, to) do
           {:ok, diff} ->
             Diff.Storage.put(package, from, to, diff)
             render(conn, "diff.html", diff: diff)
