@@ -26,8 +26,6 @@ defmodule Diff.HexClient do
 
     with {:ok, _} <- :hex_tarball.unpack(tarball, path) do
       :ok
-    else
-      {:error, reason} -> {:error, reason}
     end
   end
 
@@ -35,24 +33,17 @@ defmodule Diff.HexClient do
     path_from = tmp_path("#{package}-#{from}-")
     path_to = tmp_path("#{package}-#{to}-")
 
-    try do
-      {:ok, tarball_from} = get_tarball(package, from)
-      {:ok, tarball_to} = get_tarball(package, to)
-
-      :ok = unpack_tarball(tarball_from, path_from)
-      :ok = unpack_tarball(tarball_to, path_to)
-
+    with {:ok, tarball_from} <- get_tarball(package, from),
+         {:ok, tarball_to} <- get_tarball(package, to),
+         :ok <- unpack_tarball(tarball_from, path_from),
+         :ok <- unpack_tarball(tarball_to, path_to) do
       git_diff(path_from, path_to)
-    rescue
-      MatchError ->
-        {:error, :not_found}
-
+    else
       error ->
+        File.rm_rf(path_from)
+        File.rm_rf(path_to)
         Logger.error(inspect(error))
         {:error, :unknown}
-    after
-      File.rm_rf!(path_from)
-      File.rm_rf!(path_to)
     end
   end
 
