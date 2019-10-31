@@ -21,9 +21,6 @@ defmodule DiffWeb.PageController do
           {:error, reason} ->
             Logger.error("Failed to generate diff with:\n#{inspect(reason)}")
             render(conn, "500.html")
-
-            # :error ->
-            #   render(conn, "500.html")
         end
     end
   end
