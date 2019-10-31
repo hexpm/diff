@@ -27,8 +27,6 @@ defmodule Diff.Package.Store do
     old_entries = :ets.tab2list(__MODULE__)
     changed = new_entries -- old_entries
 
-    for entry <- changed do
-      :ets.insert(__MODULE__, entry)
-    end
+    :ets.insert(__MODULE__, changed)
   end
 end
