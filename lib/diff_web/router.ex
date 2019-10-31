@@ -17,7 +17,7 @@ defmodule DiffWeb.Router do
   scope "/", DiffWeb do
     pipe_through :browser
 
-    live "/", SearchView
+    live "/", SearchLiveView
     get "/diff/:package/:from/:to", PageController, :diff
   end
 
