@@ -40,8 +40,7 @@ defmodule Diff.HexClient do
            :ok <- unpack_tarball(tarball_to, path_to),
            {:ok, gd} <- git_diff(path_from, path_to),
            {:ok, parsed} <- GitDiff.parse_patch(gd) do
-        rendered = Diff.Render.diff_to_html(parsed)
-        {:ok, :erlang.iolist_to_binary(rendered)}
+        {:ok, Diff.Render.diff_to_html(parsed)}
       else
         error ->
           Logger.error(inspect(error))
