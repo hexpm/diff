@@ -45,6 +45,7 @@ nav ul li {
 .search-input {
   margin-top: 15rem;
   width: 400px;
+  font-size: 16px;
 }
 
 .version-form {
@@ -68,6 +69,10 @@ button:hover {
 .suggestion {
   color: #9b4dca;
   cursor: pointer;
+}
+
+.select-area select {
+  font-size: 16px;
 }
 
 @media only screen
