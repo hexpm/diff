@@ -16,18 +16,11 @@ defmodule Diff.Render do
     from = patch.from
     to = patch.to
 
-    if from && to do
-      if from == to do
-        "changed"
-      else
-        "renamed"
-      end
-    else
-      if from do
-        "removed"
-      else
-        "added"
-      end
+    cond do
+      !from -> "added"
+      !to -> "removed"
+      from == to -> "changed"
+      true -> "renamed"
     end
   end
 
