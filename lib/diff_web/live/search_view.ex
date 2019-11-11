@@ -12,7 +12,7 @@ defmodule DiffWeb.SearchLiveView do
   def handle_event("search", %{"q" => ""}, socket), do: {:noreply, reset_state(socket)}
 
   def handle_event("search", %{"q" => query}, socket) when byte_size(query) <= 30 do
-    send(self(), {:search, query})
+    send(self(), {:search, String.downcase(query)})
     {:noreply, assign(socket, query: query)}
   end
 

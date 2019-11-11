@@ -40,7 +40,8 @@ defmodule Diff.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, "~> 0.2.0"},
-      {:hex_core, "~> 0.6.1"}
+      {:hex_core, "~> 0.6.1"},
+      {:git_diff, github: "joladev/git_diff", branch: "handle-phoenix-diff"}
     ]
   end
 end

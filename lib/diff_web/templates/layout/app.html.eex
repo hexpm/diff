@@ -6,18 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="Web based diffs of Hex packages for Elixir.">
     <title>diff.hex.pm</title>
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.css">
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/milligram/1.3.0/milligram.css">
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/styles/github.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.11.2/diff2html.min.css" />
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.3/jquery.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/languages/elixir.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.11.2/diff2html.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/diff2html/2.11.2/diff2html-ui.min.js"></script>
 
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
@@ -25,7 +13,7 @@
     <header>
       <section class="container header">
         <h1 class="logo">
-          <a href="/">hex diff</a>
+          <a href="/">diff.hex.pm</a>
         </h1>
       </section>
     </header>

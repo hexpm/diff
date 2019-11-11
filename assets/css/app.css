@@ -1,4 +1,5 @@
-/* This file is for your main application css. */
+@import "./milligram.css";
+
 .header {
   display: flex;
   align-items: center;
@@ -44,6 +45,7 @@ nav ul li {
 .search-input {
   margin-top: 15rem;
   width: 400px;
+  font-size: 16px;
 }
 
 .version-form {
@@ -69,6 +71,10 @@ button:hover {
   cursor: pointer;
 }
 
+.select-area select {
+  font-size: 16px;
+}
+
 @media only screen
   and (min-device-width: 320px)
   and (max-device-width: 480px) {
@@ -87,44 +93,96 @@ button:hover {
     }
 }
 
-.spinner {
-  margin: 100px auto 0;
-  width: 70px;
-  text-align: center;
+.ghd-container {
+  font-family: Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: #333;
 }
 
-.spinner > div {
-  width: 18px;
-  height: 18px;
-  background-color: #333;
+.ghd-file {
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-bottom: 1em;
+}
 
-  border-radius: 100%;
+.ghd-file-header {
+  padding: 10px;
+  border-bottom: 0.1rem solid #e1e1e1;
+}
+
+.ghd-chunk-header .ghd-line-number {
+  background-color: #f8fafd;
+}
+
+.ghd-file-status {
+  color: #999;
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 0 3px;
   display: inline-block;
-  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
-  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  text-transform: uppercase;
 }
 
-.spinner .bounce1 {
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
+.ghd-file-status-removed {
+  color: red;
+  border-color: red;
 }
 
-.spinner .bounce2 {
-  -webkit-animation-delay: -0.16s;
-  animation-delay: -0.16s;
+.ghd-file-status-added {
+  color: rgb(115, 148, 115);
+  border-color: rgb(115, 148, 115);
 }
 
-@-webkit-keyframes sk-bouncedelay {
-  0%, 80%, 100% { -webkit-transform: scale(0) }
-  40% { -webkit-transform: scale(1.0) }
+.ghd-diff {
+  overflow-y: hidden;
 }
 
-@keyframes sk-bouncedelay {
-  0%, 80%, 100% {
-    -webkit-transform: scale(0);
-    transform: scale(0);
-  } 40% {
-    -webkit-transform: scale(1.0);
-    transform: scale(1.0);
-  }
+.ghd-chunk-header {
+  background-color: #f8fafd;
+  color: rgba(0,0,0,.3);
+}
+
+.ghd-line-number {
+  position: absolute;
+  width: 80px;
+  background-color: white;
+  display: flex;
+  color: rgba(0,0,0,.3);
+  border-right: 0.1rem solid #e1e1e1;
+}
+
+.ghd-line-number-from {
+  padding-left: 10px;
+}
+
+.ghd-line-number-to {
+  padding: 0 10px;
+}
+
+.ghd-line-type-add {
+  background-color: #dfd;
+}
+
+.ghd-line-type-add .ghd-line-number {
+  background-color: #dfd;
+}
+
+.ghd-line-type-remove {
+  background-color: #fee8e9;
+}
+
+.ghd-line-type-remove .ghd-line-number {
+  background-color: #fee8e9;
+}
+
+.ghd-line-number div {
+  width: 35px;
+}
+
+.ghd-text-internal {
+  white-space: pre;
+}
+
+.ghd-text-internal {
+  padding: 0 90px;
 }
