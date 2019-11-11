@@ -41,7 +41,7 @@ defmodule Diff.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, "~> 0.2.0"},
       {:hex_core, "~> 0.6.1"},
-      {:git_diff, github: "joladev/git_diff", branch: "handle-phoenix-diff"}
+      {:git_diff, github: "hexpm/git_diff", branch: "diff-fixes"}
     ]
   end
 end
