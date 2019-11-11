@@ -52,7 +52,7 @@ defmodule Diff.HexClient do
   end
 
   defp git_diff(path_from, path_to) do
-    case System.cmd("git", ["diff", "--no-index", path_from, path_to]) do
+    case System.cmd("git", ["diff", "--no-index", "--no-color", path_from, path_to]) do
       {"", 1} ->
         {:error, :not_found}
 
