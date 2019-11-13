@@ -16,6 +16,11 @@ config :diff, DiffWeb.Endpoint,
 config :diff,
   storage_impl: Diff.Storage.GCS
 
+config :rollbax,
+  environment: "prod",
+  enabled: true,
+  enable_crash_reports: true
+
 # Do not print debug messages in production
 config :logger, level: :info
 

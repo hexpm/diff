@@ -42,6 +42,7 @@ defmodule Diff.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, "~> 0.2.0"},
       {:hex_core, "~> 0.6.1"},
+      {:rollbax, "~> 0.11.0"},
       {:git_diff, github: "hexpm/git_diff", branch: "diff-fixes"}
     ]
   end
