@@ -69,3 +69,5 @@ config :phoenix, :plug_init_mode, :runtime
 config :diff,
   tmp_dir: Path.expand("tmp/dev"),
   storage_impl: Diff.Storage.Local
+
+config :goth, config: %{"project_id" => "diff"}
