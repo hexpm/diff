@@ -4,12 +4,8 @@ defmodule Diff.HexClient do
   require Logger
 
   def get_versions() do
-    try do
-      with {:ok, {200, _, results}} <- :hex_repo.get_versions(@config) do
-        {:ok, results}
-      end
-    rescue
-      e in MatchError -> {:error, e}
+    with {:ok, {200, _, results}} <- :hex_repo.get_versions(@config) do
+      {:ok, results}
     end
   end
 
