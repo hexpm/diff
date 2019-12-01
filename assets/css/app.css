@@ -149,6 +149,13 @@ button:hover {
   display: flex;
   color: rgba(0,0,0,.3);
   border-right: 0.1rem solid #e1e1e1;
+  cursor: pointer;
+}
+
+:target .ghd-line-number,
+.ghd-line-type-add:target .ghd-line-number,
+.ghd-line-type-remove:target .ghd-line-number {
+  background-color: rgb(255, 251, 194);
 }
 
 .ghd-line-number-from {

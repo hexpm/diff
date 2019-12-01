@@ -21,3 +21,19 @@ import { LiveSocket } from "phoenix_live_view"
 
 let liveSocket = new LiveSocket("/live", Socket, {})
 liveSocket.connect()
+
+
+/*
+Make it possible to click line numbers to update the address bar to a
+link directly to that line.
+*/
+const lines = document.querySelectorAll('.ghd-line-number')
+lines.forEach(line => {
+  line.addEventListener('click', e => {
+    const parent = line.parentNode
+
+    if (parent && parent.id) {
+      history.pushState(null, null, '#' + parent.id)
+    }
+  })
+})
