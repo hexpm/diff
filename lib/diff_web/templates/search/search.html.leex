@@ -24,7 +24,7 @@
     The package only has one version so there's nothing to diff with.
   <% else %>
     <%= if @result do %>
-      <form phx-change="diff" class="version-form">
+      <form phx-change="select_version" class="version-form">
         <div style="display: flex; flex-direction: column">
           <div class="select-area">
             <label for="from">From</label>

@@ -22,7 +22,7 @@ defmodule DiffWeb.SearchLiveView do
   end
 
   def handle_event(
-        "diff",
+        "select_version",
         %{"_target" => ["from"]} = data,
         %{assigns: %{releases: releases}} = socket
       ) do
@@ -41,7 +41,7 @@ defmodule DiffWeb.SearchLiveView do
   end
 
   def handle_event(
-        "diff",
+        "select_version",
         %{"_target" => ["to"]} = data,
         socket
       ) do
