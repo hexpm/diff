@@ -63,7 +63,7 @@ defmodule DiffWeb.SearchLiveView do
   end
 
   def handle_info({:search, query}, socket) do
-    suggestions = get_suggestions(query)
+    suggestions = get_suggestions(query, 3)
 
     case Diff.Package.Store.get_versions(query) do
       {:ok, versions} ->
@@ -114,24 +114,34 @@ defmodule DiffWeb.SearchLiveView do
 
   defp build_url(app, from, to), do: "/diff/#{app}/#{from}/#{to}"
 
-  def get_suggestions(query) do
-    names = Diff.Package.Store.get_names()
+  defp get_suggestions(query, number) do
+    package_names = Diff.Package.Store.get_names()
+    starts_with = package_starts_with(package_names, query)
 
-    starts =
-      names
-      |> Enum.filter(&String.starts_with?(&1, query))
-      |> Enum.sort()
-      |> Enum.map(&{&1})
+    cond do
+      length(starts_with) >= number -> starts_with
+      true ->
+        similar_to = package_similar_to(package_names, query)
+        Enum.concat(starts_with, similar_to)
+    end
+    |> Enum.take(number)
+    |> Enum.map(&elem(&1, 0))
+  end
 
-    names
+  defp package_starts_with(package_names, query) do
+    package_names
+    |> Enum.filter(&String.starts_with?(&1, query))
+    |> Enum.sort()
+    |> Enum.map(&{&1})
+  end
+
+  defp package_similar_to(package_names, query) do
+    package_names
     |> Stream.map(&{&1, String.jaro_distance(query, &1)})
     |> Stream.filter(fn
       {^query, 1.0} -> false
       {_, value} -> value > 0.8
     end)
     |> Enum.sort(fn {_, v1}, {_, v2} -> v1 > v2 end)
-    |> (fn items -> Enum.concat(starts, items) end).()
-    |> Enum.take(3)
-    |> Enum.map(&elem(&1, 0))
   end
 end
