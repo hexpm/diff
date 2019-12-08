@@ -119,7 +119,9 @@ defmodule DiffWeb.SearchLiveView do
     starts_with = package_starts_with(package_names, query)
 
     cond do
-      length(starts_with) >= number -> starts_with
+      length(starts_with) >= number ->
+        starts_with
+
       true ->
         similar_to = package_similar_to(package_names, query)
         Enum.concat(starts_with, similar_to)
