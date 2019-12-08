@@ -23,30 +23,24 @@ defmodule DiffWeb.SearchLiveView do
 
   def handle_event(
         "select_version",
-        %{"_target" => ["from"]} = data,
+        %{"_target" => ["from"], "from" => from},
         %{assigns: %{releases: releases}} = socket
       ) do
-    from = Map.get(data, "from")
-
     index_of_selected_from = Enum.find_index(releases, &(&1 == from))
     to_releases = Enum.slice(releases, (index_of_selected_from + 1)..-1)
-    to = List.last(to_releases)
 
     {:noreply,
      assign(socket,
        from: from,
-       to: to,
        to_releases: to_releases
      )}
   end
 
   def handle_event(
         "select_version",
-        %{"_target" => ["to"]} = data,
+        %{"_target" => ["to"], "to" => to},
         socket
       ) do
-    to = Map.get(data, "to")
-
     {:noreply,
      assign(socket,
        to: to
