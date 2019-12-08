@@ -16,11 +16,7 @@ defmodule DiffWeb.PageController do
             Diff.Storage.put(package, from, to, rendered)
             render(conn, "diff.html", diff: rendered)
 
-          {:error, :not_found} ->
-            render(conn, "404.html")
-
-          {:error, reason} ->
-            Logger.error("Failed to generate diff with:\n#{inspect(reason)}")
+          {:error, :unknown} ->
             render(conn, "500.html")
         end
     end
