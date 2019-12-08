@@ -12,9 +12,7 @@ defmodule DiffWeb.PageController do
       {:error, :not_found} ->
         case Diff.HexClient.diff(package, from, to) do
           {:ok, diff} ->
-            rendered =
-              Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", diff: diff)
-
+            rendered = Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", diff: diff)
             Diff.Storage.put(package, from, to, rendered)
             render(conn, "diff.html", diff: rendered)
 
