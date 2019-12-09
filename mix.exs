@@ -9,6 +9,7 @@ defmodule Diff.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
+      releases: releases(),
       deps: deps()
     ]
   end
@@ -44,6 +45,14 @@ defmodule Diff.MixProject do
       {:hex_core, "~> 0.6.1"},
       {:rollbax, "~> 0.11.0"},
       {:git_diff, github: "hexpm/git_diff", branch: "diff-fixes"}
+    ]
+  end
+
+  defp releases() do
+    [
+      diff: [
+        include_executables_for: [:unix]
+      ]
     ]
   end
 end
