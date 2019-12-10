@@ -25,6 +25,7 @@ defmodule DiffWeb.Endpoint do
     plug Phoenix.CodeReloader
   end
 
+  plug DiffWeb.Plugs.Status
   plug Plug.RequestId
   plug Logster.Plugs.Logger, excludes: [:params]
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
