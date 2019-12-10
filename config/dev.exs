@@ -47,7 +47,7 @@ config :diff, DiffWeb.Endpoint,
 
 # Watch static and templates for browser reloading.
 config :diff, DiffWeb.Endpoint,
-  http: [port: 4003],
+  http: [port: 4004],
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
