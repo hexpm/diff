@@ -26,8 +26,9 @@ config :rollbax,
   enabled: true,
   enable_crash_reports: true
 
-# Do not print debug messages in production
-config :logger, level: :info
+config :logger,
+  level: :info,
+  metadata: [:request_id]
 
 # ## SSL Support
 #
