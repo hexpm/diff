@@ -48,6 +48,10 @@ defmodule DiffWeb.Endpoint do
     key: "_diff_key",
     signing_salt: "UnVf7+wn"
 
+  if Mix.env() == :prod do
+    plug Plug.SSL, rewrite_on: [:x_forwarded_proto]
+  end
+
   plug DiffWeb.Router
 
   def init(_key, config) do
