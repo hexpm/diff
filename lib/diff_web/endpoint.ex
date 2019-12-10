@@ -7,6 +7,8 @@ defmodule DiffWeb.Endpoint do
 
   socket "/live", Phoenix.LiveView.Socket
 
+  plug DiffWeb.Plugs.Forwarded
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # You should set gzip to true if you are running phx.digest
