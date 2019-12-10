@@ -20,7 +20,7 @@ defmodule Diff.MixProject do
   def application do
     [
       mod: {Diff.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :inets, :runtime_tools]
     ]
   end
 
