@@ -1,4 +1,4 @@
-defmodule Diff.Plugs.Rollbax do
+defmodule DiffWeb.Plugs.Rollbax do
   defmacro __using__(_opts) do
     quote do
       defp handle_errors(conn, %{kind: kind, reason: reason, stack: stacktrace}) do

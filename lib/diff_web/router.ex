@@ -1,7 +1,7 @@
 defmodule DiffWeb.Router do
   use DiffWeb, :router
   use Plug.ErrorHandler
-  use Diff.Plugs.Rollbax
+  use DiffWeb.Plugs.Rollbax
 
   pipeline :browser do
     plug :accepts, ["html"]
