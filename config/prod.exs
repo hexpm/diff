@@ -30,3 +30,4 @@ config :logger,
   level: :info,
   metadata: [:request_id]
 
+config :phoenix, :serve_endpoints, true
