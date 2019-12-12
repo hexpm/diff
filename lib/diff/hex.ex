@@ -6,14 +6,31 @@ defmodule Diff.Hex do
   def get_versions() do
     with {:ok, {200, _, results}} <- :hex_repo.get_versions(@config) do
       {:ok, results}
+    else
+      {:ok, {status, _, _}} ->
+        Logger.error("Failed to get package versions. Status: #{status}.")
+        {:error, :not_found}
+
+      {:error, reason} ->
+        Logger.error("Failed to get package versions. Reason: #{inspect(reason)}.")
+        {:error, :not_found}
     end
   end
 
-  def get_tarball(name, version) do
-    with {:ok, {200, _, tarball}} <- :hex_repo.get_tarball(@config, name, version) do
+  def get_tarball(package, version) do
+    with {:ok, {200, _, tarball}} <- :hex_repo.get_tarball(@config, package, version) do
       {:ok, tarball}
     else
-      {:ok, {403, _, _}} -> {:error, :not_found}
+      {:ok, {403, _, _}} ->
+        {:error, :not_found}
+
+      {:ok, {status, _, _}} ->
+        Logger.error("Failed to get package versions. Status: #{status}.")
+        {:error, :not_found}
+
+      {:error, reason} ->
+        Logger.error("Failed to get tarball for package: #{package}. Reason: #{inspect(reason)}.")
+        {:error, :not_found}
     end
   end
 
