@@ -25,6 +25,28 @@ defmodule Diff.HexClient do
     end
   end
 
+  def get_checksums(package, versions) do
+    with {:ok, {200, _, releases}} <- :hex_repo.get_package(@config, package) do
+      checksums =
+        for release <- releases, release.version in versions do
+          release.outer_checksum
+        end
+
+      {:ok, checksums}
+    else
+      {:ok, {status, _, _}} ->
+        Logger.error("Failed to get checksums for package: #{package}. Status: #{status}.")
+        {:error, :not_found}
+
+      {:error, reason} ->
+        Logger.error(
+          "Failed to get checksums for package: #{package}. Reason: #{inspect(reason)}"
+        )
+
+        {:error, :not_found}
+    end
+  end
+
   def diff(package, from, to) do
     path_from = tmp_path("#{package}-#{from}-")
     path_to = tmp_path("#{package}-#{to}-")

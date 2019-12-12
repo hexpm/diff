@@ -1,25 +1,46 @@
 defmodule Diff.Storage.GCS do
+  require Logger
+
   @behaviour Diff.Storage
 
   @gs_xml_url "https://storage.googleapis.com"
   @oauth_scope "https://www.googleapis.com/auth/devstorage.read_write"
+  @cache_version Application.get_env(:diff, :cache_version)
 
   def get(package, from_version, to_version) do
-    url = url(key(package, from_version, to_version))
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+         url = url(key(package, from_version, to_version, hash)),
+         {:ok, 200, _headers, body} <-
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.get(url, headers()) end) do
+      {:ok, body}
+    else
+      {:ok, 404, _headers, _body} ->
+        {:error, :not_found}
 
-    case Diff.HTTP.retry("gs", fn -> Diff.HTTP.get(url, headers()) end) do
-      {:ok, 200, _headers, body} -> {:ok, body}
-      {:ok, 404, _headers, _body} -> {:error, :not_found}
-      {:error, reason} -> {:error, reason}
+      {:ok, status, _headers, _body} ->
+        Logger.error("Failed to get diff from storage. Status #{status}")
+        {:error, :not_found}
+
+      {:error, reason} ->
+        Logger.error("Failed to get diff from storage. Reason #{inspect(reason)}")
+        {:error, reason}
     end
   end
 
   def put(package, from_version, to_version, body) do
-    url = url(key(package, from_version, to_version))
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+         url = url(key(package, from_version, to_version, hash)),
+         {:ok, 200, _headers, _body} <-
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.put(url, headers(), body) end) do
+      :ok
+    else
+      {:ok, status, _headers, _body} ->
+        Logger.error("Failed to put diff to storage. Status #{status}")
+        {:error, :not_found}
 
-    case Diff.HTTP.retry("gs", fn -> Diff.HTTP.put(url, headers(), body) end) do
-      {:ok, 200, _headers, _body} -> :ok
-      {:error, reason} -> {:error, reason}
+      error ->
+        Logger.error("Failed to put diff to storage. Reason #{inspect(error)}")
+        error
     end
   end
 
@@ -28,8 +49,14 @@ defmodule Diff.Storage.GCS do
     [{"authorization", "#{token.type} #{token.token}"}]
   end
 
-  defp key(package, from_version, to_version) do
-    "diffs/#{package}-#{from_version}-#{to_version}.tgz"
+  def combined_checksum(package, from, to) do
+    with {:ok, checksums} <- Diff.Hex.get_checksums(package, [from, to]) do
+      {:ok, :erlang.phash2({@cache_version, checksums})}
+    end
+  end
+
+  defp key(package, from_version, to_version, hash) do
+    "diffs/#{package}-#{from_version}-#{to_version}-#{hash}.tgz"
   end
 
   defp url(key) do
