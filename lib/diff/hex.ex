@@ -1,4 +1,4 @@
-defmodule Diff.HexClient do
+defmodule Diff.Hex do
   @config :hex_core.default_config()
 
   require Logger
