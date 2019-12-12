@@ -23,7 +23,7 @@ defmodule Diff.Storage.GCS do
 
       {:error, reason} ->
         Logger.error("Failed to get diff from storage. Reason #{inspect(reason)}")
-        {:error, reason}
+        {:error, :not_found}
     end
   end
 
