@@ -27,7 +27,7 @@ defmodule Diff.Package.Updater do
   def update() do
     Logger.debug("Updating version store")
 
-    case Diff.HexClient.get_versions() do
+    case Diff.Hex.get_versions() do
       {:ok, results} ->
         results
         |> format_packages()

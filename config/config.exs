@@ -7,6 +7,9 @@
 # General application configuration
 use Mix.Config
 
+config :diff,
+  cache_version: 1
+
 # Configures the endpoint
 config :diff, DiffWeb.Endpoint,
   url: [host: "localhost"],
