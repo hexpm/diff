@@ -1,10 +1,6 @@
 defmodule DiffWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :diff
 
-  socket "/socket", DiffWeb.UserSocket,
-    websocket: true,
-    longpoll: false
-
   socket "/live", Phoenix.LiveView.Socket
 
   plug DiffWeb.Plugs.Forwarded
@@ -39,14 +35,6 @@ defmodule DiffWeb.Endpoint do
 
   plug Plug.MethodOverride
   plug Plug.Head
-
-  # The session will be stored in the cookie and signed,
-  # this means its contents can be read but not tampered with.
-  # Set :encryption_salt if you would also like to encrypt it.
-  plug Plug.Session,
-    store: :cookie,
-    key: "_diff_key",
-    signing_salt: "UnVf7+wn"
 
   if Mix.env() == :prod do
     plug Plug.SSL, rewrite_on: [:x_forwarded_proto]
