@@ -9,10 +9,10 @@ defmodule Diff.Hex.Adapter do
     resp = :hackney.request(method, uri, req_headers, payload, @opts)
 
     with {:ok, status, resp_headers, client_ref} = resp,
-      {:ok, resp_body} <- :hackney.body(client_ref) do
-        # :hex_core expects headers to be a Map
-        resp_headers = Map.new(resp_headers)
-        {:ok, {status, resp_headers, resp_body}}
+         {:ok, resp_body} <- :hackney.body(client_ref) do
+      # :hex_core expects headers to be a Map
+      resp_headers = Map.new(resp_headers)
+      {:ok, {status, resp_headers, resp_body}}
     end
   end
 
