@@ -1,5 +1,9 @@
 defmodule Diff.Hex do
-  @config Map.put(:hex_core.default_config(), :http_adapter, Diff.Hex.Adapter)
+  @config %{
+    :hex_core.default_config()
+    | http_adapter: Diff.Hex.Adapter,
+      http_user_agent_fragment: "hexpm_diff"
+  }
 
   require Logger
 

@@ -1,8 +1,9 @@
 defmodule Diff.Hex.Adapter do
   @behaviour :hex_http
 
-  @opts [{:follow_redirect, true}, {:max_redirect, 5}]
+  @opts [follow_redirect: true, max_redirect: 5]
 
+  @impl true
   def request(method, uri, req_headers, req_body, _config) do
     {content_type, payload} = deconstruct_body(req_body)
     req_headers = prepare_headers(req_headers, content_type)
