@@ -1,5 +1,9 @@
 @import "./milligram.css";
 
+body {
+  background-color: #3e424d;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -9,7 +13,11 @@
 .logo {
   margin: 0;
   padding: 20px;
-  font-size: 3rem;
+}
+
+.logo img {
+  width: 200px;
+  height: 50px;
 }
 
 td {
@@ -33,6 +41,7 @@ nav ul li {
   display: flex;
   align-items: center;
   flex-direction: column;
+  color: #ddd;
 }
 
 .search-form {
@@ -42,37 +51,47 @@ nav ul li {
   width: 400px;
 }
 
-.search-input {
+input.search-input {
   margin-top: 15rem;
   width: 400px;
   font-size: 16px;
+  background-color: white;
 }
 
 .version-form {
   width: 400px;
 }
 
-.message-container {
-  display: flex;
-  justify-content: center;
-}
-
-.message {
-  max-width: 400px;
-  margin-top: 10rem;
-}
-
-button:hover {
-  background-color: #8b4dca;
+input.search-input:focus {
+  border-color: #ddd;
 }
 
 .suggestion {
-  color: #9b4dca;
+  color: #eee;
   cursor: pointer;
+  background: #714a94;
+  padding: 2px 4px;
+  border-radius: 5px;
+  border-color: #714a94;
+}
+
+.suggestion:hover {
+  background-color: #8154a8;
 }
 
 .select-area select {
   font-size: 16px;
+  background-color: white;
+}
+
+.diff-button {
+  background-color: #714a94;
+  border-color: #714a94;
+}
+
+.diff-button:hover {
+  background-color: #8154a8;
+  border-color: #8154a8;
 }
 
 @media only screen
@@ -97,12 +116,14 @@ button:hover {
   font-family: Menlo, Consolas, monospace;
   font-size: 13px;
   color: #333;
+  border-radius: 5px;
 }
 
 .ghd-file {
   border: 1px solid #ddd;
   border-radius: 3px;
   margin-bottom: 1em;
+  background-color: white;
 }
 
 .ghd-file-header {
