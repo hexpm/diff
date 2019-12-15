@@ -3,24 +3,39 @@ defmodule DiffWeb.PageController do
 
   require Logger
 
-  def diff(conn, %{"package" => package, "from" => from, "to" => to}) do
-    case Diff.Storage.get(package, from, to) do
-      {:ok, diff} ->
-        Logger.debug("cache hit for #{inspect(package)}")
-        render(conn, "diff.html", diff: diff)
+  def diff(conn, %{"package" => package, "versions" => versions}) do
+    with {:ok, from, to} <- parse_versions(conn, versions) do
+      case Diff.Storage.get(package, from, to) do
+        {:ok, diff} ->
+          Logger.debug("cache hit for #{inspect(package)}")
+          render(conn, "diff.html", diff: diff)
 
-      {:error, :not_found} ->
-        case Diff.Hex.diff(package, from, to) do
-          {:ok, diff} ->
-            rendered =
-              Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", diff: diff)
+        {:error, :not_found} ->
+          case Diff.Hex.diff(package, from, to) do
+            {:ok, diff} ->
+              rendered =
+                Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", diff: diff)
 
-            Diff.Storage.put(package, from, to, rendered)
-            render(conn, "diff.html", diff: rendered)
+              Diff.Storage.put(package, from, to, rendered)
+              render(conn, "diff.html", diff: rendered)
 
-          {:error, :unknown} ->
-            render(conn, "500.html")
-        end
+            {:error, :unknown} ->
+              render(conn, "500.html")
+          end
+      end
+    end
+  end
+
+  defp parse_versions(conn, versions) do
+    with [from, to] <- String.split(versions, "..", trim: true),
+         {:ok, from} <- Version.parse(from),
+         {:ok, to} <- Version.parse(to) do
+      {:ok, to_string(from), to_string(to)}
+    else
+      _ ->
+        conn
+        |> put_status(400)
+        |> render("400.html")
     end
   end
 end
