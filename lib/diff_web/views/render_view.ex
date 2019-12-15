@@ -37,4 +37,8 @@ defmodule DiffWeb.RenderView do
   end
 
   def line_type(line), do: to_string(line.type)
+
+  def line_text("+" <> text), do: "+ " <> text
+  def line_text("-" <> text), do: "- " <> text
+  def line_text(text), do: " " <> text
 end
