@@ -9,6 +9,7 @@ defmodule Diff.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
+      aliases: aliases(),
       releases: releases(),
       deps: deps()
     ]
@@ -55,5 +56,24 @@ defmodule Diff.MixProject do
         include_executables_for: [:unix]
       ]
     ]
+  end
+
+  defp aliases() do
+    [
+      setup: ["deps.get", &setup_npm/1]
+    ]
+  end
+
+  defp setup_npm(_) do
+    cmd("npm", ["install"], cd: "assets")
+  end
+
+  defp cmd(cmd, args, opts) do
+    opts = Keyword.merge([into: IO.stream(:stdio, :line), stderr_to_stdout: true], opts)
+    {_, result} = System.cmd(cmd, args, opts)
+
+    if result != 0 do
+      raise "Non-zero result (#{result}) from: #{cmd} #{Enum.map_join(args, " ", &inspect/1)}"
+    end
   end
 end
