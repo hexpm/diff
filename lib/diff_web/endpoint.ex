@@ -1,10 +1,6 @@
 defmodule DiffWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :diff
 
-  socket "/socket", DiffWeb.UserSocket,
-    websocket: true,
-    longpoll: false
-
   socket "/live", Phoenix.LiveView.Socket
 
   plug DiffWeb.Plugs.Forwarded
