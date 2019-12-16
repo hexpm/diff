@@ -13,7 +13,9 @@
     <header>
       <section class="container header">
         <h1 class="logo">
-          <a href="/">diff.hex.pm</a>
+          <a href="/">
+            <img src="<%= Routes.static_path(@conn, "/images/diff-hex-pm-dark.png") %>" alt="hex.diff.pm"/>
+          </a>
         </h1>
       </section>
     </header>
