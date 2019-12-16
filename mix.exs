@@ -45,7 +45,8 @@ defmodule Diff.MixProject do
       {:hex_core, "~> 0.6.1"},
       {:rollbax, "~> 0.11.0"},
       {:logster, "~> 1.0"},
-      {:git_diff, github: "hexpm/git_diff", branch: "diff-fixes"}
+      {:git_diff, github: "hexpm/git_diff", branch: "diff-fixes"},
+      {:hackney, "~> 1.15"}
     ]
   end
 
