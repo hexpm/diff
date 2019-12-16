@@ -106,7 +106,7 @@ defmodule DiffWeb.SearchLiveView do
     )
   end
 
-  defp build_url(app, from, to), do: "/diff/#{app}/#{from}/#{to}"
+  defp build_url(app, from, to), do: "/diff/#{app}/#{from}..#{to}"
 
   defp get_suggestions(query, number) do
     package_names = Diff.Package.Store.get_names()
