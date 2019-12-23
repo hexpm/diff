@@ -1,3 +1,4 @@
 <div class="message-container">
   <div class="message">Bad request</div>
+  <a href="/"><button type="button">Go back</button></a>
 </div>
