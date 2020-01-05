@@ -1,7 +1,10 @@
 defmodule Diff.Package.Store do
   use GenServer
 
-  require Logger
+  @callback get_versions(binary()) :: {:ok, [binary()]} | {:error, :not_found}
+  @callback get_names() :: [binary()]
+
+  defp impl(), do: Application.get_env(:diff, :package_store_impl)
 
   def start_link(_opts) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -13,14 +16,11 @@ defmodule Diff.Package.Store do
   end
 
   def get_versions(key) do
-    case :ets.lookup(__MODULE__, key) do
-      [{_key, versions}] -> {:ok, versions}
-      _ -> {:error, :not_found}
-    end
+    impl().get_versions(key)
   end
 
   def get_names() do
-    :ets.select(__MODULE__, [{{:"$1", :_}, [], [:"$1"]}])
+    impl().get_names()
   end
 
   def fill(new_entries) do
