@@ -11,6 +11,6 @@ defmodule DiffWeb.SearchView do
 
   def disabled(thing), do: disabled([thing])
 
-  def selected(x, x), do: "selected=\"selected\""
+  def selected(x, x), do: "selected=selected"
   def selected(_, _), do: ""
 end
