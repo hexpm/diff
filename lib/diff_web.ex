@@ -44,7 +44,7 @@ defmodule DiffWeb do
       alias DiffWeb.Router.Helpers, as: Routes
 
       # LiveView
-      import Phoenix.LiveView, only: [live_render: 2, live_render: 3]
+      import Phoenix.LiveView.Helpers
     end
   end
 
