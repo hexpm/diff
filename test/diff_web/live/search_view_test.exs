@@ -1,5 +1,5 @@
 defmodule DiffWeb.SearchLiveViewTest do
-  use DiffWeb.ConnCase, async: false
+  use DiffWeb.ConnCase
   import Phoenix.LiveViewTest
   import Mox
 
