@@ -20,6 +20,7 @@ body {
 }
 
 td {
+  border: 0;
   padding: 1px;
 }
 
@@ -186,7 +187,6 @@ input.search-input:focus {
   background-color: white;
   display: flex;
   color: rgba(0,0,0,.3);
-  border-right: 0.1rem solid #e1e1e1;
   cursor: pointer;
 }
 
@@ -209,7 +209,7 @@ input.search-input:focus {
 }
 
 .ghd-line-type-add .ghd-line-number {
-  background-color: #dfd;
+  background-color: #bdffbd;
 }
 
 .ghd-line-type-remove {
@@ -217,7 +217,7 @@ input.search-input:focus {
 }
 
 .ghd-line-type-remove .ghd-line-number {
-  background-color: #fee8e9;
+  background-color: #ffd7d9;
 }
 
 .ghd-line-number div {
