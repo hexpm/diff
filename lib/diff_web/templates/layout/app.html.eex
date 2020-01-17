@@ -15,7 +15,7 @@
       <section class="container header">
         <h1 class="logo">
           <a href="/">
-            <img src="<%= Routes.static_path(@conn, "/images/hexdiff.png") %>" alt="hexdiffs"/>
+            <img src="<%= Routes.static_path(@conn, "/images/hexdiff.png") %>" alt="hexdiff"/>
           </a>
         </h1>
       </section>
