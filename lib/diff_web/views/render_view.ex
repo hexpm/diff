@@ -31,9 +31,9 @@ defmodule DiffWeb.RenderView do
   def line_id(patch, line) do
     hash = :erlang.phash2({patch.from, patch.to})
 
-    ln = line.from_line_number || line.to_line_number
+    ln = "-#{line.from_line_number}-#{line.to_line_number}"
 
-    [to_string(hash), to_string(ln)]
+    [to_string(hash), ln]
   end
 
   def line_type(line), do: to_string(line.type)
