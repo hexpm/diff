@@ -190,9 +190,10 @@ input.search-input:focus {
   cursor: pointer;
 }
 
-:target .ghd-line-number,
-.ghd-line-type-add:target .ghd-line-number,
-.ghd-line-type-remove:target .ghd-line-number {
+
+.ghd-line.selected .ghd-line-number,
+.ghd-line.selected .ghd-line-number,
+.ghd-line.selected .ghd-text {
   background-color: rgb(255, 251, 194);
 }
 

@@ -21,13 +21,23 @@ liveSocket.connect()
 Make it possible to click line numbers to update the address bar to a
 link directly to that line.
 */
+if (location.hash) {
+  document.getElementById(location.hash.replace('#', '')).classList.add('selected')
+}
+
 const lines = document.querySelectorAll('.ghd-line-number')
 lines.forEach(line => {
   line.addEventListener('click', e => {
     const parent = line.parentNode
 
     if (parent && parent.id) {
-      history.pushState(null, null, '#' + parent.id)
+      document.querySelectorAll('.ghd-line.selected').forEach(line => {
+        line.classList.remove('selected')
+      })
+
+      parent.classList.add('selected')
+
+      history.replaceState(null, null, '#' + parent.id)
     }
   })
 })
