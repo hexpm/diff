@@ -1,6 +1,13 @@
 @import "./milligram.css";
 
-body {
+html, body {
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  margin:0;
+}
+
+html, body {
   background-color: #3e424d;
 }
 
@@ -24,16 +31,38 @@ td {
   padding: 1px;
 }
 
-nav ul {
-  display: flex;
-  align-items: center;
-  margin: 0;
+.footer {
+  width: 100%;
+  margin-top:auto;
+  color: #fff;
+  background: #a4a6af;
+  border-top: 1px solid #cbccd2;
 }
 
-nav ul li {
+.footer h4 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.footer nav {
+  padding: 10px 20px 20px 20px;
+}
+
+.footer nav ul {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: .8em;
+
+}
+
+.footer nav ul li {
   margin: 0;
   list-style: none;
-  padding: 20px;
+}
+
+.footer nav a {
+  color: #fff;
 }
 
 .search-area {
@@ -118,7 +147,7 @@ input.search-input:focus {
 @media only screen
   and (min-device-width: 320px)
   and (max-device-width: 480px) {
-    .search-input {
+    input.search-input {
       margin-top: 3rem;
       width: 200px;
     }

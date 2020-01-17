@@ -23,6 +23,46 @@
     <main role="main" class="main container">
       <%= render @view_module, @view_template, assigns %>
     </main>
+
+    <section class="footer">
+      <nav class="container">
+        <div class="row">
+          <div class="column">
+            <h4>About Hex</h4>
+            <ul>
+              <li><a href="https://hex.pm/about">About</a></li>
+              <li><a href="https://hex.pm/blog">Blog</a></li>
+              <li><a href="https://hex.pm/sponsors">Sponsors</a></li>
+              <li><a href="https://github.com/hexpm">GitHub</a></li>
+              <li><a href="https://twitter.com/hexpm">Twitter</a></li>
+            </ul>
+          </div>
+
+          <div class="column">
+            <h4>Help</h4>
+            <ul>
+              <li><a href="https://hex.pm/docs">Documentation</a></li>
+              <li><a href="https://github.com/hexpm/specifications">Specifications</a></li>
+              <li><a href="https://github.com/hexpm/hex/issues">Report Client Issue</a></li>
+              <li><a href="https://github.com/hexpm/hexpm/issues">Report General Issue</a></li>
+              <li><a href="mailto:support@hex.pm">Contact Support</a></li>
+            </ul>
+          </div>
+
+          <div class="column">
+            <h4>Policies and Terms</h4>
+            <ul>
+              <li><a href="https://hex.pm/policies/codeofconduct">Code of Conduct</a></li>
+              <li><a href="https://hex.pm/policies/termsofservice">Terms of Service</a></li>
+              <li><a href="https://hex.pm/policies/privacy">Privacy Policy</a></li>
+              <li><a href="https://hex.pm/policies/copyright">Copyright Policy</a></li>
+              <li><a href="https://hex.pm/policies/dispute">Dispute Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
