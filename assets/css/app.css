@@ -1,6 +1,13 @@
 @import "./milligram.css";
 
-body {
+html, body {
+  display:flex;
+  flex-direction:column;
+  height:100%;
+  margin:0;
+}
+
+html, body {
   background-color: #3e424d;
 }
 
@@ -8,32 +15,54 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  /* border-bottom: 1px solid #cbccd2; */
 }
 
 .logo {
   margin: 0;
-  padding: 20px 0;
+  padding: 20px 10px;
 }
 
 .logo img {
-  width: 200px;
-  height: 50px;
+  height: 40px;
 }
 
 td {
+  border: 0;
   padding: 1px;
 }
 
-nav ul {
-  display: flex;
-  align-items: center;
-  margin: 0;
+nav.footer {
+  width: 100%;
+  margin-top: auto;
+  color: #fff;
+  border-top: 1px solid #cbccd2;
 }
 
-nav ul li {
+nav.footer h4 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+nav.footer {
+  padding: 10px 20px 20px 20px;
+}
+
+nav.footer ul {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-size: .8em;
+
+}
+
+nav.footer ul li {
   margin: 0;
   list-style: none;
-  padding: 20px;
+}
+
+nav.footer a {
+  color: #fff;
 }
 
 .search-area {
@@ -52,7 +81,7 @@ nav ul li {
 }
 
 input.search-input {
-  margin-top: 15rem;
+  margin-top: 7rem;
   width: 400px;
   font-size: 16px;
   background-color: white;
@@ -115,26 +144,12 @@ input.search-input:focus {
   margin-top: 50px;
 }
 
-@media only screen
-  and (min-device-width: 320px)
-  and (max-device-width: 480px) {
-    .search-input {
-      margin-top: 3rem;
-      width: 200px;
-    }
-    .search-form {
-      width: 200px;
-    }
-    .version-form {
-      width: 200px;
-    }
-}
-
 .ghd-container {
   font-family: Menlo, Consolas, monospace;
   font-size: 13px;
   color: #333;
   border-radius: 5px;
+  margin-bottom: 50px;
 }
 
 .ghd-file {
@@ -187,13 +202,13 @@ input.search-input:focus {
   background-color: white;
   display: flex;
   color: rgba(0,0,0,.3);
-  border-right: 0.1rem solid #e1e1e1;
   cursor: pointer;
 }
 
-:target .ghd-line-number,
-.ghd-line-type-add:target .ghd-line-number,
-.ghd-line-type-remove:target .ghd-line-number {
+
+.ghd-line.selected .ghd-line-number,
+.ghd-line.selected .ghd-line-number,
+.ghd-line.selected .ghd-text {
   background-color: rgb(255, 251, 194);
 }
 
@@ -210,7 +225,7 @@ input.search-input:focus {
 }
 
 .ghd-line-type-add .ghd-line-number {
-  background-color: #dfd;
+  background-color: #bdffbd;
 }
 
 .ghd-line-type-remove {
@@ -218,7 +233,7 @@ input.search-input:focus {
 }
 
 .ghd-line-type-remove .ghd-line-number {
-  background-color: #fee8e9;
+  background-color: #ffd7d9;
 }
 
 .ghd-line-number div {
@@ -231,4 +246,25 @@ input.search-input:focus {
 
 .ghd-text-internal {
   padding: 0 90px;
+}
+
+@media only screen
+  and (min-device-width: 320px)
+  and (max-device-width: 480px) {
+    input.search-input {
+      margin-top: 3rem;
+      width: 200px;
+    }
+
+    .search-form {
+      width: 200px;
+    }
+
+    .version-form {
+      width: 200px;
+    }
+
+    .ghd-container {
+      font-size: 10px;
+    }
 }

@@ -4,24 +4,68 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <meta name="description" content="Web based diffs of Hex packages for Elixir.">
-    <title>diff.hex.pm</title>
+    <meta name="description" content="Web based diffs of Hex packages">
+    <title>hexdiff</title>
 
+    <link rel="shortcut icon" href="<%= Routes.static_path(@conn, "/favicon.png") %>">
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
     <header>
-      <section class="container header">
-        <h1 class="logo">
-          <a href="/">
-            <img src="<%= Routes.static_path(@conn, "/images/diff-hex-pm-dark.png") %>" alt="hex.diff.pm"/>
-          </a>
-        </h1>
+      <section class="header">
+        <div class="container">
+          <h1 class="logo">
+            <a href="/">
+              <img src="<%= Routes.static_path(@conn, "/images/hexdiff.png") %>" alt="hexdiff"/>
+            </a>
+          </h1>
+        </div>
       </section>
     </header>
+
     <main role="main" class="main container">
       <%= render @view_module, @view_template, assigns %>
     </main>
+
+    <nav class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="column">
+            <h4>About Hex</h4>
+            <ul>
+              <li><a href="https://hex.pm/about">About</a></li>
+              <li><a href="https://hex.pm/blog">Blog</a></li>
+              <li><a href="https://hex.pm/sponsors">Sponsors</a></li>
+              <li><a href="https://github.com/hexpm">GitHub</a></li>
+              <li><a href="https://twitter.com/hexpm">Twitter</a></li>
+            </ul>
+          </div>
+
+          <div class="column">
+            <h4>Help</h4>
+            <ul>
+              <li><a href="https://hex.pm/docs">Documentation</a></li>
+              <li><a href="https://github.com/hexpm/specifications">Specifications</a></li>
+              <li><a href="https://github.com/hexpm/hex/issues">Report Client Issue</a></li>
+              <li><a href="https://github.com/hexpm/hexpm/issues">Report General Issue</a></li>
+              <li><a href="mailto:support@hex.pm">Contact Support</a></li>
+            </ul>
+          </div>
+
+          <div class="column">
+            <h4>Policies and Terms</h4>
+            <ul>
+              <li><a href="https://hex.pm/policies/codeofconduct">Code of Conduct</a></li>
+              <li><a href="https://hex.pm/policies/termsofservice">Terms of Service</a></li>
+              <li><a href="https://hex.pm/policies/privacy">Privacy Policy</a></li>
+              <li><a href="https://hex.pm/policies/copyright">Copyright Policy</a></li>
+              <li><a href="https://hex.pm/policies/dispute">Dispute Policy</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+  </section>
+
     <script type="text/javascript" src="<%= Routes.static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
