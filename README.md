@@ -6,19 +6,13 @@ Website to display diffs between Hex package versions.
 
 ### Setup
 
-1. Run `mix setup` to install dependencies etc
+1. Run `mix setup` to install Hex and NPM dependencies
 2. Run `mix test`
 3. Run `mix phx.server` and visit [http://localhost:4004/](http://localhost:4004/)
 
-### Node Dependencies
+### Updating dependencies
 
-For assets compilation we need to install Node dependencies:
-
-```shell
-cd assets && yarn install
-```
-
-If you don't have yarn installed, `cd assets && npm install` will work too.
+If Hex or NPM dependencies are outdated run `mix setup` again.
 
 ## License
 
