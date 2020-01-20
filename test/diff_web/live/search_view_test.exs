@@ -35,7 +35,7 @@ defmodule DiffWeb.SearchLiveViewTest do
       {:ok, view, html} = live(conn, "/")
 
       Diff.Package.StoreMock
-      |> expect(:get_names, fn -> ["phoenix"] end)
+      |> expect(:get_names, fn -> ["phoenix", "phoenix_live_view"] end)
       |> expect(:get_versions, fn "phoenix" -> {:ok, ["1.4.10", "1.4.11"]} end)
       |> allow(self(), view.pid)
 
