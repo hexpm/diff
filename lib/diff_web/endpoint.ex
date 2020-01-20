@@ -26,7 +26,6 @@ defmodule DiffWeb.Endpoint do
   plug DiffWeb.Plugs.Status
   plug Plug.RequestId
   plug Logster.Plugs.Logger, excludes: [:params]
-  plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
