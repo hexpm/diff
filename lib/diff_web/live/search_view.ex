@@ -12,7 +12,8 @@ defmodule DiffWeb.SearchLiveView do
   def handle_event("search", %{"q" => ""}, socket), do: {:noreply, reset_state(socket)}
 
   def handle_event("search", %{"q" => query}, socket) do
-    send(self(), {:search, String.downcase(query)})
+    query = String.downcase(query)
+    send(self(), {:search, query})
     {:noreply, assign(socket, query: query)}
   end
 
@@ -120,15 +121,14 @@ defmodule DiffWeb.SearchLiveView do
         similar_to = package_similar_to(package_names, query)
         Enum.concat(starts_with, similar_to)
     end
+    |> Enum.filter(&(&1 != query))
     |> Enum.take(number)
-    |> Enum.map(&elem(&1, 0))
   end
 
   defp package_starts_with(package_names, query) do
     package_names
     |> Enum.filter(&String.starts_with?(&1, query))
     |> Enum.sort()
-    |> Enum.map(&{&1})
   end
 
   defp package_similar_to(package_names, query) do
@@ -139,5 +139,6 @@ defmodule DiffWeb.SearchLiveView do
       {_, value} -> value > 0.8
     end)
     |> Enum.sort(fn {_, v1}, {_, v2} -> v1 > v2 end)
+    |> Enum.map(&elem(&1, 0))
   end
 end
