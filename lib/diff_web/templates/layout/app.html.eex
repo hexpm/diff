@@ -7,7 +7,6 @@
     <meta name="description" content="Web based diffs of Hex packages">
     <title>hexdiff</title>
 
-    <link rel="shortcut icon" href="<%= Routes.static_path(@conn, "/favicon.png") %>">
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
