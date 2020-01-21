@@ -32,7 +32,7 @@ defmodule DiffWeb.SearchLiveViewTest do
     end
 
     test "searching for packages that do exist", %{conn: conn} do
-      {:ok, view, html} = live(conn, "/")
+      {:ok, view, _html} = live(conn, "/")
 
       Diff.Package.StoreMock
       |> expect(:get_names, fn -> ["phoenix", "phoenix_live_view"] end)
@@ -54,7 +54,7 @@ defmodule DiffWeb.SearchLiveViewTest do
     end
 
     test "clicking diff", %{conn: conn} do
-      {:ok, view, html} = live(conn, "/")
+      {:ok, view, _html} = live(conn, "/")
 
       Diff.Package.StoreMock
       |> expect(:get_names, fn -> ["phoenix"] end)
@@ -62,7 +62,6 @@ defmodule DiffWeb.SearchLiveViewTest do
       |> allow(self(), view.pid)
 
       send(view.pid, {:search, "phoenix"})
-      rendered = render(view)
 
       assert render_click(view, "go", %{result: "phoenix", to: "1.4.11", from: "1.4.10"}) ==
                {:error, {:redirect, %{to: "/diff/phoenix/1.4.10..1.4.11"}}}
