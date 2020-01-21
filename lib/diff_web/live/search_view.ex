@@ -91,7 +91,8 @@ defmodule DiffWeb.SearchLiveView do
            not_found: "Package #{query} not found.",
            suggestions: suggestions,
            to: nil,
-           from: nil
+           from: nil,
+           releases: []
          )}
     end
   end

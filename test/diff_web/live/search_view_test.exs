@@ -92,7 +92,6 @@ defmodule DiffWeb.SearchLiveViewTest do
       |> allow(self(), view.pid)
 
       send(view.pid, {:search, "phoenix"})
-      render(view)
 
       assert render_click(view, "go", %{result: "phoenix", to: "1.4.11", from: "1.4.10"}) ==
                {:error, {:redirect, %{to: "/diff/phoenix/1.4.10..1.4.11"}}}
