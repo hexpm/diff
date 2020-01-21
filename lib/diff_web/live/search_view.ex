@@ -5,16 +5,27 @@ defmodule DiffWeb.SearchLiveView do
     DiffWeb.SearchView.render("search.html", assigns)
   end
 
+  @valid_query ~r{^[a-zA-Z0-9_]+$}
+
   def mount(_session, socket) do
     {:ok, reset_state(socket)}
   end
 
   def handle_event("search", %{"q" => ""}, socket), do: {:noreply, reset_state(socket)}
 
+  def handle_event("search", %{"q" => query}, socket)
+      when byte_size(query) > 30 do
+    {:noreply, socket}
+  end
+
   def handle_event("search", %{"q" => query}, socket) do
-    query = String.downcase(query)
-    send(self(), {:search, query})
-    {:noreply, assign(socket, query: query)}
+    if String.match?(query, @valid_query) do
+      query = String.downcase(query)
+      send(self(), {:search, query})
+      {:noreply, assign(socket, query: query)}
+    else
+      {:noreply, socket}
+    end
   end
 
   def handle_event("search_" <> suggestion, _params, socket) do
@@ -30,11 +41,7 @@ defmodule DiffWeb.SearchLiveView do
     index_of_selected_from = Enum.find_index(releases, &(&1 == from))
     to_releases = Enum.slice(releases, (index_of_selected_from + 1)..-1)
 
-    {:noreply,
-     assign(socket,
-       from: from,
-       to_releases: to_releases
-     )}
+    {:noreply, assign(socket, from: from, to_releases: to_releases)}
   end
 
   def handle_event(
@@ -42,10 +49,7 @@ defmodule DiffWeb.SearchLiveView do
         %{"_target" => ["to"], "to" => to},
         socket
       ) do
-    {:noreply,
-     assign(socket,
-       to: to
-     )}
+    {:noreply, assign(socket, to: to)}
   end
 
   def handle_event("go", _params, %{assigns: %{result: result, to: to, from: from}} = socket)
