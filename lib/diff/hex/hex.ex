@@ -94,6 +94,8 @@ defmodule Diff.Hex do
     case System.cmd("git", [
            "-c",
            "core.quotepath=false",
+           "-c",
+           "diff.algorithm=histogram",
            "diff",
            "--no-index",
            "--no-color",
