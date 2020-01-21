@@ -77,11 +77,12 @@ defmodule Diff.Hex do
            {:ok, tarball_to} <- get_tarball(package, to),
            :ok <- unpack_tarball(tarball_from, path_from),
            :ok <- unpack_tarball(tarball_to, path_to),
-           {:ok, gd} <- git_diff(path_from, path_to) do
-        GitDiff.parse_patch(gd)
+           {:ok, gd} <- git_diff(path_from, path_to),
+           {:ok, parsed} <- GitDiff.parse_patch(gd) do
+        {:ok, parsed}
       else
         error ->
-          Logger.error(inspect(error))
+          Logger.error("Failed to diff #{package} #{from}..#{to} with: #{inspect(error)}")
           {:error, :unknown}
       end
     after
