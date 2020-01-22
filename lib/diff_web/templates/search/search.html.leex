@@ -15,7 +15,7 @@
       <%= if length(@suggestions) > 0 do %>
         Did you mean:
         <%= for suggestion <- @suggestions do %>
-          <span class="suggestion" phx-click="search_<%= suggestion %>"><%= suggestion %></span>
+          <span class="suggestion" phx-click="search_<%= suggestion %>" onclick=""><%= suggestion %></span>
         <% end %>
       <% end %>
     </div>
