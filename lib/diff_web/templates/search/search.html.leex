@@ -21,7 +21,7 @@
     </div>
   </form>
   <%= if length(@releases) == 1 do %>
-    The package "<%= @query %>" has only one version so there's nothing to diff with.
+    The package only has one version so there's nothing to diff with.
   <% else %>
     <%= if @result do %>
       <form phx-change="select_version" class="version-form">
