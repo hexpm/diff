@@ -15,13 +15,13 @@
       <%= if length(@suggestions) > 0 do %>
         Did you mean:
         <%= for suggestion <- @suggestions do %>
-          <span class="suggestion" phx-click="search_<%= suggestion %>"><%= suggestion %></span>
+          <span class="suggestion" phx-click="search_<%= suggestion %>" onclick=""><%= suggestion %></span>
         <% end %>
       <% end %>
     </div>
   </form>
   <%= if length(@releases) == 1 do %>
-    The package only has one version so there's nothing to diff with.
+    The package "<%= @query %>" has only one version so there's nothing to diff with.
   <% else %>
     <%= if @result do %>
       <form phx-change="select_version" class="version-form">
