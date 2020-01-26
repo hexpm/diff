@@ -1,4 +1,4 @@
-FROM elixir:1.9.4-alpine as build
+FROM hexpm/elixir:1.9.4-erlang-22.2.3-alpine-3.11.2 as build
 
 # install build dependencies
 RUN apk add --update git build-base nodejs yarn python
@@ -35,7 +35,7 @@ COPY rel rel
 RUN mix release
 
 # prepare release image
-FROM alpine:3.10 AS app
+FROM alpine:3.11.2 AS app
 RUN apk add --update bash openssl git
 
 RUN mkdir /app
