@@ -3,8 +3,6 @@ defmodule Diff.Storage.Local do
 
   @behaviour Diff.Storage
 
-  @cache_version Application.get_env(:diff, :cache_version)
-
   def get(package, from_version, to_version) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
          filename <- key(package, from_version, to_version, hash),
@@ -32,7 +30,7 @@ defmodule Diff.Storage.Local do
 
   def combined_checksum(package, from, to) do
     with {:ok, checksums} <- Diff.Hex.get_checksums(package, [from, to]) do
-      {:ok, :erlang.phash2({@cache_version, checksums})}
+      {:ok, :erlang.phash2({Application.get_env(:diff, :cache_version), checksums})}
     end
   end
 

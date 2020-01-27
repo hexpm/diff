@@ -5,7 +5,6 @@ defmodule Diff.Storage.GCS do
 
   @gs_xml_url "https://storage.googleapis.com"
   @oauth_scope "https://www.googleapis.com/auth/devstorage.read_write"
-  @cache_version Application.get_env(:diff, :cache_version)
 
   def get(package, from_version, to_version) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
@@ -51,7 +50,7 @@ defmodule Diff.Storage.GCS do
 
   def combined_checksum(package, from, to) do
     with {:ok, checksums} <- Diff.Hex.get_checksums(package, [from, to]) do
-      {:ok, :erlang.phash2({@cache_version, checksums})}
+      {:ok, :erlang.phash2({Application.get_env(:diff, :cache_version), checksums})}
     end
   end
 

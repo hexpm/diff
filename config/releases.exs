@@ -1,6 +1,8 @@
 import Config
 
-config :diff, bucket: System.fetch_env!("DIFF_BUCKET")
+config :diff,
+  cache_version: String.to_integer(System.fetch_env!("DIFF_CACHE_VERSION")),
+  bucket: System.fetch_env!("DIFF_BUCKET")
 
 config :goth, json: System.fetch_env!("DIFF_GCP_CREDENTIALS")
 
