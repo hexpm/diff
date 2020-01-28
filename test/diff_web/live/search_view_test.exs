@@ -53,6 +53,36 @@ defmodule DiffWeb.SearchLiveViewTest do
       refute rendered =~ ~s(Package phoenix not found.)
     end
 
+    test "do not search if the query is too long", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/")
+
+      Diff.Package.StoreMock
+      |> expect(:get_names, fn -> ["phoenix", "phoenix_live_view"] end)
+      |> expect(:get_versions, fn "phoenix" -> {:ok, ["1.4.10", "1.4.11"]} end)
+      |> allow(self(), view.pid)
+
+      send(view.pid, {:search, "phoenix"})
+      rendered = render(view)
+
+      assert rendered =~
+               render_change(view, "search", %{"q" => "phoenix_phoenix_phoenix_phoenix_phoenix"})
+    end
+
+    test "do not search if the query has invalid characters", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/")
+
+      Diff.Package.StoreMock
+      |> expect(:get_names, fn -> ["phoenix", "phoenix_live_view"] end)
+      |> expect(:get_versions, fn "phoenix" -> {:ok, ["1.4.10", "1.4.11"]} end)
+      |> allow(self(), view.pid)
+
+      send(view.pid, {:search, "phoenix"})
+      rendered = render(view)
+
+      assert rendered =~ render_change(view, "search", %{"q" => "phoenix-"})
+      assert rendered =~ render_change(view, "search", %{"q" => "phoenixё"})
+    end
+
     test "clicking diff", %{conn: conn} do
       {:ok, view, _html} = live(conn, "/")
 
