@@ -5,7 +5,7 @@ defmodule DiffWeb.SearchLiveView do
     DiffWeb.SearchView.render("search.html", assigns)
   end
 
-  def mount(_session, socket) do
+  def mount(_params, _session, socket) do
     {:ok, reset_state(socket)}
   end
 
