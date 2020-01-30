@@ -4,7 +4,7 @@ defmodule DiffWeb.PageController do
   require Logger
 
   def diff(conn, %{"package" => package, "versions" => versions}) do
-    case parse_versions(versions) do
+    case parse_versions(package, versions) do
       {:ok, from, to} ->
         do_diff(conn, package, from, to)
 
@@ -36,14 +36,29 @@ defmodule DiffWeb.PageController do
     end
   end
 
-  defp parse_versions(versions) do
-    with [from, to] <- String.split(versions, "..", trim: true),
-         {:ok, from} <- Version.parse(from),
-         {:ok, to} <- Version.parse(to) do
+  defp parse_versions(package, versions) do
+    with [from, to] <- versions |> String.split("..") |> Enum.map(&String.trim/1),
+         {:ok, from} <- parse_version(package, :from, from),
+         {:ok, to} <- parse_version(package, :to, to) do
       {:ok, to_string(from), to_string(to)}
     else
       _ ->
         :error
     end
   end
+
+  defp parse_version(_package, :from, ""), do: :error
+
+  defp parse_version(package, :to, "") do
+    with {:ok, versions} <- Diff.Package.Store.get_versions(package) do
+      version =
+        versions
+        |> Enum.map(&Version.parse!/1)
+        |> Enum.max()
+
+      {:ok, version}
+    end
+  end
+
+  defp parse_version(_package, _kind, input), do: Version.parse(input)
 end
