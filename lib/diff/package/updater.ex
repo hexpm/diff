@@ -16,12 +16,12 @@ defmodule Diff.Package.Updater do
 
   def handle_continue(:update, state) do
     update()
-    {:noreply, state}
+    {:noreply, state, :hibernate}
   end
 
   def handle_info(:update, state) do
     update()
-    {:noreply, state}
+    {:noreply, state, :hibernate}
   end
 
   def update() do
