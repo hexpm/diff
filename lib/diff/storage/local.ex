@@ -5,8 +5,8 @@ defmodule Diff.Storage.Local do
 
   def get(package, from_version, to_version) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
-         filename <- key(package, from_version, to_version, hash),
-         path <- Path.join([dir(), package, filename]),
+         filename = key(package, from_version, to_version, hash),
+         path = Path.join([dir(), package, filename]),
          {:ok, diff} <- File.read(path) do
       {:ok, diff}
     else
@@ -17,10 +17,11 @@ defmodule Diff.Storage.Local do
 
   def put(package, from_version, to_version, diff) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
-         filename <- key(package, from_version, to_version, hash),
-         path <- Path.join([dir(), package, filename]),
-         File.mkdir_p!(Path.dirname(path)),
+         filename = key(package, from_version, to_version, hash),
+         path = Path.join([dir(), package, filename]),
+         :ok <- File.mkdir_p(Path.dirname(path)),
          :ok <- File.write(path, diff) do
+      :ok
     else
       {:error, reason} ->
         Logger.error("Failed to store diff. Reason: #{inspect(reason)}.")
