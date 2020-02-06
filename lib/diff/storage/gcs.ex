@@ -55,7 +55,7 @@ defmodule Diff.Storage.GCS do
   end
 
   defp key(package, from_version, to_version, hash) do
-    "diffs/#{package}-#{from_version}-#{to_version}-#{hash}.tgz"
+    "diffs/#{package}-#{from_version}-#{to_version}-#{hash}.html"
   end
 
   defp url(key) do

@@ -35,7 +35,7 @@ defmodule Diff.Storage.Local do
   end
 
   defp key(package, from_version, to_version, hash) do
-    "#{package}-#{from_version}-#{to_version}-#{hash}.tgz"
+    "#{package}-#{from_version}-#{to_version}-#{hash}.html"
   end
 
   defp dir() do
