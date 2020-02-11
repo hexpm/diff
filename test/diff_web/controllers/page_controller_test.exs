@@ -22,7 +22,7 @@ defmodule DiffWeb.PageControllerTest do
       expect(Diff.Package.StoreMock, :get_versions, fn "phoenix" -> {:ok, versions} end)
       expect(Diff.StorageMock, :get, fn "phoenix", "1.4.5", "1.4.9" -> {:ok, diff} end)
 
-      conn = get(conn, "diff/phoenix/1.4.5..")
+      conn = get(conn, "diff/phoenix/1.4.5")
       assert html_response(conn, 200) =~ diff
     end
   end

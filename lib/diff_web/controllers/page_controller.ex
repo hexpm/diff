@@ -61,8 +61,8 @@ defmodule DiffWeb.PageController do
     end
   end
 
-  defp parse_versions(versions) do
-    with [from, to] <- versions |> String.split("..") |> Enum.map(&String.trim/1),
+  defp parse_versions(input) do
+    with {:ok, [from, to]} <- versions_from_input(input),
          {:ok, from} <- parse_version(from),
          {:ok, to} <- parse_version(to) do
       {:ok, from, to}
@@ -71,6 +71,26 @@ defmodule DiffWeb.PageController do
         :error
     end
   end
+
+  defp versions_from_input(input) when is_binary(input) do
+    input
+    |> String.split("..")
+    |> case do
+      [from] ->
+        [from, ""]
+
+      [from, to] ->
+        [from, to]
+    end
+    |> versions_from_input()
+  end
+
+  defp versions_from_input([_from, _to] = versions) do
+    versions = Enum.map(versions, &String.trim/1)
+    {:ok, versions}
+  end
+
+  defp versions_from_input(_), do: :error
 
   defp parse_version(""), do: {:ok, :latest}
   defp parse_version(input), do: Version.parse(input)
