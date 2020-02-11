@@ -12,4 +12,5 @@ config :goth, config: %{"project_id" => "diff"}
 config :logger, level: :warn
 
 config :diff,
-  package_store_impl: Diff.Package.StoreMock
+  package_store_impl: Diff.Package.StoreMock,
+  storage_impl: Diff.StorageMock

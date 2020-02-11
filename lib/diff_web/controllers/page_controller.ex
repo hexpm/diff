@@ -9,13 +9,38 @@ defmodule DiffWeb.PageController do
         do_diff(conn, package, from, to)
 
       :error ->
-        conn
-        |> put_status(400)
-        |> render("400.html")
+        render_error(conn, 400)
+    end
+  end
+
+  defp do_diff(conn, _package, version, version) do
+    render_error(conn, 400)
+  end
+
+  defp do_diff(conn, _package, :latest, _version) do
+    render_error(conn, 400)
+  end
+
+  defp do_diff(conn, package, from, :latest) do
+    case Diff.Package.Store.get_versions(package) do
+      {:ok, versions} ->
+        to =
+          versions
+          |> Enum.map(&Version.parse!/1)
+          |> Enum.filter(&(&1.pre == []))
+          |> Enum.max(Version)
+
+        do_diff(conn, package, from, to)
+
+      {:error, :not_found} ->
+        render_error(conn, 404)
     end
   end
 
   defp do_diff(conn, package, from, to) do
+    from = to_string(from)
+    to = to_string(to)
+
     case Diff.Storage.get(package, from, to) do
       {:ok, diff} ->
         Logger.debug("cache hit for #{inspect(package)}")
@@ -31,19 +56,48 @@ defmodule DiffWeb.PageController do
             render(conn, "diff.html", diff: rendered)
 
           {:error, :unknown} ->
-            render(conn, "500.html")
+            render_error(conn, 500)
         end
     end
   end
 
-  defp parse_versions(versions) do
-    with [from, to] <- String.split(versions, "..", trim: true),
-         {:ok, from} <- Version.parse(from),
-         {:ok, to} <- Version.parse(to) do
-      {:ok, to_string(from), to_string(to)}
+  defp parse_versions(input) do
+    with {:ok, [from, to]} <- versions_from_input(input),
+         {:ok, from} <- parse_version(from),
+         {:ok, to} <- parse_version(to) do
+      {:ok, from, to}
     else
       _ ->
         :error
     end
+  end
+
+  defp versions_from_input(input) when is_binary(input) do
+    input
+    |> String.split("..")
+    |> case do
+      [from] ->
+        [from, ""]
+
+      [from, to] ->
+        [from, to]
+    end
+    |> versions_from_input()
+  end
+
+  defp versions_from_input([_from, _to] = versions) do
+    versions = Enum.map(versions, &String.trim/1)
+    {:ok, versions}
+  end
+
+  defp versions_from_input(_), do: :error
+
+  defp parse_version(""), do: {:ok, :latest}
+  defp parse_version(input), do: Version.parse(input)
+
+  defp render_error(conn, status) do
+    conn
+    |> put_status(status)
+    |> render("#{status}.html")
   end
 end
