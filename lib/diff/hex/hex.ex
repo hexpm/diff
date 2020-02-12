@@ -110,8 +110,6 @@ defmodule Diff.Hex do
            "--no-index",
            "--no-color",
            "--output=#{path_out}",
-           # "--ignore-space-at-eol",
-           # "--ignore-space-change",
            path_from,
            path_to
          ]) do
