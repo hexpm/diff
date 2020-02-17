@@ -9,9 +9,9 @@ defmodule Diff.Storage.GCS do
   def get(package, from_version, to_version) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
          url = url(key(package, from_version, to_version, hash)),
-         {:ok, 200, _headers, body} <-
-           Diff.HTTP.retry("gs", fn -> Diff.HTTP.get(url, headers()) end) do
-      {:ok, body}
+         {:ok, 200, _headers, stream} <-
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.get_stream(url, headers()) end) do
+      {:ok, stream}
     else
       {:ok, 404, _headers, _body} ->
         {:error, :not_found}
@@ -26,11 +26,11 @@ defmodule Diff.Storage.GCS do
     end
   end
 
-  def put(package, from_version, to_version, body) do
+  def put(package, from_version, to_version, stream) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
          url = url(key(package, from_version, to_version, hash)),
          {:ok, 200, _headers, _body} <-
-           Diff.HTTP.retry("gs", fn -> Diff.HTTP.put(url, headers(), body) end) do
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.put_stream(url, headers(), stream) end) do
       :ok
     else
       {:ok, status, _headers, _body} ->

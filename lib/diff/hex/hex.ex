@@ -69,21 +69,30 @@ defmodule Diff.Hex do
   end
 
   def diff(package, from, to) do
-    path_from = tmp_path("#{package}-#{from}-")
-    path_to = tmp_path("#{package}-#{to}-")
+    path_from = tmp_path("package-#{package}-#{from}-")
+    path_to = tmp_path("package-#{package}-#{to}-")
+    path_diff = tmp_path("diff-#{package}-#{from}-#{to}-")
 
     try do
       with {:ok, tarball_from} <- get_tarball(package, from),
-           {:ok, tarball_to} <- get_tarball(package, to),
            :ok <- unpack_tarball(tarball_from, path_from),
+           {:ok, tarball_to} <- get_tarball(package, to),
            :ok <- unpack_tarball(tarball_to, path_to),
-           {:ok, gd} <- git_diff(path_from, path_to),
-           {:ok, parsed} <- GitDiff.parse_patch(gd) do
-        {:ok, parsed}
+           :ok <- git_diff(path_from, path_to, path_diff) do
+        stream =
+          File.stream!(path_diff, [:read_ahead])
+          |> GitDiff.stream_patch(relative_from: path_from, relative_to: path_to)
+          |> Stream.transform(
+            fn -> :ok end,
+            fn elem, :ok -> {[elem], :ok} end,
+            fn :ok -> File.rm(path_diff) end
+          )
+
+        {:ok, stream}
       else
         error ->
-          Logger.error("Failed to diff #{package} #{from}..#{to} with: #{inspect(error)}")
-          {:error, :unknown}
+          Logger.error("Failed to create diff #{package} #{from}..#{to} with: #{inspect(error)}")
+          :error
       end
     after
       File.rm_rf(path_from)
@@ -91,7 +100,7 @@ defmodule Diff.Hex do
     end
   end
 
-  defp git_diff(path_from, path_to) do
+  defp git_diff(path_from, path_to, path_out) do
     case System.cmd("git", [
            "-c",
            "core.quotepath=false",
@@ -100,15 +109,12 @@ defmodule Diff.Hex do
            "diff",
            "--no-index",
            "--no-color",
+           "--output=#{path_out}",
            path_from,
            path_to
          ]) do
       {"", 1} ->
-        {:error, :not_found}
-
-      {result, 1} ->
-        cleaned = String.replace(result, [path_from, path_to], "")
-        {:ok, cleaned}
+        :ok
 
       other ->
         {:error, other}
@@ -117,6 +123,6 @@ defmodule Diff.Hex do
 
   defp tmp_path(prefix) do
     random_string = Base.encode16(:crypto.strong_rand_bytes(4))
-    Path.join(System.tmp_dir!(), prefix <> random_string)
+    Path.join([System.tmp_dir!(), "diff", prefix <> random_string])
   end
 end

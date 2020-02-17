@@ -4,23 +4,28 @@ defmodule Diff.Storage.Local do
   @behaviour Diff.Storage
 
   def get(package, from_version, to_version) do
-    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
-         filename = key(package, from_version, to_version, hash),
-         path = Path.join([dir(), package, filename]),
-         {:ok, diff} <- File.read(path) do
-      {:ok, diff}
-    else
-      {:error, :not_found} -> {:error, :not_found}
-      {:error, :enoent} -> {:error, :not_found}
+    case combined_checksum(package, from_version, to_version) do
+      {:ok, hash} ->
+        filename = key(package, from_version, to_version, hash)
+        path = Path.join([dir(), package, filename])
+
+        if File.regular?(path) do
+          {:ok, File.stream!(path, [:read_ahead])}
+        else
+          {:error, :not_found}
+        end
+
+      {:error, :not_found} ->
+        {:error, :not_found}
     end
   end
 
-  def put(package, from_version, to_version, diff) do
+  def put(package, from_version, to_version, stream) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
          filename = key(package, from_version, to_version, hash),
          path = Path.join([dir(), package, filename]),
-         :ok <- File.mkdir_p(Path.dirname(path)),
-         :ok <- File.write(path, diff) do
+         :ok <- File.mkdir_p(Path.dirname(path)) do
+      Enum.into(stream, File.stream!(path, [:write_delay]))
       :ok
     else
       {:error, reason} ->
