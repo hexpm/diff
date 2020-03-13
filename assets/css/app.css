@@ -171,6 +171,10 @@ input.search-input:focus {
   color: #999;
 }
 
+.ghd-file-header .reveal-diff path {
+  fill: #999;
+}
+
 .ghd-file-header.collapsed .reveal-diff {
   display: block;
 }
@@ -179,6 +183,10 @@ input.search-input:focus {
   display: block;
   float: right;
   color: #999;
+}
+
+.ghd-file-header .collapse-diff path {
+  fill: #999;
 }
 
 .ghd-file-header.collapsed .collapse-diff {
