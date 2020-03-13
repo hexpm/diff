@@ -60,7 +60,7 @@ defmodule DiffWeb.PageController do
   defp do_diff(conn, package, from, to) do
     case Diff.Hex.diff(package, from, to) do
       {:ok, stream} ->
-        path = render_diff(package, from, to, stream, conn)
+        path = render_diff(package, from, to, stream)
         stream = File.stream!(path, [:read_ahead], @chunk_size)
 
         cache_diff(package, from, to, stream)
@@ -114,17 +114,14 @@ defmodule DiffWeb.PageController do
     end)
   end
 
-  defp render_diff(package, from, to, stream, conn) do
+  defp render_diff(package, from, to, stream) do
     path = tmp_path("html-#{package}-#{from}-#{to}-")
 
     File.open!(path, [:write, :raw, :binary, :write_delay], fn file ->
       Enum.each(stream, fn
         {:ok, patch} ->
           html_patch =
-            Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html",
-              patch: patch,
-              conn: conn
-            )
+            Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", patch: patch)
 
           IO.binwrite(file, html_patch)
 
