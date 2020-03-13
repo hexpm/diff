@@ -162,6 +162,27 @@ input.search-input:focus {
 .ghd-file-header {
   padding: 10px;
   border-bottom: 0.1rem solid #e1e1e1;
+  cursor: pointer;
+}
+
+.ghd-file-header .reveal-diff {
+  display: none;
+  float: right;
+  color: #999;
+}
+
+.ghd-file-header.collapsed .reveal-diff {
+  display: block;
+}
+
+.ghd-file-header .collapse-diff {
+  display: block;
+  float: right;
+  color: #999;
+}
+
+.ghd-file-header.collapsed .collapse-diff {
+  display: none;
 }
 
 .ghd-chunk-header .ghd-line-number {
@@ -189,6 +210,10 @@ input.search-input:focus {
 
 .ghd-diff {
   overflow-y: hidden;
+}
+
+.ghd-diff.hidden{
+  display: none;
 }
 
 .ghd-chunk-header {

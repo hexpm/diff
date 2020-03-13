@@ -5,6 +5,8 @@
       <%= status %>
     </span>
     <%= file_header(@patch, status) %>
+    <span class="collapse-diff">Collapse</span>
+    <span class="reveal-diff">Reveal</span>
   </div>
   <div class="ghd-diff">
     <table class="ghd-diff">
