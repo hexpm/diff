@@ -63,20 +63,7 @@ defmodule Diff.MixProject do
 
   defp aliases() do
     [
-      setup: ["deps.get", &setup_npm/1]
+      setup: ["deps.get", "cmd npm install --prefix assets"]
     ]
-  end
-
-  defp setup_npm(_) do
-    cmd("npm", ["install"], cd: "assets")
-  end
-
-  defp cmd(cmd, args, opts) do
-    opts = Keyword.merge([into: IO.stream(:stdio, :line), stderr_to_stdout: true], opts)
-    {_, result} = System.cmd(cmd, args, opts)
-
-    if result != 0 do
-      raise "Non-zero result (#{result}) from: #{cmd} #{Enum.map_join(args, " ", &inspect/1)}"
-    end
   end
 end
