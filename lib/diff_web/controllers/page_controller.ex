@@ -5,6 +5,19 @@ defmodule DiffWeb.PageController do
 
   @chunk_size 64 * 1024
 
+  def diffs(conn, %{"diffs" => diffs}) do
+    diffs =
+      diffs
+      |> Enum.map(&parse_diff/1)
+      |> Enum.reject(&is_nil/1)
+
+    conn
+    |> assign(:diffs, diffs)
+    |> render()
+  end
+
+  def diffs(conn, _params), do: render_error(conn, 400)
+
   def diff(conn, %{"package" => package, "versions" => versions}) do
     case parse_versions(versions) do
       {:ok, from, to} ->
@@ -193,4 +206,13 @@ defmodule DiffWeb.PageController do
     random_string = Base.encode16(:crypto.strong_rand_bytes(4))
     Path.join([System.tmp_dir!(), "diff", prefix <> random_string])
   end
+
+  defp parse_diff(diff) do
+    case String.split(diff, ":", trim: true) do
+      [app, from, to] -> {app, from, to, build_url(app, from, to)}
+      _ -> nil
+    end
+  end
+
+  defp build_url(app, from, to), do: "/diff/#{app}/#{from}..#{to}"
 end

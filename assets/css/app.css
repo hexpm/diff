@@ -281,6 +281,32 @@ input.search-input:focus {
   padding: 0 90px;
 }
 
+table.package-list tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+table.package-list th{
+  text-align: left;
+  border-bottom: none;
+}
+
+table.package-list td {
+  text-align: left;
+  padding: 1.2rem 1.5rem;
+}
+
+table.package-list th:first-child {
+  padding-left: 1.5rem;
+}
+
+table.package-list td:last-child {
+  text-align: right;
+}
+
+table.package-list .button {
+  margin-bottom: 0;
+}
+
 @media only screen
   and (min-device-width: 320px)
   and (max-device-width: 480px) {
