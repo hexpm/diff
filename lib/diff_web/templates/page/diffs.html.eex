@@ -1,0 +1,8 @@
+<div class="message-container">
+  <table class="package-list">
+    <tr><th>Package Name</th><th>From</th><th>To</th><th></th></tr>
+<%= for {app, from, to, link} <- @diffs do %>
+    <tr><td><%= app %></td><td><%= from %></td><td><%= to %></td><td><a href="<%= link %>" class="button diff-button">View Diff</a></td></tr>
+<% end %>
+</table>
+</div>

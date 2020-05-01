@@ -16,5 +16,6 @@ defmodule DiffWeb.Router do
 
     live "/", SearchLiveView
     get "/diff/:package/:versions", PageController, :diff
+    get "/diffs", PageController, :diffs
   end
 end
