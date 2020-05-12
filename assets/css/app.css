@@ -163,6 +163,11 @@ input.search-input:focus {
   padding: 10px;
   border-bottom: 0.1rem solid #e1e1e1;
   cursor: pointer;
+  background: #fff;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0px;
+  z-index: 1;
 }
 
 .ghd-file-header .reveal-diff {
