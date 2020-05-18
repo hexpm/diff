@@ -38,10 +38,11 @@ defmodule Diff.Hex do
     end
   end
 
-  def unpack_tarball(tarball, path) when is_binary(path) do
+  def unpack_tarball(tarball, file_list \\ [], path) when is_binary(path) do
     path = to_charlist(path)
+    file_list = Enum.map(file_list, &to_charlist/1)
 
-    with {:ok, _} <- :hex_tarball.unpack(tarball, path) do
+    with {:ok, _} <- :hex_tarball.unpack(tarball, file_list, path) do
       :ok
     end
   end
@@ -97,6 +98,35 @@ defmodule Diff.Hex do
     after
       File.rm_rf(path_from)
       File.rm_rf(path_to)
+    end
+  end
+
+  def get_chunk(package, version, file_name, from_line, direction) do
+    path = tmp_path("package-#{package}-#{version}-")
+
+    chunk_extractor_params = %{
+      file_path: Path.join(path, file_name),
+      from_line: from_line,
+      direction: direction,
+      lines_to_read: 20
+    }
+
+    try do
+      with {:ok, tarball} <- get_tarball(package, version),
+           :ok <- unpack_tarball(tarball, [file_name], path),
+           {:ok, %{parsed: parsed_chunk}} <- Diff.Hex.ChunkExtractor.run(chunk_extractor_params) do
+        {:ok, parsed_chunk}
+      else
+        {:error, %Diff.Hex.ChunkExtractor{errors: errors} = chunk} ->
+          Logger.error(inspect(errors))
+          {:error, chunk}
+
+        error ->
+          Logger.error(inspect(error))
+          {:error, error}
+      end
+    after
+      File.rm_rf(path)
     end
   end
 

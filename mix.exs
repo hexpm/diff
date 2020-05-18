@@ -43,7 +43,7 @@ defmodule Diff.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:phoenix_live_view, "~> 0.6"},
-      {:hex_core, "~> 0.6.1"},
+      {:hex_core, github: "RudolfMan/hex_core", branch: "unpack-list-of-files"},
       {:rollbax, "~> 0.11.0"},
       {:logster, "~> 1.0"},
       {:git_diff, github: "hexpm/git_diff", branch: "emj/stream"},

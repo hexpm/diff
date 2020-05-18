@@ -41,4 +41,36 @@ defmodule DiffWeb.PageControllerTest do
       assert html_response(conn, 200) =~ diff
     end
   end
+
+  describe "/GET /diff/:package/:versions/expand/:from_line/:direction" do
+    setup :verify_on_exit!
+
+    test "requires file_name query param", %{conn: conn} do
+      conn = get(conn, "/diff/phoenix/1.4.5/expand/1/down")
+      assert %{"error" => "missing query parameter: file_name"} = json_response(conn, 400)
+    end
+
+    test "doesn't accept direction other that up or down", %{conn: conn} do
+      conn = get(conn, "/diff/phoenix/1.4.5/expand/1/left?file_name=mix.exs")
+      assert %{"errors" => %{"direction" => error}} = json_response(conn, 400)
+      assert error =~ ~r/direction must be either \"up\" or \"down\"/
+    end
+
+    test "doesn't accept negative from_line", %{conn: conn} do
+      conn = get(conn, "/diff/phoenix/1.4.5/expand/-2/up?file_name=mix.exs")
+      assert json_response(conn, 400)
+    end
+
+    test "returns chunk of the file", %{conn: conn} do
+      conn = get(conn, "/diff/phoenix/1.4.5/expand/2/up?file_name=mix.exs")
+      assert %{"chunk" => chunk} = json_response(conn, 200)
+
+      assert [
+               %{"line_text" => "defmodule Phoenix.MixProject do"},
+               %{"line_text" => "  use Mix.Project"}
+             ] = chunk
+
+      assert 2 = length(chunk)
+    end
+  end
 end

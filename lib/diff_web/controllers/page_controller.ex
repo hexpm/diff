@@ -28,6 +28,32 @@ defmodule DiffWeb.PageController do
     end
   end
 
+  def expand_context(conn, %{"file_name" => file_name} = params) do
+    %{
+      "version" => version,
+      "package" => package,
+      "from_line" => from_line,
+      "direction" => direction
+    } = params
+
+    case parse_version(version) do
+      {:ok, version} ->
+        version = to_string(version)
+        do_expand_context(conn, package, version, file_name, from_line, direction)
+
+      :error ->
+        conn
+        |> put_status(400)
+        |> json(%{error: "Bad Request"})
+    end
+  end
+
+  def expand_context(conn, _params) do
+    conn
+    |> put_status(400)
+    |> json(%{error: "missing query parameter: file_name"})
+  end
+
   defp maybe_cached_diff(conn, _package, version, version) do
     render_error(conn, 400)
   end
@@ -67,6 +93,18 @@ defmodule DiffWeb.PageController do
       {:error, :not_found} ->
         Logger.debug("cache miss for #{package}/#{from}..#{to}")
         do_diff(conn, package, from, to)
+    end
+  end
+
+  defp do_expand_context(conn, package, version, file_name, from_line, direction) do
+    case Diff.Hex.get_chunk(package, version, file_name, from_line, direction) do
+      {:ok, chunk} ->
+        json(conn, %{chunk: chunk})
+
+      {:error, %{errors: errors}} ->
+        conn
+        |> put_status(400)
+        |> json(%{errors: Enum.into(errors, %{})})
     end
   end
 
