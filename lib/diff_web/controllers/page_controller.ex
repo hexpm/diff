@@ -100,7 +100,9 @@ defmodule DiffWeb.PageController do
     case Diff.Hex.get_chunk(chunk_extractor_params) do
       {:ok, chunk} ->
         rendered_chunk =
-          Phoenix.View.render_to_string(DiffWeb.RenderView, "render_context_chunk.html",
+          Phoenix.View.render_to_string(
+            DiffWeb.RenderView,
+            "render_context_chunk.html",
             chunk: chunk
           )
 

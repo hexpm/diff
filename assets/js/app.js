@@ -108,8 +108,7 @@ const gatherInfo = line => {
 }
 
 const fetchChunkAndInsert = params => {
-  if( !(params.fromLine && params.toLine) ||
-      (params.fromLine >= params.toLine) ){
+  if(!params.fromLine || !params.toLine || (params.fromLine >= params.toLine)){
     return
   }
 
@@ -120,7 +119,7 @@ const fetchChunkAndInsert = params => {
   fetch(url)
   .then(response => response.json())
   .then(({chunk, lines, errors}) => {
-    if(errors){return}
+    if(errors) return
     const context = document.createElement('template')
     context.innerHTML = chunk.trim()
     const patchBody = params.patch.querySelector('tbody')
