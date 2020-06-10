@@ -17,35 +17,15 @@ defmodule Diff.Hex.ChunkExtractorTest do
     on_exit(fn -> File.rm!(path) end)
 
     # some deafult params
-    %{params: %{file_path: path, lines_to_read: 2, from_line: 1, direction: "down"}}
-  end
-
-  describe "validates direction" do
-    test "down", %{params: params} do
-      {:ok, %{errors: errors}} = ChunkExtractor.run(%{params | direction: "down"})
-      assert [] = errors
-    end
-
-    test "up", %{params: params} do
-      {:ok, %{errors: errors}} = ChunkExtractor.run(%{params | direction: "up"})
-      assert [] = errors
-    end
-
-    test "error when direction is neither up nor down", %{params: params} do
-      {:error, %{errors: errors}} = ChunkExtractor.run(%{params | direction: "left"})
-      assert "direction must be either \"up\" or \"down\"" = Keyword.get(errors, :direction)
-    end
+    %{
+      params: %{file_path: path, right_line: 1, from_line: 1, to_line: 2}
+    }
   end
 
   describe "reads raw chunk from the file_path" do
     test "reads first 2 lines down", %{params: params} do
-      {:ok, %{raw: raw}} = ChunkExtractor.run(%{params | direction: "down"})
+      {:ok, %{raw: raw}} = ChunkExtractor.run(%{params | from_line: 1, to_line: 2})
       assert "foo 1\nbar 2\n" = raw
-    end
-
-    test "reads first 2 lines up", %{params: params} do
-      {:ok, %{raw: raw}} = ChunkExtractor.run(%{params | direction: "up", from_line: 2})
-      assert "foo 1\nbar 2" = raw
     end
 
     test "error when file doesn't exist", %{params: params} do
@@ -53,36 +33,41 @@ defmodule Diff.Hex.ChunkExtractorTest do
       assert Keyword.get(errors, :system) =~ ~r/non_existent: No such file/
     end
 
+    test "returns from 1 when from_line is negative", %{params: params} do
+      {:ok, %{parsed: actual}} =
+        ChunkExtractor.run(%{params | from_line: -2, right_line: -2, to_line: 2})
+
+      assert [
+               %{from_line_number: 1, to_line_number: 1},
+               %{from_line_number: 2, to_line_number: 2}
+             ] = actual
+    end
+
     test "error when arguments are not valid", %{params: params} do
-      {:error, %{errors: errors}} = ChunkExtractor.run(%{params | from_line: -1})
-      assert Keyword.get(errors, :system) =~ ~r/illegal offset/
+      {:error, %{errors: errors}} = ChunkExtractor.run(%{params | from_line: -4, to_line: -3})
+      assert Keyword.get(errors, :param) == "from_line parameter must be less than to_line"
     end
 
-    test "reads 2 lines up from the middle", %{params: params} do
-      {:ok, %{raw: raw}} = ChunkExtractor.run(%{params | direction: "up", from_line: 3})
-      assert "bar 2\nbaz 3" = raw
-    end
-
-    test "reads 2 lines down from the middle", %{params: params} do
-      {:ok, %{raw: raw}} = ChunkExtractor.run(%{params | direction: "down", from_line: 2})
-      assert "bar 2\nbaz 3\n" = raw
+    test "reads 2 lines from the middle", %{params: params} do
+      {:ok, %{raw: raw}} = ChunkExtractor.run(%{params | from_line: 2, to_line: 4})
+      assert "bar 2\nbaz 3\nbaf 4\n" = raw
     end
   end
 
   describe "parse_chunk" do
     test "parses raw chunk into list of structs", %{params: params} do
       {:ok, %{parsed: actual}} = ChunkExtractor.run(params)
-      assert [%{line_text: "foo 1"}, %{line_text: "bar 2"}] = actual
+      assert [%{text: " foo 1"}, %{text: " bar 2"}] = actual
     end
 
-    test "sets line_numbers when direction is down", %{params: params} do
-      {:ok, %{parsed: actual}} = ChunkExtractor.run(%{params | direction: "down", from_line: 2})
-      assert [%{line_number: 2}, %{line_number: 3}] = actual
-    end
+    test "sets line_numbers", %{params: params} do
+      {:ok, %{parsed: actual}} =
+        ChunkExtractor.run(%{params | from_line: 2, right_line: 1, to_line: 3})
 
-    test "sets line_numbers when direction is up", %{params: params} do
-      {:ok, %{parsed: actual}} = ChunkExtractor.run(%{params | direction: "up", from_line: 3})
-      assert [%{line_number: 2}, %{line_number: 3}] = actual
+      assert [
+               %{from_line_number: 2, to_line_number: 1},
+               %{from_line_number: 3, to_line_number: 2}
+             ] = actual
     end
   end
 end

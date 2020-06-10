@@ -101,19 +101,14 @@ defmodule Diff.Hex do
     end
   end
 
-  def get_chunk(package, version, file_name, from_line, direction) do
-    path = tmp_path("package-#{package}-#{version}-")
+  def get_chunk(params) do
+    path = tmp_path("chunk")
 
-    chunk_extractor_params = %{
-      file_path: Path.join(path, file_name),
-      from_line: from_line,
-      direction: direction,
-      lines_to_read: 20
-    }
+    chunk_extractor_params = Map.put(params, :file_path, Path.join(path, params.file_name))
 
     try do
-      with {:ok, tarball} <- get_tarball(package, version),
-           :ok <- unpack_tarball(tarball, [file_name], path),
+      with {:ok, tarball} <- get_tarball(params.package, params.version),
+           :ok <- unpack_tarball(tarball, [params.file_name], path),
            {:ok, %{parsed: parsed_chunk}} <- Diff.Hex.ChunkExtractor.run(chunk_extractor_params) do
         {:ok, parsed_chunk}
       else
