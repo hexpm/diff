@@ -198,8 +198,29 @@ input.search-input:focus {
   display: none;
 }
 
+.ghd-chunk-header {
+  height: 44px;
+}
+.ghd-chunk-header:first-child, .ghd-chunk-header:last-child {
+  height: 0;
+}
+
 .ghd-chunk-header .ghd-line-number {
   background-color: #f8fafd;
+  flex-direction: column;
+}
+
+.expanded, .expanded .ghd-line-number{
+  background-color: #f5f5f5;
+}
+
+.ghd-chunk-header .ghd-line-number div{
+  background: #dbedff;
+  width: 100%;
+  text-align: center;
+}
+.ghd-chunk-header .ghd-line-number div:hover{
+  background: #95c6fe;
 }
 
 .ghd-file-status {

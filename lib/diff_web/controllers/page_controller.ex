@@ -179,7 +179,11 @@ defmodule DiffWeb.PageController do
       Enum.each(stream, fn
         {:ok, patch} ->
           html_patch =
-            Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", patch: patch)
+            Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html",
+              patch: patch,
+              package: package,
+              from_version: from
+            )
 
           IO.binwrite(file, html_patch)
 
