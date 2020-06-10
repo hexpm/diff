@@ -15,7 +15,11 @@ defmodule DiffWeb.Router do
     pipe_through :browser
 
     live "/", SearchLiveView
-    get "/diff/:package/:version/expand/:from_line/:direction", PageController, :expand_context
+
+    get "/diff/:package/:version/expand/:from_line/:to_line/:right_line/",
+        PageController,
+        :expand_context
+
     get "/diff/:package/:versions", PageController, :diff
     get "/diffs", PageController, :diffs
   end

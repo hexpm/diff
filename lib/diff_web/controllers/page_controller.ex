@@ -28,18 +28,13 @@ defmodule DiffWeb.PageController do
     end
   end
 
-  def expand_context(conn, %{"file_name" => file_name} = params) do
-    %{
-      "version" => version,
-      "package" => package,
-      "from_line" => from_line,
-      "direction" => direction
-    } = params
-
-    case parse_version(version) do
+  def expand_context(conn, %{"file_name" => _file_name} = params) do
+    case parse_version(params["version"]) do
       {:ok, version} ->
         version = to_string(version)
-        do_expand_context(conn, package, version, file_name, from_line, direction)
+        params = Map.update!(params, "version", fn _ -> version end)
+
+        do_expand_context(conn, params)
 
       :error ->
         conn
@@ -96,10 +91,22 @@ defmodule DiffWeb.PageController do
     end
   end
 
-  defp do_expand_context(conn, package, version, file_name, from_line, direction) do
-    case Diff.Hex.get_chunk(package, version, file_name, from_line, direction) do
+  defp do_expand_context(conn, params) do
+    chunk_extractor_params =
+      for {key, val} <- params, into: %{} do
+        {String.to_existing_atom(key), val}
+      end
+
+    case Diff.Hex.get_chunk(chunk_extractor_params) do
       {:ok, chunk} ->
-        json(conn, %{chunk: chunk})
+        rendered_chunk =
+          Phoenix.View.render_to_string(DiffWeb.RenderView, "render_context_chunk.html",
+            chunk: chunk
+          )
+
+        conn
+        |> put_status(200)
+        |> json(%{chunk: rendered_chunk, lines: length(chunk)})
 
       {:error, %{errors: errors}} ->
         conn

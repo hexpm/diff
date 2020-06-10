@@ -1,0 +1,15 @@
+<%= for line <- @chunk do %>
+  <tr class="ghd-line ghd-line-type-context expanded">
+    <td class="ghd-line-number">
+      <div class="ghd-line-number-from">
+        <%= line_number(line.from_line_number) %>
+      </div>
+      <div class="ghd-line-number-to">
+        <%= line_number(line.to_line_number) %>
+      </div>
+    </td>
+    <td class="ghd-text">
+      <div class="ghd-text-internal"><%= line_text(line.text) %></div>
+    </td>
+  </tr>
+<% end %>
