@@ -38,9 +38,17 @@ defmodule Diff.Hex do
     end
   end
 
-  def unpack_tarball(tarball, file_list \\ [], path) when is_binary(path) do
-    path = to_charlist(path)
+  def unpack_tarball(tarball, path) when is_binary(path) do
+    do_unpack_tarball(tarball, :all_files, path)
+  end
+
+  def unpack_tarball(tarball, file_list, path) when is_binary(path) do
     file_list = Enum.map(file_list, &to_charlist/1)
+    do_unpack_tarball(tarball, file_list, path)
+  end
+
+  def do_unpack_tarball(tarball, file_list, path) do
+    path = to_charlist(path)
 
     with {:ok, _} <- :hex_tarball.unpack(tarball, file_list, path) do
       :ok
