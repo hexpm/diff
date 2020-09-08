@@ -48,7 +48,7 @@ defmodule Diff.MixProject do
       {:logster, "~> 1.0"},
       {:git_diff, github: "hexpm/git_diff", branch: "emj/stream"},
       {:hackney, "~> 1.15"},
-      {:floki, "~> 0.24"},
+      {:floki, "~> 0.28.0"},
       {:mox, "~> 0.5.1", only: :test}
     ]
   end
