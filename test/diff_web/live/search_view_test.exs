@@ -80,9 +80,8 @@ defmodule DiffWeb.SearchLiveViewTest do
 
       send(view.pid, {:search, "html_sa"})
       rendered = render(view)
-      assert rendered =~ "html_sanitize_ex"
-      # one suggestions includes the string twice
-      assert rendered |> :binary.matches("html_sanitize_ex") |> length() == 2
+      rendered = render(view)
+      assert [_] = :binary.matches(rendered, "html_sanitize_ex</span>")
     end
   end
 end
