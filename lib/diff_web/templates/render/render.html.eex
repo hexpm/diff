@@ -1,6 +1,6 @@
 <% status = patch_status(@patch) %>
 <div class="ghd-file">
-  <div class="ghd-file-header">
+  <div class="ghd-file-header" data-file-name="<%= @patch.from %>" data-package-name="<%= @package %>" data-version="<%= @from_version %>" >
     <span class="ghd-file-status ghd-file-status-<%= status %>">
       <%= status %>
     </span>
@@ -10,11 +10,13 @@
   </div>
   <div class="ghd-diff">
     <table class="ghd-diff">
-      <%= for chunk <- @patch.chunks do %>
+      <%= for {chunk, index} <- Enum.with_index(@patch.chunks) do %>
         <tr class="ghd-chunk-header">
           <td class="ghd-line-number">
-            <div class="ghd-line-number-from">&nbsp;</div>
-            <div class="ghd-line-number-to"></div>
+            <%= unless index == 0 do %>
+              <div class="ghd-expand-down"><svg class="octicon octicon-fold-down" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 11l3 3 3-3H8V5H6v6H4zm-4 0c0 .55.45 1 1 1h2.5l-1-1h-1l2-2H5V8H3.5l-2-2H5V5H1c-.55 0-1 .45-1 1l2.5 2.5L0 11zm10.5-2H9V8h1.5l2-2H9V5h4c.55 0 1 .45 1 1l-2.5 2.5L14 11c0 .55-.45 1-1 1h-2.5l1-1h1l-2-2z"></path></svg></div>
+            <% end %>
+            <div class="ghd-expand-up"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 16" width="14" height="16"><path fill-rule="evenodd" d="M10 6L7 3 4 6h2v6h2V6h2zm4 0c0-.55-.45-1-1-1h-2.5l1 1h1l-2 2H9v1h1.5l2 2H9v1h4c.55 0 1-.45 1-1l-2.5-2.5L14 6zM3.5 8H5v1H3.5l-2 2H5v1H1c-.55 0-1-.45-1-1l2.5-2.5L0 6c0-.55.45-1 1-1h2.5l-1 1h-1l2 2z"></path></svg></div>
           </td>
           <td class="ghd-text">
             <div class="ghd-text-internal"><%= chunk.header %></div>
@@ -36,6 +38,14 @@
           </tr>
         <% end %>
       <% end %>
+      <tr class="ghd-chunk-header">
+        <td class="ghd-line-number">
+          <div class="ghd-expand-down"><svg class="octicon octicon-fold-down" viewBox="0 0 14 16" version="1.1" width="14" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 11l3 3 3-3H8V5H6v6H4zm-4 0c0 .55.45 1 1 1h2.5l-1-1h-1l2-2H5V8H3.5l-2-2H5V5H1c-.55 0-1 .45-1 1l2.5 2.5L0 11zm10.5-2H9V8h1.5l2-2H9V5h4c.55 0 1 .45 1 1l-2.5 2.5L14 11c0 .55-.45 1-1 1h-2.5l1-1h1l-2-2z"></path></svg></div>
+        </td>
+        <td class="ghd-text">
+          <div class="ghd-text-internal"></div>
+        </td>
+      </tr>
     </table>
   </div>
 </div>

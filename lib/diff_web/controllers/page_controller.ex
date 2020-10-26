@@ -28,6 +28,27 @@ defmodule DiffWeb.PageController do
     end
   end
 
+  def expand_context(conn, %{"file_name" => _file_name} = params) do
+    case parse_version(params["version"]) do
+      {:ok, version} ->
+        version = to_string(version)
+        params = Map.update!(params, "version", fn _ -> version end)
+
+        do_expand_context(conn, params)
+
+      :error ->
+        conn
+        |> put_status(400)
+        |> json(%{error: "Bad Request"})
+    end
+  end
+
+  def expand_context(conn, _params) do
+    conn
+    |> put_status(400)
+    |> json(%{error: "missing query parameter: file_name"})
+  end
+
   defp maybe_cached_diff(conn, _package, version, version) do
     render_error(conn, 400)
   end
@@ -67,6 +88,32 @@ defmodule DiffWeb.PageController do
       {:error, :not_found} ->
         Logger.debug("cache miss for #{package}/#{from}..#{to}")
         do_diff(conn, package, from, to)
+    end
+  end
+
+  defp do_expand_context(conn, params) do
+    chunk_extractor_params =
+      for {key, val} <- params, into: %{} do
+        {String.to_existing_atom(key), val}
+      end
+
+    case Diff.Hex.get_chunk(chunk_extractor_params) do
+      {:ok, chunk} ->
+        rendered_chunk =
+          Phoenix.View.render_to_string(
+            DiffWeb.RenderView,
+            "render_context_chunk.html",
+            chunk: chunk
+          )
+
+        conn
+        |> put_status(200)
+        |> json(%{chunk: rendered_chunk, lines: length(chunk)})
+
+      {:error, %{errors: errors}} ->
+        conn
+        |> put_status(400)
+        |> json(%{errors: Enum.into(errors, %{})})
     end
   end
 
@@ -134,7 +181,11 @@ defmodule DiffWeb.PageController do
       Enum.each(stream, fn
         {:ok, patch} ->
           html_patch =
-            Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", patch: patch)
+            Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html",
+              patch: patch,
+              package: package,
+              from_version: from
+            )
 
           IO.binwrite(file, html_patch)
 

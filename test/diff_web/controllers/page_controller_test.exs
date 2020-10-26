@@ -41,4 +41,24 @@ defmodule DiffWeb.PageControllerTest do
       assert html_response(conn, 200) =~ diff
     end
   end
+
+  describe "/GET /diff/:package/:versions/expand/:from/:to/:right_line" do
+    setup :verify_on_exit!
+
+    test "requires file_name query param", %{conn: conn} do
+      conn = get(conn, "/diff/phoenix/1.4.5/expand/1/1/1")
+      assert %{"error" => "missing query parameter: file_name"} = json_response(conn, 400)
+    end
+
+    test "doesn't accept when to_line is less than from_line", %{conn: conn} do
+      conn = get(conn, "/diff/phoenix/1.4.5/expand/2/1/1?file_name=mix.exs")
+      assert json_response(conn, 400)
+    end
+
+    test "returns chunk of the file", %{conn: conn} do
+      conn = get(conn, "/diff/phoenix/1.4.5/expand/1/4/1?file_name=mix.exs")
+      assert %{"chunk" => chunk} = json_response(conn, 200)
+      assert chunk =~ "defmodule Phoenix.MixProject do"
+    end
+  end
 end
