@@ -80,7 +80,6 @@ defmodule DiffWeb.SearchLiveViewTest do
 
       send(view.pid, {:search, "html_sa"})
       rendered = render(view)
-      rendered = render(view)
       assert [_] = :binary.matches(rendered, "html_sanitize_ex</span>")
     end
   end
