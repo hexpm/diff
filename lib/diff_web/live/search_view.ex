@@ -120,7 +120,9 @@ defmodule DiffWeb.SearchLiveView do
 
       true ->
         similar_to = package_similar_to(package_names, query)
+
         Enum.concat(starts_with, similar_to)
+        |> Enum.uniq()
     end
     |> Enum.filter(&(&1 != query))
     |> Enum.take(number)

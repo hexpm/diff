@@ -66,5 +66,21 @@ defmodule DiffWeb.SearchLiveViewTest do
       assert render_click(view, "go", %{result: "phoenix", to: "1.4.11", from: "1.4.10"}) ==
                {:error, {:redirect, %{to: "/diff/phoenix/1.4.10..1.4.11"}}}
     end
+
+    test "no duplicates for suggestions", %{conn: conn} do
+      {:ok, view, _html} = live(conn, "/")
+
+      Diff.Package.StoreMock
+      |> expect(:get_names, fn -> ["html_sanitize_ex"] end)
+      |> expect(:get_versions, fn
+        "html_sanitize_ex" -> {:ok, ["1.4.0"]}
+        "html_sa" -> {:error, :not_found}
+      end)
+      |> allow(self(), view.pid)
+
+      send(view.pid, {:search, "html_sa"})
+      rendered = render(view)
+      assert [_] = :binary.matches(rendered, "html_sanitize_ex</span>")
+    end
   end
 end
