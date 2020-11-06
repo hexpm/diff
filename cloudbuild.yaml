@@ -43,3 +43,6 @@ images:
 - 'gcr.io/$PROJECT_ID/diff:latest'
 - 'gcr.io/$PROJECT_ID/diff-build:$SHORT_SHA'
 - 'gcr.io/$PROJECT_ID/diff:$SHORT_SHA'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
