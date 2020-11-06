@@ -37,19 +37,19 @@ defmodule Diff.MixProject do
       {:phoenix, "~> 1.5.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 2.11"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.0"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.1"},
       {:phoenix_live_view, "~> 0.6"},
-      {:hex_core, "~> 0.6.1"},
+      {:hex_core, "~> 0.7.0"},
       {:rollbax, "~> 0.11.0"},
       {:logster, "~> 1.0"},
-      {:git_diff, github: "hexpm/git_diff", branch: "emj/stream"},
+      {:git_diff, "~> 0.6.2"},
       {:hackney, "~> 1.15"},
-      {:floki, "~> 0.28.0"},
-      {:mox, "~> 0.5.1", only: :test}
+      {:floki, "~> 0.29.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:mox, "~> 1.0.0", only: :test}
     ]
   end
 
