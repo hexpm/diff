@@ -9,6 +9,8 @@ defmodule Diff.Application do
     # List all child processes to be supervised
     children = [
       {Task.Supervisor, name: Diff.Tasks},
+      # Start the PubSub system
+      {Phoenix.PubSub, name: Diff.PubSub},
       # Start the endpoint when the application starts
       DiffWeb.Endpoint,
       # Starts a worker by calling: Diff.Worker.start_link(arg)

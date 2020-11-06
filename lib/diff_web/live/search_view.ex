@@ -50,7 +50,7 @@ defmodule DiffWeb.SearchLiveView do
 
   def handle_event("go", _params, %{assigns: %{result: result, to: to, from: from}} = socket)
       when is_binary(result) and is_binary(from) and is_binary(to) do
-    {:stop, redirect(socket, to: build_url(result, from, to))}
+    {:noreply, redirect(socket, to: build_url(result, from, to))}
   end
 
   def handle_event("go", _params, socket) do

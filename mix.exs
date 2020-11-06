@@ -34,21 +34,21 @@ defmodule Diff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.4.10"},
-      {:phoenix_pubsub, "~> 1.1"},
+      {:phoenix, "~> 1.5.0"},
+      {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_html, "~> 2.11"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:gettext, "~> 0.11"},
       {:goth, "~> 1.0"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"},
+      {:plug_cowboy, "~> 2.1"},
       {:phoenix_live_view, "~> 0.6"},
       {:hex_core, "~> 0.6.1"},
       {:rollbax, "~> 0.11.0"},
       {:logster, "~> 1.0"},
       {:git_diff, github: "hexpm/git_diff", branch: "emj/stream"},
       {:hackney, "~> 1.15"},
-      {:floki, "~> 0.24.0"},
+      {:floki, "~> 0.28.0"},
       {:mox, "~> 0.5.1", only: :test}
     ]
   end
