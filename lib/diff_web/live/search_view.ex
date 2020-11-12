@@ -1,5 +1,5 @@
 defmodule DiffWeb.SearchLiveView do
-  use Phoenix.LiveView
+  use DiffWeb, :live_view
 
   def render(assigns) do
     DiffWeb.SearchView.render("search.html", assigns)
