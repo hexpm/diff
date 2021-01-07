@@ -8,7 +8,7 @@
 use Mix.Config
 
 config :diff,
-  cache_version: 1,
+  cache_version: 2,
   package_store_impl: Diff.Package.DefaultStore
 
 # Configures the endpoint
