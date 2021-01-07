@@ -31,7 +31,7 @@
               </div>
             </td>
             <td class="ghd-text">
-              <div class="ghd-text-internal"><%= line_text(line.text) %></div>
+              <div class="ghd-text-user"><%= line_text(line.text) %></div>
             </td>
           </tr>
         <% end %>

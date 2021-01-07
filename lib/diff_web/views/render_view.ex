@@ -38,7 +38,8 @@ defmodule DiffWeb.RenderView do
 
   def line_type(line), do: to_string(line.type)
 
-  def line_text("+" <> text), do: "+ " <> text
-  def line_text("-" <> text), do: "- " <> text
-  def line_text(text), do: " " <> text
+  def line_text("+" <> text), do: [content_tag(:span, "+ ", class: "ghd-line-status"), content_tag(:span, text)]
+  def line_text("-" <> text), do: [content_tag(:span, "- ", class: "ghd-line-status"), content_tag(:span, text)]
+  def line_text(" " <> text), do: [content_tag(:span, "  ", class: "ghd-line-status"), content_tag(:span, text)]
+  def line_text(text), do: [content_tag(:span, text)]
 end
