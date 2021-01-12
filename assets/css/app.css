@@ -211,6 +211,15 @@ input.search-input:focus {
   text-transform: uppercase;
 }
 
+.ghd-line-status {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .ghd-file-status-removed {
   color: red;
   border-color: red;
@@ -243,6 +252,14 @@ input.search-input:focus {
   cursor: pointer;
 }
 
+.ghd-line-number * {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 
 .ghd-line.selected .ghd-line-number,
 .ghd-line.selected .ghd-line-number,
@@ -280,9 +297,17 @@ input.search-input:focus {
 
 .ghd-text-internal {
   white-space: pre;
+  padding: 0 90px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-.ghd-text-internal {
+.ghd-text-user {
+  white-space: pre;
   padding: 0 90px;
 }
 
