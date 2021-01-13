@@ -45,7 +45,7 @@ defmodule Diff.MixProject do
       {:hex_core, "~> 0.7.0"},
       {:rollbax, "~> 0.11.0"},
       {:logster, "~> 1.0"},
-      {:git_diff, "~> 0.6.2"},
+      {:git_diff, "~> 0.6.3"},
       {:hackney, "~> 1.15"},
       {:floki, "~> 0.29.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
