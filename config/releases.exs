@@ -1,6 +1,8 @@
 import Config
 
 config :diff,
+  host: System.fetch_env!("DIFF_HOST"),
+  hexpm_host: System.fetch_env!("DIFF_HEXPM_HOST"),
   cache_version: String.to_integer(System.fetch_env!("DIFF_CACHE_VERSION")),
   bucket: System.fetch_env!("DIFF_BUCKET")
 

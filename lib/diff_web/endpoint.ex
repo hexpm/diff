@@ -55,7 +55,7 @@ defmodule DiffWeb.Endpoint do
 
       case Integer.parse(port) do
         {_int, ""} ->
-          host = System.fetch_env!("DIFF_HOST")
+          host = Application.fetch_env!(:diff, :host)
           secret_key_base = System.fetch_env!("DIFF_SECRET_KEY_BASE")
           config = put_in(config[:http][:port], port)
           config = put_in(config[:url][:host], host)

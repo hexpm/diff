@@ -8,6 +8,10 @@
     <title>hexdiff</title>
 
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
+
+    <%= if host = Application.get_env(:diff, :host) do %>
+    <script async defer data-domain="<%= host %>" src="https://stats.<%= Application.fetch_env!(:diff, :hexpm_host) %>/js/plausible.js"></script>
+    <% end %>
   </head>
   <body>
     <header>
