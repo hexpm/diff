@@ -1,42 +1,42 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches:
+      - master
 
 jobs:
   format:
-    name: Format
-    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+    runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install OTP and Elixir
-        uses: actions/setup-elixir@v1
+      - uses: erlef/setup-elixir@v1
         with:
           otp-version: 23.1.5
           elixir-version: 1.11.3
 
-      - name: Install dependencies
-        run: mix deps.get
-
-      - name: Check mix format
-        run: mix format --check-formatted
+      - run: mix deps.get
+      - run: mix format --check-formatted
+      - run: mix deps.unlock --check-unused
+      - run: mix deps.compile
+      - run: mix compile --warnings-as-errors
 
   test:
-    name: Test
-    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+    runs-on: ubuntu-16.04
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install OTP and Elixir
-        uses: actions/setup-elixir@v1
+      - uses: erlef/setup-elixir@v1
         with:
           otp-version: 23.1.5
           elixir-version: 1.11.3
 
-      - name: Install dependencies
-        run: |
-          mix deps.get
-          mix deps.compile
-
-      - name: Run tests
-        run: mix test
+      - run: mix deps.get
+      - run: mix deps.compile
+      - run: mix test
