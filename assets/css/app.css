@@ -65,6 +65,19 @@ nav.footer a {
   color: #fff;
 }
 
+.copyright {
+  margin-top: 9px;
+  font-size: 0.8em;
+}
+
+.copyright p {
+  margin: 10px 0 10px 0;
+}
+
+.copyright a {
+  white-space: nowrap;
+}
+
 .search-area {
   max-width: 100%;
   display: flex;
