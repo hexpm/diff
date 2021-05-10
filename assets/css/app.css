@@ -131,6 +131,19 @@ input.search-input:focus {
   background-color: white;
 }
 
+.package-name {
+  color: white;
+  padding: 2px 4px;
+}
+
+.package-name:hover {
+  color: #eee;
+  background: #714a94;
+  padding: 2px 4px;
+  border-radius: 5px;
+  border-color: #714a94;
+}
+
 .diff-button {
   background-color: #714a94;
   border-color: #714a94;
