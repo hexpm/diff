@@ -7,7 +7,7 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :diff, DiffWeb.Endpoint,
-  http: [port: 4000],
+  http: [port: 4004],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -47,7 +47,6 @@ config :diff, DiffWeb.Endpoint,
 
 # Watch static and templates for browser reloading.
 config :diff, DiffWeb.Endpoint,
-  http: [port: 4004],
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
