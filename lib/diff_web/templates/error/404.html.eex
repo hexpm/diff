@@ -1,4 +1,4 @@
 <div class="message-container">
-  <div class="message">Couldn't find that combination of name and versions.</div>
+  <div class="message">Page not found</div>
   <a href="/"><button type="button">Go back</button></a>
 </div>
