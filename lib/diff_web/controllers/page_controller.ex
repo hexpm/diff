@@ -84,11 +84,11 @@ defmodule DiffWeb.PageController do
         |> stream_diff(stream)
 
       :error ->
-        render(conn, "500.html")
+        render_error(conn, 500)
     end
   catch
     :throw, {:diff, :invalid_diff} ->
-      render(conn, "500.html")
+      render_error(conn, 500)
   end
 
   defp stream_diff(conn, stream) do
@@ -198,6 +198,7 @@ defmodule DiffWeb.PageController do
 
   defp render_error(conn, status) do
     conn
+    |> put_view(DiffWeb.ErrorView)
     |> put_status(status)
     |> render("#{status}.html")
   end

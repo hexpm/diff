@@ -15,7 +15,11 @@ config :diff,
 config :diff, DiffWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "sCQPp27jGUACmECgpI4vEwAJUrryxT7+d2IzxkbUv/57paSo723fbsED+EmRcvfj",
-  render_errors: [view: DiffWeb.ErrorView, accepts: ~w(html json)],
+  render_errors: [
+    view: DiffWeb.ErrorView,
+    accepts: ~w(html json),
+    layout: {DiffWeb.LayoutView, "root.html"}
+  ],
   pubsub_server: Diff.PubSub,
   live_view: [signing_salt: "Bmk5Cupu"]
 
