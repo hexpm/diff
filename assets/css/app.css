@@ -260,6 +260,13 @@ input.search-input:focus {
   overflow-y: hidden;
 }
 
+.ghd-diff-error {
+  text-align: center;
+  padding: 25px;
+  font-size: 16px;
+  color: red;
+}
+
 .ghd-diff.hidden{
   display: none;
 }
