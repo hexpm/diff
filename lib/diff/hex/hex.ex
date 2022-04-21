@@ -171,6 +171,6 @@ defmodule Diff.Hex do
 
   defp tmp_path(prefix) do
     random_string = Base.encode16(:crypto.strong_rand_bytes(4))
-    Path.join(["tmp", "diff", prefix <> random_string])
+    Path.join([System.tmp_dir!(), "diff", prefix <> random_string])
   end
 end
