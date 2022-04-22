@@ -7,36 +7,20 @@ on:
       - master
 
 jobs:
-  format:
+  test:
     env:
       MIX_ENV: test
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
 
       - uses: erlef/setup-elixir@v1
         with:
-          otp-version: 23.1.5
-          elixir-version: 1.11.3
+          otp-version: 24.3.3
+          elixir-version: 1.13.4
 
       - run: mix deps.get
       - run: mix format --check-formatted
       - run: mix deps.unlock --check-unused
-      - run: mix deps.compile
-      - run: mix compile --warnings-as-errors
-
-  test:
-    env:
-      MIX_ENV: test
-    runs-on: ubuntu-16.04
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: erlef/setup-elixir@v1
-        with:
-          otp-version: 23.1.5
-          elixir-version: 1.11.3
-
-      - run: mix deps.get
-      - run: mix deps.compile
+      - run: MIX_ENV=test mix compile --warnings-as-errors
       - run: mix test

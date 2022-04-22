@@ -133,13 +133,15 @@ defmodule DiffWeb.PageController do
     File.open!(path, [:write, :raw, :binary, :write_delay], fn file ->
       Enum.each(stream, fn
         {:ok, patch} ->
-          html_patch =
-            Phoenix.View.render_to_iodata(DiffWeb.RenderView, "render.html", patch: patch)
+          html = Phoenix.View.render_to_iodata(DiffWeb.RenderView, "patch.html", patch: patch)
+          IO.binwrite(file, html)
 
-          IO.binwrite(file, html_patch)
+        {:too_large, path} ->
+          html = Phoenix.View.render_to_iodata(DiffWeb.RenderView, "too_large.html", file: path)
+          IO.binwrite(file, html)
 
         {:error, error} ->
-          Logger.error("Failed to parse diff #{package} #{from}..#{to} with: #{inspect(error)}")
+          Logger.error("Failed to diff #{package} #{from}..#{to} with: #{inspect(error)}")
           throw({:diff, :invalid_diff})
       end)
     end)

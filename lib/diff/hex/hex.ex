@@ -5,6 +5,8 @@ defmodule Diff.Hex do
       http_user_agent_fragment: "hexpm_diff"
   }
 
+  @max_file_size 1024 * 1024
+
   require Logger
 
   def get_versions() do
@@ -71,36 +73,66 @@ defmodule Diff.Hex do
   def diff(package, from, to) do
     path_from = tmp_path("package-#{package}-#{from}-")
     path_to = tmp_path("package-#{package}-#{to}-")
-    path_diff = tmp_path("diff-#{package}-#{from}-#{to}-")
 
-    try do
-      with {:ok, tarball_from} <- get_tarball(package, from),
-           :ok <- unpack_tarball(tarball_from, path_from),
-           {:ok, tarball_to} <- get_tarball(package, to),
-           :ok <- unpack_tarball(tarball_to, path_to),
-           :ok <- git_diff(path_from, path_to, path_diff) do
-        stream =
-          File.stream!(path_diff, [:read_ahead])
-          |> GitDiff.stream_patch(relative_from: path_from, relative_to: path_to)
-          |> Stream.transform(
-            fn -> :ok end,
-            fn elem, :ok -> {[elem], :ok} end,
-            fn :ok -> File.rm(path_diff) end
-          )
+    with {:ok, tarball_from} <- get_tarball(package, from),
+         :ok <- unpack_tarball(tarball_from, path_from),
+         {:ok, tarball_to} <- get_tarball(package, to),
+         :ok <- unpack_tarball(tarball_to, path_to) do
+      from_files = tree_files(path_from)
+      to_files = tree_files(path_to)
 
-        {:ok, stream}
-      else
-        error ->
-          Logger.error("Failed to create diff #{package} #{from}..#{to} with: #{inspect(error)}")
-          :error
-      end
-    after
-      File.rm_rf(path_from)
-      File.rm_rf(path_to)
+      new_files = to_files -- from_files
+      removed_files = from_files -- to_files
+      changed_files = MapSet.new((to_files -- new_files) -- removed_files)
+      new_files = MapSet.new(new_files)
+      removed_files = MapSet.new(removed_files)
+
+      all_files = (from_files ++ to_files) |> Enum.uniq() |> Enum.sort()
+
+      stream =
+        all_files
+        |> Stream.flat_map(fn file ->
+          {path_old, path_new} =
+            cond do
+              file in new_files -> {"/dev/null", Path.join(path_to, file)}
+              file in removed_files -> {Path.join(path_from, file), "/dev/null"}
+              file in changed_files -> {Path.join(path_from, file), Path.join(path_to, file)}
+            end
+
+          with {_, true} <- {:file_size_old, file_size_check?(path_old)},
+               {_, true} <- {:file_size_new, file_size_check?(path_new)},
+               {_, {:ok, output}} <- {:git_diff, git_diff(path_old, path_new)},
+               {_, {:ok, patches}} <- {:parse_patch, parse_patch(output, path_from, path_to)} do
+            Enum.map(patches, &{:ok, &1})
+          else
+            {:file_size_old, false} ->
+              [{:too_large, Path.relative_to(path_old, path_from)}]
+
+            {:file_size_new, false} ->
+              [{:too_large, Path.relative_to(path_new, path_to)}]
+
+            {error, {:error, reason}} ->
+              [{:error, {error, reason}}]
+          end
+        end)
+        |> Stream.transform(
+          fn -> :ok end,
+          fn elem, :ok -> {[elem], :ok} end,
+          fn :ok ->
+            File.rm_rf(path_from)
+            File.rm_rf(path_to)
+          end
+        )
+
+      {:ok, stream}
+    else
+      error ->
+        Logger.error("Failed to create diff #{package} #{from}..#{to} with: #{inspect(error)}")
+        :error
     end
   end
 
-  defp git_diff(path_from, path_to, path_out) do
+  defp git_diff(path_from, path_to) do
     case System.cmd("git", [
            "-c",
            "core.quotepath=false",
@@ -109,16 +141,32 @@ defmodule Diff.Hex do
            "diff",
            "--no-index",
            "--no-color",
-           "--output=#{path_out}",
            path_from,
            path_to
          ]) do
-      {"", 1} ->
-        :ok
-
-      other ->
-        {:error, other}
+      {"", 0} -> {:ok, nil}
+      {output, 1} -> {:ok, output}
+      other -> {:error, other}
     end
+  end
+
+  defp parse_patch(_output = nil, _path_from, _path_to) do
+    {:ok, []}
+  end
+
+  defp parse_patch(output, path_from, path_to) do
+    GitDiff.parse_patch(output, relative_from: path_from, relative_to: path_to)
+  end
+
+  defp file_size_check?(path) do
+    File.stat!(path).size <= @max_file_size
+  end
+
+  defp tree_files(directory) do
+    File.cd!(directory, fn ->
+      Path.wildcard("**", match_dot: true)
+      |> Enum.filter(&File.regular?(&1, raw: true))
+    end)
   end
 
   defp tmp_path(prefix) do
