@@ -163,10 +163,11 @@ defmodule Diff.Hex do
   end
 
   defp tree_files(directory) do
-    File.cd!(directory, fn ->
-      Path.wildcard("**", match_dot: true)
-      |> Enum.filter(&File.regular?(&1, raw: true))
-    end)
+    directory
+    |> Path.join("**")
+    |> Path.wildcard(match_dot: true)
+    |> Enum.filter(&File.regular?(&1, raw: true))
+    |> Enum.map(&Path.relative_to(&1, directory))
   end
 
   defp tmp_path(prefix) do
