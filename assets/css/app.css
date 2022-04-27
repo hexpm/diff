@@ -347,6 +347,13 @@ input.search-input:focus {
 .package-header {
   text-align: center;
   color: #fff;
+  margin-bottom: 0;
+}
+
+.package-sub-header {
+  text-align: center;
+  color: #fff;
+  word-spacing: 5px;
 }
 
 table.package-list tr:nth-child(even) {
