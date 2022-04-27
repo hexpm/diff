@@ -62,7 +62,7 @@ defmodule DiffWeb.PageController do
 
         conn
         |> put_resp_content_type("text/html")
-        |> stream_diff(stream)
+        |> stream_diff(stream, package, from, to)
 
       {:error, :not_found} ->
         Logger.debug("cache miss for #{package}/#{from}..#{to}")
@@ -81,7 +81,7 @@ defmodule DiffWeb.PageController do
 
         conn
         |> put_resp_content_type("text/html")
-        |> stream_diff(stream)
+        |> stream_diff(stream, package, from, to)
 
       :error ->
         render_error(conn, 500)
@@ -91,9 +91,11 @@ defmodule DiffWeb.PageController do
       render_error(conn, 500)
   end
 
-  defp stream_diff(conn, stream) do
+  defp stream_diff(conn, stream, package, from, to) do
+    header_assigns = [conn: conn, package: package, from: from, to: to]
+
     header = [
-      Phoenix.View.render_to_iodata(DiffWeb.LayoutView, "header.html", conn: conn),
+      Phoenix.View.render_to_iodata(DiffWeb.LayoutView, "header.html", header_assigns),
       Phoenix.View.render_to_iodata(DiffWeb.PageView, "diff_header.html", [])
     ]
 
