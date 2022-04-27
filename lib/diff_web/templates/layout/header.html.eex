@@ -24,7 +24,7 @@
 
             <%= if @package do %>
               <h2 class="package-header"><%= @package %></h2>
-              <h3 class="package-sub-header"><%= @from %> &rarr; <%= @to %></h2>
+              <h3 class="package-sub-header"><%= @from %> &rarr; <%= @to %></h3>
             <% end %>
           </h1>
         </div>
