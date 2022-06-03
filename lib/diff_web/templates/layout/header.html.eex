@@ -5,7 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="description" content="Web based diffs of Hex packages">
-    <title>hexdiff</title>
+    <%= if @package do %>
+      <title><%= @package %> <%= @from %>..<%= @to %> | hexdiff</title>
+    <% else %>
+      <title>hexdiff</title>
+    <% end %>
 
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
 
@@ -21,6 +25,11 @@
             <a href="/">
               <img src="<%= Routes.static_path(@conn, "/images/hexdiff.svg") %>" alt="hexdiff"/>
             </a>
+
+            <%= if @package do %>
+              <h2 class="package-header"><%= @package %></h2>
+              <h3 class="package-sub-header"><%= @from %> &rarr; <%= @to %></h3>
+            <% end %>
           </h1>
         </div>
       </section>
