@@ -179,7 +179,7 @@ defmodule DiffWeb.PageController do
 
   defp versions_from_input(input) when is_binary(input) do
     input
-    |> String.split("..")
+    |> String.split("..", parts: 2)
     |> case do
       [from] ->
         [from, ""]
