@@ -135,8 +135,10 @@ defmodule DiffWeb.PageController do
     File.open!(path, [:write, :raw, :binary, :write_delay], fn file ->
       Enum.each(stream, fn
         {:ok, patch} ->
-          html = Phoenix.View.render_to_iodata(DiffWeb.RenderView, "patch.html", patch: patch)
-          IO.binwrite(file, html)
+          if patch.chunks != [] do
+            html = Phoenix.View.render_to_iodata(DiffWeb.RenderView, "patch.html", patch: patch)
+            IO.binwrite(file, html)
+          end
 
         {:too_large, path} ->
           html = Phoenix.View.render_to_iodata(DiffWeb.RenderView, "too_large.html", file: path)
