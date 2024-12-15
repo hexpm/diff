@@ -6,6 +6,8 @@ defmodule Diff.Application do
   use Application
 
   def start(_type, _args) do
+    :logger.add_handler(:sentry_handler, Sentry.LoggerHandler, %{})
+
     # List all child processes to be supervised
     children = [
       {Task.Supervisor, name: Diff.Tasks},

@@ -8,7 +8,9 @@ config :diff,
 
 config :goth, json: System.fetch_env!("DIFF_GCP_CREDENTIALS")
 
-config :rollbax, access_token: System.fetch_env!("DIFF_ROLLBAR_ACCESS_TOKEN")
+config :sentry,
+  dsn: System.fetch_env!("DIFF_SENTRY_DSN"),
+  environment_name: System.fetch_env!("DIFF_ENV")
 
 config :kernel,
   inet_dist_listen_min: String.to_integer(System.fetch_env!("BEAM_PORT")),

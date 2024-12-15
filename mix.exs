@@ -34,22 +34,22 @@ defmodule Diff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6"},
-      {:phoenix_pubsub, "~> 2.0"},
-      {:phoenix_html, "~> 3.2"},
-      {:gettext, "~> 0.11"},
-      {:goth, "~> 1.0"},
-      {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.1"},
-      {:phoenix_live_view, "~> 0.6"},
-      {:hex_core, "~> 0.8.0"},
-      {:rollbax, "~> 0.11.0"},
-      {:logster, "~> 1.0"},
-      {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
-      {:hackney, "~> 1.15"},
       {:floki, "~> 0.32.0"},
+      {:gettext, "~> 0.11"},
+      {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
+      {:goth, "~> 1.0"},
+      {:hackney, "~> 1.15"},
+      {:hex_core, "~> 0.8.0"},
+      {:jason, "~> 1.0"},
+      {:logster, "~> 1.0"},
+      {:mox, "~> 1.0.0", only: :test},
+      {:phoenix_html, "~> 3.2"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:mox, "~> 1.0.0", only: :test}
+      {:phoenix_live_view, "~> 0.6"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:phoenix, "~> 1.6"},
+      {:plug_cowboy, "~> 2.1"},
+      {:sentry, "~> 10.2"}
     ]
   end
 

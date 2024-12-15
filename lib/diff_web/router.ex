@@ -1,7 +1,6 @@
 defmodule DiffWeb.Router do
   use DiffWeb, :router
   use Plug.ErrorHandler
-  use DiffWeb.Plugs.Rollbax
 
   import Phoenix.LiveView.Router
 
