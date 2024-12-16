@@ -40,7 +40,7 @@ defmodule Diff.Package.Updater do
     Process.send_after(self(), :update, 60_000)
   end
 
-  def format_packages(packages) do
+  def format_packages(%{packages: packages}) do
     Enum.map(packages, fn %{name: name, versions: versions} -> {name, versions} end)
   end
 end

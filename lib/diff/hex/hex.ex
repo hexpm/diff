@@ -51,7 +51,7 @@ defmodule Diff.Hex do
   def get_checksums(package, versions) do
     with {:ok, {200, _, releases}} <- :hex_repo.get_package(@config, package) do
       checksums =
-        for release <- releases, release.version in versions do
+        for release <- releases.releases, release.version in versions do
           release.outer_checksum
         end
 
