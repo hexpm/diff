@@ -24,9 +24,7 @@ config :diff, DiffWeb.Endpoint,
   live_view: [signing_salt: "Bmk5Cupu"]
 
 # Configures Elixir's Logger
-config :logger, :default_formatter,
-  format: "$metadata[$level] $message\n",
-  metadata: [:request_id]
+config :logger, :default_formatter, format: "$metadata[$level] $message\n"
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason

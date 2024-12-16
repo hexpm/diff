@@ -24,8 +24,8 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_paths: [File.cwd!()]
 
-config :logger,
-  level: :info,
-  metadata: [:request_id]
+config :logger, level: :info
+
+config :logger, :default_formatter, metadata: [:request_id]
 
 config :phoenix, :serve_endpoints, true
