@@ -16,7 +16,8 @@ config :diff, DiffWeb.Endpoint,
       "node_modules/webpack/bin/webpack.js",
       "--mode",
       "development",
-      "--watch-stdin",
+      "--watch",
+      "--watch-options-stdin",
       cd: Path.expand("../assets", __DIR__)
     ]
   ]
