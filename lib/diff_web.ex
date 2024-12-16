@@ -44,7 +44,7 @@ defmodule DiffWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {DiffWeb.LayoutView, "live.html"}
+        layout: {DiffWeb.LayoutView, :live}
 
       unquote(view_helpers())
     end
@@ -79,7 +79,9 @@ defmodule DiffWeb do
   defp view_helpers do
     quote do
       # Use all HTML functionality (forms, tags, etc)
-      use Phoenix.HTML
+      import Phoenix.HTML
+      import Phoenix.HTML.Form
+      use PhoenixHTMLHelpers
 
       # Import LiveView helpers (live_render, live_component, live_patch, etc)
       import Phoenix.LiveView.Helpers

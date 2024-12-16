@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 # For production, don't forget to configure the url host
 # to something meaningful, Phoenix uses this information
@@ -12,7 +12,6 @@ use Mix.Config
 config :diff, DiffWeb.Endpoint,
   http: [compress: true],
   url: [scheme: "https", port: 443],
-  load_from_system_env: true,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
 config :diff,

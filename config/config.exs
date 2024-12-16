@@ -5,7 +5,7 @@
 # is restricted to this project.
 
 # General application configuration
-use Mix.Config
+import Config
 
 config :diff,
   cache_version: 2,
@@ -24,7 +24,7 @@ config :diff, DiffWeb.Endpoint,
   live_view: [signing_salt: "Bmk5Cupu"]
 
 # Configures Elixir's Logger
-config :logger, :console,
+config :logger, :default_formatter,
   format: "$metadata[$level] $message\n",
   metadata: [:request_id]
 

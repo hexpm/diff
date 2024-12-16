@@ -26,7 +26,7 @@ defmodule DiffWeb.Endpoint do
 
   plug DiffWeb.Plugs.Status
   plug Plug.RequestId
-  plug Logster.Plugs.Logger, excludes: [:params]
+  plug Logster.Plugs.Logger, excludes: [:params], log: :info
 
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
@@ -50,25 +50,4 @@ defmodule DiffWeb.Endpoint do
   end
 
   plug DiffWeb.Router
-
-  def init(_key, config) do
-    if config[:load_from_system_env] do
-      port = System.fetch_env!("DIFF_PORT")
-
-      case Integer.parse(port) do
-        {_int, ""} ->
-          host = Application.fetch_env!(:diff, :host)
-          secret_key_base = System.fetch_env!("DIFF_SECRET_KEY_BASE")
-          config = put_in(config[:http][:port], port)
-          config = put_in(config[:url][:host], host)
-          config = put_in(config[:secret_key_base], secret_key_base)
-          {:ok, config}
-
-        :error ->
-          {:ok, config}
-      end
-    else
-      {:ok, config}
-    end
-  end
 end

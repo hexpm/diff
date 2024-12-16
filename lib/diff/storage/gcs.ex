@@ -44,7 +44,7 @@ defmodule Diff.Storage.GCS do
   end
 
   defp headers() do
-    {:ok, token} = Goth.Token.for_scope(@oauth_scope)
+    token = Goth.fetch!(@oauth_scope)
     [{"authorization", "#{token.type} #{token.token}"}]
   end
 
