@@ -4,7 +4,6 @@ defmodule Diff.Storage.GCS do
   @behaviour Diff.Storage
 
   @gs_xml_url "https://storage.googleapis.com"
-  @oauth_scope "https://www.googleapis.com/auth/devstorage.read_write"
 
   def get(package, from_version, to_version) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
@@ -44,7 +43,7 @@ defmodule Diff.Storage.GCS do
   end
 
   defp headers() do
-    token = Goth.fetch!(@oauth_scope)
+    token = Goth.fetch!(Diff.Goth)
     [{"authorization", "#{token.type} #{token.token}"}]
   end
 

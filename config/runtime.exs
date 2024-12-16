@@ -12,8 +12,6 @@ if config_env() == :prod do
     url: [host: System.fetch_env!("DIFF_HOST")],
     secret_key_base: System.fetch_env!("DIFF_SECRET_KEY_BASE")
 
-  config :goth, json: System.fetch_env!("DIFF_GCP_CREDENTIALS")
-
   config :sentry,
     dsn: System.fetch_env!("DIFF_SENTRY_DSN"),
     environment_name: System.fetch_env!("DIFF_ENV")

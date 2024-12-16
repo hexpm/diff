@@ -10,6 +10,7 @@ defmodule Diff.Application do
 
     # List all child processes to be supervised
     children = [
+      goth_spec(),
       {Task.Supervisor, name: Diff.Tasks},
       # Start the PubSub system
       {Phoenix.PubSub, name: Diff.PubSub},
@@ -31,5 +32,21 @@ defmodule Diff.Application do
   def config_change(changed, _new, removed) do
     DiffWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  if Mix.env() == :prod do
+    defp goth_spec() do
+      credentials =
+        "DIFF_GCP_CREDENTIALS"
+        |> System.fetch_env!()
+        |> Jason.decode!()
+
+      options = [scope: "https://www.googleapis.com/auth/devstorage.read_write"]
+      {Goth, name: Diff.Goth, source: {:service_account, credentials, options}}
+    end
+  else
+    defp goth_spec() do
+      {Task, fn -> :ok end}
+    end
   end
 end
