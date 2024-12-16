@@ -57,7 +57,8 @@ defmodule Diff.MixProject do
   defp releases() do
     [
       diff: [
-        include_executables_for: [:unix]
+        include_executables_for: [:unix],
+        reboot_system_after_config: true
       ]
     ]
   end
