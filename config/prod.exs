@@ -22,7 +22,8 @@ config :sasl, sasl_error_logger: false
 
 config :sentry,
   enable_source_code_context: true,
-  root_source_code_paths: [File.cwd!()]
+  root_source_code_paths: [File.cwd!()],
+  before_send: {Diff.Application, :sentry_before_send}
 
 config :logger, level: :info
 

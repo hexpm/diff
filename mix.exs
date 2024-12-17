@@ -50,7 +50,7 @@ defmodule Diff.MixProject do
       {:phoenix_view, "~> 2.0"},
       {:phoenix, "~> 1.6"},
       {:plug_cowboy, "~> 2.1"},
-      {:sentry, "~> 10.2"}
+      {:sentry, "~> 10.8"}
     ]
   end
 
