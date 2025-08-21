@@ -5,12 +5,12 @@ defmodule Diff.Storage.GCS do
 
   @gs_xml_url "https://storage.googleapis.com"
 
-  def get(package, from_version, to_version) do
+  def get_diff(package, from_version, to_version, diff_id) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
-         url = url(key(package, from_version, to_version, hash)),
-         {:ok, 200, _headers, stream} <-
-           Diff.HTTP.retry("gs", fn -> Diff.HTTP.get_stream(url, headers()) end) do
-      {:ok, stream}
+         url = url(diff_key(package, from_version, to_version, hash, diff_id)),
+         {:ok, 200, _headers, body} <-
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.get(url, headers()) end) do
+      {:ok, body}
     else
       {:ok, 404, _headers, _body} ->
         {:error, :not_found}
@@ -25,19 +25,78 @@ defmodule Diff.Storage.GCS do
     end
   end
 
-  def put(package, from_version, to_version, stream) do
+  def put_diff(package, from_version, to_version, diff_id, diff_data) do
     with {:ok, hash} <- combined_checksum(package, from_version, to_version),
-         url = url(key(package, from_version, to_version, hash)),
+         url = url(diff_key(package, from_version, to_version, hash, diff_id)),
          {:ok, 200, _headers, _body} <-
-           Diff.HTTP.retry("gs", fn -> Diff.HTTP.put_stream(url, headers(), stream) end) do
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.put(url, headers(), diff_data) end) do
       :ok
     else
       {:ok, status, _headers, _body} ->
         Logger.error("Failed to put diff to storage. Status #{status}")
-        {:error, :not_found}
+        {:error, :storage_error}
 
       error ->
         Logger.error("Failed to put diff to storage. Reason #{inspect(error)}")
+        error
+    end
+  end
+
+  def list_diffs(package, from_version, to_version) do
+    case get_metadata(package, from_version, to_version) do
+      {:ok, %{total_diffs: total_diffs}} ->
+        diff_ids = 0..(total_diffs - 1) |> Enum.map(&"diff-#{&1}")
+        {:ok, diff_ids}
+
+      {:error, :not_found} ->
+        {:ok, []}
+
+      error ->
+        error
+    end
+  end
+
+  def get_metadata(package, from_version, to_version) do
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+         url = url(metadata_key(package, from_version, to_version, hash)),
+         {:ok, 200, _headers, body} <-
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.get(url, headers()) end) do
+      case Jason.decode(body, keys: :atoms) do
+        {:ok, metadata} -> {:ok, metadata}
+        {:error, _} -> {:error, :invalid_metadata}
+      end
+    else
+      {:ok, 404, _headers, _body} ->
+        {:error, :not_found}
+
+      {:ok, status, _headers, _body} ->
+        Logger.error("Failed to get metadata from storage. Status #{status}")
+        {:error, :not_found}
+
+      {:error, reason} ->
+        Logger.error("Failed to get metadata from storage. Reason #{inspect(reason)}")
+        {:error, :not_found}
+    end
+  end
+
+  def put_metadata(package, from_version, to_version, metadata) do
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+         url = url(metadata_key(package, from_version, to_version, hash)),
+         {:ok, json} <- Jason.encode(metadata),
+         {:ok, 200, _headers, _body} <-
+           Diff.HTTP.retry("gs", fn -> Diff.HTTP.put(url, headers(), json) end) do
+      :ok
+    else
+      {:ok, status, _headers, _body} ->
+        Logger.error("Failed to put metadata to storage. Status #{status}")
+        {:error, :storage_error}
+
+      {:error, %Jason.EncodeError{}} ->
+        Logger.error("Failed to encode metadata as JSON")
+        {:error, :invalid_metadata}
+
+      error ->
+        Logger.error("Failed to put metadata to storage. Reason #{inspect(error)}")
         error
     end
   end
@@ -53,8 +112,12 @@ defmodule Diff.Storage.GCS do
     end
   end
 
-  defp key(package, from_version, to_version, hash) do
-    "diffs/#{package}-#{from_version}-#{to_version}-#{hash}.html"
+  defp diff_key(package, from_version, to_version, hash, diff_id) do
+    "diffs/#{package}-#{from_version}-#{to_version}-#{hash}-#{diff_id}.json"
+  end
+
+  defp metadata_key(package, from_version, to_version, hash) do
+    "metadata/#{package}-#{from_version}-#{to_version}-#{hash}.json"
   end
 
   defp url(key) do

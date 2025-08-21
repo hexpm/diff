@@ -28,6 +28,12 @@ defmodule DiffWeb.ConnCase do
   end
 
   setup _tags do
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+    conn =
+      Phoenix.ConnTest.build_conn()
+      |> Plug.Conn.put_private(:phoenix_router, DiffWeb.Router)
+      |> Plug.Conn.put_private(:phoenix_endpoint, DiffWeb.Endpoint)
+      |> Phoenix.ConnTest.init_test_session(%{})
+
+    {:ok, conn: conn}
   end
 end

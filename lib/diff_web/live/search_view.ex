@@ -2,7 +2,60 @@ defmodule DiffWeb.SearchLiveView do
   use DiffWeb, :live_view
 
   def render(assigns) do
-    DiffWeb.SearchView.render("search.html", assigns)
+    ~H"""
+    <div class="search-area">
+      <form phx-change="search" phx-submit="go" class="search-form">
+        <input
+          autocomplete="off"
+          autofocus
+          class="search-input"
+          type="text"
+          name="q"
+          value={@query}
+          placeholder="Search..."
+        />
+        <div class="suggestions">
+          <%= if length(@suggestions) > 0 do %>
+            Did you mean:
+            <%= for suggestion <- @suggestions do %>
+              <span class="suggestion" phx-click={"search_#{suggestion}"} onclick=""><%= suggestion %></span>
+            <% end %>
+          <% end %>
+        </div>
+      </form>
+      <%= if length(@releases) == 1 do %>
+        The package only has one version so there's nothing to diff with.
+      <% else %>
+        <%= if @result do %>
+          <form phx-change="select_version" class="version-form">
+            <div class="version-area">
+              <div class="select-area">
+                <label for="from">From</label>
+                <select name="from">
+                  <%= for release_from <- @from_releases do %>
+                    <option selected={selected(@from, release_from)} value={release_from}><%= release_from %></option>
+                  <% end %>
+                </select>
+                <label for="to">To</label>
+                <select name="to">
+                  <%= for release_to <- @to_releases do %>
+                    <option selected={selected(@to, release_to)} value={release_to}><%= release_to %></option>
+                  <% end %>
+                </select>
+              </div>
+              <button
+                class="diff-button"
+                type="button"
+                disabled={disabled([@from, @to])}
+                phx-click="go"
+              >Diff</button>
+            </div>
+          </form>
+        <% end %>
+      <% end %>
+      <%= @not_found %>
+    </div>
+    """
   end
 
   def mount(_params, _session, socket) do
@@ -109,6 +162,16 @@ defmodule DiffWeb.SearchLiveView do
   end
 
   defp build_url(app, from, to), do: "/diff/#{app}/#{from}..#{to}"
+
+  # Helper functions for template
+  defp disabled(things) when is_list(things) do
+    Enum.any?(things, &(!&1))
+  end
+
+  defp disabled(thing), do: disabled([thing])
+
+  defp selected(x, x), do: true
+  defp selected(_, _), do: false
 
   defp get_suggestions(query, number) do
     package_names = Diff.Package.Store.get_names()

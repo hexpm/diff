@@ -17,7 +17,7 @@ defmodule DiffWeb.Router do
     pipe_through :browser
 
     live "/", SearchLiveView
-    get "/diff/:package/:versions", PageController, :diff
-    get "/diffs", PageController, :diffs
+    live "/diff/:package/:versions", DiffLiveView
+    live "/diffs", DiffLiveView
   end
 end

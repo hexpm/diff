@@ -382,6 +382,62 @@ table.package-list .button {
   margin-bottom: 0;
 }
 
+.diff-stats-header {
+  margin: 15px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.diff-stats-header span {
+  margin-right: 15px;
+  font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+  font-size: 14px;
+}
+
+.diff-stats-header .files-changed {
+  color: #ddd;
+}
+
+.diff-stats-header .additions {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.diff-stats-header .deletions {
+  color: #f44336;
+  font-weight: 600;
+}
+
+#loading-trigger {
+  height: 60px;
+  width: 100%;
+  margin: 30px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+#loading-trigger::before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #888;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
 @media only screen
   and (min-device-width: 320px)
   and (max-device-width: 480px) {
