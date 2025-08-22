@@ -82,6 +82,7 @@ defmodule DiffWeb.DiffLiveView do
         metadata: metadata,
         all_diff_ids: diff_ids,
         loaded_diffs: initial_diffs,
+        loaded_diff_content: %{},
         remaining_diffs: remaining,
         loading: true,
         generating: false,
@@ -103,6 +104,7 @@ defmodule DiffWeb.DiffLiveView do
         metadata: %{files_changed: 0, total_additions: 0, total_deletions: 0},
         all_diff_ids: [],
         loaded_diffs: [],
+        loaded_diff_content: %{},
         remaining_diffs: [],
         loading: false,
         generating: true,
@@ -162,6 +164,7 @@ defmodule DiffWeb.DiffLiveView do
                 metadata: metadata,
                 all_diff_ids: diff_ids,
                 loaded_diffs: initial_diffs,
+                loaded_diff_content: %{},
                 remaining_diffs: remaining,
                 generating: false,
                 loading: true,
@@ -186,54 +189,114 @@ defmodule DiffWeb.DiffLiveView do
   end
 
   def handle_info({:load_diffs_and_update, diff_ids}, socket) do
-    # Simply add new diffs to loaded_diffs - no server memory management needed
-    # diffs are loaded on-demand during rendering from storage
+    # Load diffs in parallel and add to existing loaded content
+    new_loaded_content =
+      load_diffs_in_parallel(
+        socket.assigns.package,
+        socket.assigns.from,
+        socket.assigns.to,
+        diff_ids
+      )
+
+    existing_content = Map.get(socket.assigns, :loaded_diff_content, %{})
+    all_loaded_content = Map.merge(existing_content, new_loaded_content)
+
     new_loaded_diffs = socket.assigns.loaded_diffs ++ diff_ids
 
     socket =
       socket
       |> assign(
         loaded_diffs: new_loaded_diffs,
+        loaded_diff_content: all_loaded_content,
         loading: false
       )
 
     {:noreply, socket}
   end
 
-  def handle_info({:load_diffs, _diff_ids}, socket) do
-    # With on-demand loading, we just need to mark loading as complete
-    # diff content will be loaded during rendering
-    socket = assign(socket, loading: false)
+  def handle_info({:load_diffs, diff_ids}, socket) do
+    # Load initial diffs in parallel
+    loaded_content =
+      load_diffs_in_parallel(
+        socket.assigns.package,
+        socket.assigns.from,
+        socket.assigns.to,
+        diff_ids
+      )
+
+    socket =
+      socket
+      |> assign(
+        loaded_diff_content: loaded_content,
+        loading: false
+      )
+
     {:noreply, socket}
   end
 
   defp process_stream_to_diffs(package, from, to, stream) do
-    diff_index = 0
-
-    metadata = %{
+    initial_metadata = %{
       total_diffs: 0,
       total_additions: 0,
       total_deletions: 0,
       files_changed: 0
     }
 
-    {final_metadata, diff_ids, _} =
-      Enum.reduce(stream, {metadata, [], diff_index}, fn element,
-                                                         {acc_metadata, acc_diff_ids, index} ->
-        case element do
-          {:ok, {raw_diff, path_from, path_to}} ->
-            # Store raw git diff output with base paths for relative conversion
-            diff_id = "diff-#{index}"
+    # Process stream elements in parallel with indices
+    results =
+      stream
+      |> Stream.with_index()
+      |> Task.async_stream(
+        Diff.Tasks,
+        fn {element, index} ->
+          process_stream_element(package, from, to, element, index)
+        end,
+        max_concurrency: 10,
+        timeout: 30_000,
+        ordered: true
+      )
+      |> Enum.reduce({initial_metadata, []}, fn
+        {:ok, {:ok, diff_id, metadata_update}}, {acc_metadata, acc_diff_ids} ->
+          updated_metadata = merge_metadata(acc_metadata, metadata_update)
+          {updated_metadata, acc_diff_ids ++ [diff_id]}
 
-            diff_data =
-              Jason.encode!(%{
-                "diff" => DiffWeb.LiveView.sanitize_utf8(raw_diff),
-                "path_from" => path_from,
-                "path_to" => path_to
-              })
+        {:ok, {:error, _}}, acc ->
+          acc
 
-            Diff.Storage.put_diff(package, from, to, diff_id, diff_data)
+        {:error, _}, acc ->
+          acc
+      end)
 
+    case results do
+      {final_metadata, diff_ids} ->
+        case Diff.Storage.put_metadata(package, from, to, final_metadata) do
+          :ok ->
+            {:ok, final_metadata, diff_ids}
+
+          {:error, reason} ->
+            Logger.error("Failed to store metadata: #{inspect(reason)}")
+            {:error, reason}
+        end
+    end
+  catch
+    :throw, {:diff, :invalid_diff} ->
+      {:error, :invalid_diff}
+  end
+
+  defp process_stream_element(package, from, to, element, index) do
+    case element do
+      {:ok, {raw_diff, path_from, path_to}} ->
+        diff_id = "diff-#{index}"
+
+        diff_data =
+          Jason.encode!(%{
+            "diff" => DiffWeb.LiveView.sanitize_utf8(raw_diff),
+            "path_from" => path_from,
+            "path_to" => path_to
+          })
+
+        case Diff.Storage.put_diff(package, from, to, diff_id, diff_data) do
+          :ok ->
             # Count additions and deletions from raw diff (exclude +++ and --- headers)
             lines = String.split(raw_diff, "\n")
 
@@ -247,51 +310,56 @@ defmodule DiffWeb.DiffLiveView do
                 String.starts_with?(line, "-") and not String.starts_with?(line, "---")
               end)
 
-            updated_metadata = %{
-              acc_metadata
-              | total_diffs: acc_metadata.total_diffs + 1,
-                total_additions: acc_metadata.total_additions + additions,
-                total_deletions: acc_metadata.total_deletions + deletions,
-                files_changed: acc_metadata.files_changed + 1
+            metadata_update = %{
+              total_diffs: 1,
+              total_additions: additions,
+              total_deletions: deletions,
+              files_changed: 1
             }
 
-            {updated_metadata, acc_diff_ids ++ [diff_id], index + 1}
+            {:ok, diff_id, metadata_update}
 
-          {:too_large, file_path} ->
-            # Store raw too_large data directly
-            too_large_data = Jason.encode!(%{type: "too_large", file: file_path})
-            diff_id = "diff-#{index}"
-
-            Diff.Storage.put_diff(package, from, to, diff_id, too_large_data)
-
-            updated_metadata = %{
-              acc_metadata
-              | total_diffs: acc_metadata.total_diffs + 1,
-                files_changed: acc_metadata.files_changed + 1
-            }
-
-            {updated_metadata, acc_diff_ids ++ [diff_id], index + 1}
-
-          {:error, error} ->
-            Logger.error(
-              "Failed to process diff #{index} for #{package} #{from}..#{to} with: #{inspect(error)}"
-            )
-
-            {acc_metadata, acc_diff_ids, index}
+          {:error, reason} ->
+            Logger.error("Failed to store diff #{diff_id}: #{inspect(reason)}")
+            {:error, reason}
         end
-      end)
 
-    case Diff.Storage.put_metadata(package, from, to, final_metadata) do
-      :ok ->
-        {:ok, final_metadata, diff_ids}
+      {:too_large, file_path} ->
+        diff_id = "diff-#{index}"
+        too_large_data = Jason.encode!(%{type: "too_large", file: file_path})
 
-      {:error, reason} ->
-        Logger.error("Failed to store metadata: #{inspect(reason)}")
-        {:error, reason}
+        case Diff.Storage.put_diff(package, from, to, diff_id, too_large_data) do
+          :ok ->
+            metadata_update = %{
+              total_diffs: 1,
+              total_additions: 0,
+              total_deletions: 0,
+              files_changed: 1
+            }
+
+            {:ok, diff_id, metadata_update}
+
+          {:error, reason} ->
+            Logger.error("Failed to store too_large diff #{diff_id}: #{inspect(reason)}")
+            {:error, reason}
+        end
+
+      {:error, error} ->
+        Logger.error(
+          "Failed to process diff #{index} for #{package} #{from}..#{to} with: #{inspect(error)}"
+        )
+
+        {:error, error}
     end
-  catch
-    :throw, {:diff, :invalid_diff} ->
-      {:error, :invalid_diff}
+  end
+
+  defp merge_metadata(acc_metadata, update) do
+    %{
+      total_diffs: acc_metadata.total_diffs + update.total_diffs,
+      total_additions: acc_metadata.total_additions + update.total_additions,
+      total_deletions: acc_metadata.total_deletions + update.total_deletions,
+      files_changed: acc_metadata.files_changed + update.files_changed
+    }
   end
 
   defp parse_versions(input) do
@@ -336,4 +404,20 @@ defmodule DiffWeb.DiffLiveView do
   end
 
   defp build_url(app, from, to), do: "/diff/#{app}/#{from}..#{to}"
+
+  defp load_diffs_in_parallel(package, from, to, diff_ids) do
+    diff_ids
+    |> Task.async_stream(
+      Diff.Tasks,
+      fn diff_id ->
+        {diff_id, DiffWeb.LiveView.load_diff_content(package, from, to, diff_id)}
+      end,
+      max_concurrency: 10,
+      timeout: 30_000
+    )
+    |> Enum.reduce(%{}, fn
+      {:ok, {diff_id, content}}, acc -> Map.put(acc, diff_id, content)
+      {:error, _}, acc -> acc
+    end)
+  end
 end

@@ -41,7 +41,7 @@
     <div class="ghd-container" id="diff-list">
       <%= for diff_id <- @loaded_diffs do %>
         <div id="diff-<%= diff_id %>">
-          <%= raw(load_diff_content(@package, @from, @to, diff_id)) %>
+          <%= raw(Map.get(@loaded_diff_content, diff_id, "<div class='diff-error'>Diff content not loaded</div>")) %>
         </div>
       <% end %>
 

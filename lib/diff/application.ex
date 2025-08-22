@@ -12,13 +12,9 @@ defmodule Diff.Application do
     children = [
       goth_spec(),
       {Task.Supervisor, name: Diff.Tasks},
-      # Start the PubSub system
       {Phoenix.PubSub, name: Diff.PubSub},
-      # Start the endpoint when the application starts
-      DiffWeb.Endpoint,
-      # Starts a worker by calling: Diff.Worker.start_link(arg)
-      # {Diff.Worker, arg},
-      Diff.Package.Supervisor
+      Diff.Package.Supervisor,
+      DiffWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
