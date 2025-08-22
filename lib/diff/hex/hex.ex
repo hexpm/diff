@@ -1,4 +1,6 @@
 defmodule Diff.Hex do
+  @behaviour Diff.Hex.Behaviour
+
   @config %{
     :hex_core.default_config()
     | http_adapter: {Diff.Hex.Adapter, %{}},
@@ -101,9 +103,12 @@ defmodule Diff.Hex do
 
           with {_, true} <- {:file_size_old, file_size_check?(path_old)},
                {_, true} <- {:file_size_new, file_size_check?(path_new)},
-               {_, {:ok, output}} <- {:git_diff, git_diff(path_old, path_new)},
-               {_, {:ok, patches}} <- {:parse_patch, parse_patch(output, path_from, path_to)} do
-            Enum.map(patches, &{:ok, &1})
+               {_, {:ok, output}} <- {:git_diff, git_diff(path_old, path_new)} do
+            if output do
+              [{:ok, {output, path_from, path_to}}]
+            else
+              []
+            end
           else
             {:file_size_old, false} ->
               [{:too_large, Path.relative_to(path_old, path_from)}]
@@ -148,14 +153,6 @@ defmodule Diff.Hex do
       {output, 1} -> {:ok, output}
       other -> {:error, other}
     end
-  end
-
-  defp parse_patch(_output = nil, _path_from, _path_to) do
-    {:ok, []}
-  end
-
-  defp parse_patch(output, path_from, path_to) do
-    GitDiff.parse_patch(output, relative_from: path_from, relative_to: path_to)
   end
 
   defp file_size_check?(path) do

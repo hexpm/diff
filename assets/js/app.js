@@ -14,7 +14,53 @@ import "phoenix_html"
 import { Socket } from 'phoenix'
 import { LiveSocket } from "phoenix_live_view"
 
-let liveSocket = new LiveSocket("/live", Socket, {})
+// Define hooks for LiveView
+window.Hooks = {}
+
+window.Hooks.InfiniteScroll = {
+  mounted() {
+    this.pending = false
+
+    this.observer = new IntersectionObserver((entries) => {
+      const target = entries[0]
+      if (target.isIntersecting && !this.pending) {
+        this.pending = true
+        this.pushEvent("load-more", {})
+      }
+    }, {
+      root: null,
+      rootMargin: '100px',
+      threshold: 0.1
+    })
+
+    this.observer.observe(this.el)
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect()
+    }
+  },
+
+  updated() {
+    this.pending = false
+
+    // Check if we're still at the bottom after loading content
+    // Use requestAnimationFrame to ensure DOM has fully updated
+    requestAnimationFrame(() => {
+      const target = this.el
+      const rect = target.getBoundingClientRect()
+      const isIntersecting = rect.top <= (window.innerHeight || document.documentElement.clientHeight)
+
+      if (isIntersecting && !this.pending) {
+        this.pending = true
+        this.pushEvent("load-more", {})
+      }
+    })
+  }
+}
+
+let liveSocket = new LiveSocket("/live", Socket, { hooks: window.Hooks })
 liveSocket.connect()
 
 /*

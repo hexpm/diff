@@ -8,6 +8,7 @@ defmodule Diff.MixProject do
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
+      listeners: [Phoenix.CodeReloader],
       aliases: aliases(),
       releases: releases(),
       deps: deps()
@@ -33,7 +34,6 @@ defmodule Diff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:floki, "~> 0.37.0"},
       {:gettext, "~> 0.11"},
       {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
       {:goth, "~> 1.0"},
@@ -50,7 +50,9 @@ defmodule Diff.MixProject do
       {:phoenix_view, "~> 2.0"},
       {:phoenix, "~> 1.6"},
       {:plug_cowboy, "~> 2.1"},
-      {:sentry, "~> 10.8"}
+      {:sentry, "~> 10.8"},
+      {:floki, "~> 0.37.0", only: :test},
+      {:lazy_html, ">= 0.1.0", only: :test}
     ]
   end
 

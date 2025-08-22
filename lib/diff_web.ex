@@ -19,7 +19,9 @@ defmodule DiffWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller, namespace: DiffWeb
+      use Phoenix.Controller, formats: [:html]
+
+      plug :put_layout, html: {DiffWeb.LayoutView, :app}
 
       import Plug.Conn
       import DiffWeb.Gettext

@@ -42,9 +42,9 @@ defmodule DiffWeb.SearchLiveViewTest do
       send(view.pid, {:search, "phoenix"})
       rendered = render(view)
       assert rendered =~ ~s(<select name="from")
-      assert rendered =~ ~s(<option selected="selected" value="1.4.10">1.4.10</option>)
+      assert rendered =~ ~s(<option selected="" value="1.4.10">1.4.10</option>)
       assert rendered =~ ~s(<select name="to")
-      assert rendered =~ ~s(<option selected="selected" value="1.4.11">1.4.11</option>)
+      assert rendered =~ ~s(<option selected="" value="1.4.11">1.4.11</option>)
       assert rendered =~ ~s(Did you mean:)
 
       assert rendered =~

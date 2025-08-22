@@ -11,4 +11,5 @@ config :logger, level: :warning
 
 config :diff,
   package_store_impl: Diff.Package.StoreMock,
-  storage_impl: Diff.StorageMock
+  storage_impl: Diff.StorageMock,
+  hex_impl: Diff.HexMock
