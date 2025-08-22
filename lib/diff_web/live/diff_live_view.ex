@@ -151,7 +151,9 @@ defmodule DiffWeb.DiffLiveView do
   end
 
   def handle_info({:generate_diff, package, from, to}, socket) do
-    case Diff.Hex.diff(package, from, to) do
+    hex_impl = Application.get_env(:diff, :hex_impl, Diff.Hex)
+
+    case hex_impl.diff(package, from, to) do
       {:ok, stream} ->
         case process_stream_to_diffs(package, from, to, stream) do
           {:ok, metadata, diff_ids} ->
@@ -243,11 +245,12 @@ defmodule DiffWeb.DiffLiveView do
     }
 
     # Process stream elements in parallel with indices
+    indexed_stream = Stream.with_index(stream)
+
     results =
-      stream
-      |> Stream.with_index()
-      |> Task.async_stream(
+      Task.Supervisor.async_stream(
         Diff.Tasks,
+        indexed_stream,
         fn {element, index} ->
           process_stream_element(package, from, to, element, index)
         end,
@@ -406,9 +409,9 @@ defmodule DiffWeb.DiffLiveView do
   defp build_url(app, from, to), do: "/diff/#{app}/#{from}..#{to}"
 
   defp load_diffs_in_parallel(package, from, to, diff_ids) do
-    diff_ids
-    |> Task.async_stream(
+    Task.Supervisor.async_stream(
       Diff.Tasks,
+      diff_ids,
       fn diff_id ->
         {diff_id, DiffWeb.LiveView.load_diff_content(package, from, to, diff_id)}
       end,

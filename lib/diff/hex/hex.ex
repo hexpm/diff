@@ -1,4 +1,6 @@
 defmodule Diff.Hex do
+  @behaviour Diff.Hex.Behaviour
+
   @config %{
     :hex_core.default_config()
     | http_adapter: {Diff.Hex.Adapter, %{}},
