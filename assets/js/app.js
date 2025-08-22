@@ -44,6 +44,19 @@ window.Hooks.InfiniteScroll = {
 
   updated() {
     this.pending = false
+
+    // Check if we're still at the bottom after loading content
+    // Use requestAnimationFrame to ensure DOM has fully updated
+    requestAnimationFrame(() => {
+      const target = this.el
+      const rect = target.getBoundingClientRect()
+      const isIntersecting = rect.top <= (window.innerHeight || document.documentElement.clientHeight)
+
+      if (isIntersecting && !this.pending) {
+        this.pending = true
+        this.pushEvent("load-more", {})
+      }
+    })
   }
 }
 
