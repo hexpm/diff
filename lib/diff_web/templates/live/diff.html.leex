@@ -18,35 +18,31 @@
       </div>
     </div>
   <% else %>
-    <div class="search-area">
-      <div class="diff-stats-header">
-        <span class="files-changed"><%= @metadata.files_changed %> files changed</span>
-        <span class="additions">+<%= @metadata.total_additions %></span>
-        <span class="deletions">-<%= @metadata.total_deletions %></span>
-      </div>
-    </div>
-
-    <%= if @generating do %>
-      <div class="message-container">
-        <div class="message">Generating diffs...</div>
-      </div>
-    <% end %>
-
-    <%= if @loading do %>
-      <div class="message-container">
-        <div class="message">Loading diffs...</div>
+    <%= unless @generating do %>
+      <div class="search-area">
+        <div class="diff-stats-header">
+          <span class="files-changed"><%= @metadata.files_changed %> files changed</span>
+          <span class="additions">+<%= @metadata.total_additions %></span>
+          <span class="deletions">-<%= @metadata.total_deletions %></span>
+        </div>
       </div>
     <% end %>
 
     <div class="ghd-container" id="diff-list">
+      <%= if @generating do %>
+        <div class="loading-spinner">
+          Generating diffs...
+        </div>
+      <% end %>
+
       <%= for diff_id <- @loaded_diffs do %>
         <div id="diff-<%= diff_id %>">
-          <%= raw(Map.get(@loaded_diff_content, diff_id, "<div class='diff-error'>Diff content not loaded</div>")) %>
+          <%= raw(Map.fetch!(@loaded_diff_content, diff_id)) %>
         </div>
       <% end %>
 
       <%= if @has_more_diffs do %>
-        <div id="loading-trigger" phx-hook="InfiniteScroll" data-loaded="<%= length(@loaded_diffs) %>">
+        <div id="loading-trigger" class="loading-spinner" phx-hook="InfiniteScroll" data-loaded="<%= length(@loaded_diffs) %>">
           Loading more diffs...
         </div>
       <% end %>

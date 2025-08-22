@@ -408,7 +408,7 @@ table.package-list .button {
   font-weight: 600;
 }
 
-#loading-trigger {
+.loading-spinner {
   height: 60px;
   width: 100%;
   margin: 30px 0;
@@ -420,7 +420,7 @@ table.package-list .button {
   opacity: 0.8;
 }
 
-#loading-trigger::before {
+.loading-spinner::before {
   content: '';
   width: 20px;
   height: 20px;

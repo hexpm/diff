@@ -71,7 +71,7 @@ defmodule DiffWeb.DiffLiveView do
     {:ok, diff_ids} = Diff.Storage.list_diffs(package, from, to)
 
     initial_batch_size = 5
-    {initial_diffs, remaining} = Enum.split(diff_ids, initial_batch_size)
+    {initial_diffs, _remaining} = Enum.split(diff_ids, initial_batch_size)
 
     socket =
       assign(socket,
@@ -81,12 +81,11 @@ defmodule DiffWeb.DiffLiveView do
         to: to,
         metadata: metadata,
         all_diff_ids: diff_ids,
-        loaded_diffs: initial_diffs,
+        loaded_diffs: [],
         loaded_diff_content: %{},
-        remaining_diffs: remaining,
-        loading: true,
+        remaining_diffs: diff_ids,
         generating: false,
-        has_more_diffs: length(remaining) > 0
+        has_more_diffs: length(diff_ids) > 0
       )
 
     send(self(), {:load_diffs, initial_diffs})
@@ -106,7 +105,6 @@ defmodule DiffWeb.DiffLiveView do
         loaded_diffs: [],
         loaded_diff_content: %{},
         remaining_diffs: [],
-        loading: false,
         generating: true,
         has_more_diffs: false
       )
@@ -136,14 +134,7 @@ defmodule DiffWeb.DiffLiveView do
 
   def handle_event("load-more", _params, socket) do
     batch_size = 5
-    {next_batch, remaining} = Enum.split(socket.assigns.remaining_diffs, batch_size)
-
-    socket =
-      socket
-      |> assign(
-        remaining_diffs: remaining,
-        has_more_diffs: length(remaining) > 0
-      )
+    {next_batch, _remaining} = Enum.split(socket.assigns.remaining_diffs, batch_size)
 
     send(self(), {:load_diffs_and_update, next_batch})
 
@@ -158,19 +149,18 @@ defmodule DiffWeb.DiffLiveView do
         case process_stream_to_diffs(package, from, to, stream) do
           {:ok, metadata, diff_ids} ->
             initial_batch_size = 5
-            {initial_diffs, remaining} = Enum.split(diff_ids, initial_batch_size)
+            {initial_diffs, _remaining} = Enum.split(diff_ids, initial_batch_size)
 
             socket =
               socket
               |> assign(
                 metadata: metadata,
                 all_diff_ids: diff_ids,
-                loaded_diffs: initial_diffs,
+                loaded_diffs: [],
                 loaded_diff_content: %{},
-                remaining_diffs: remaining,
+                remaining_diffs: diff_ids,
                 generating: false,
-                loading: true,
-                has_more_diffs: length(remaining) > 0
+                has_more_diffs: length(diff_ids) > 0
               )
 
             send(self(), {:load_diffs, initial_diffs})
@@ -203,14 +193,20 @@ defmodule DiffWeb.DiffLiveView do
     existing_content = Map.get(socket.assigns, :loaded_diff_content, %{})
     all_loaded_content = Map.merge(existing_content, new_loaded_content)
 
-    new_loaded_diffs = socket.assigns.loaded_diffs ++ diff_ids
+    # Only add successfully loaded diffs to loaded_diffs
+    successfully_loaded_new_diffs = Map.keys(new_loaded_content)
+    new_loaded_diffs = socket.assigns.loaded_diffs ++ successfully_loaded_new_diffs
+
+    # Remove successfully loaded diffs from remaining_diffs
+    updated_remaining = socket.assigns.remaining_diffs -- successfully_loaded_new_diffs
 
     socket =
       socket
       |> assign(
         loaded_diffs: new_loaded_diffs,
         loaded_diff_content: all_loaded_content,
-        loading: false
+        remaining_diffs: updated_remaining,
+        has_more_diffs: length(updated_remaining) > 0
       )
 
     {:noreply, socket}
@@ -226,11 +222,19 @@ defmodule DiffWeb.DiffLiveView do
         diff_ids
       )
 
+    # Only add diffs to loaded_diffs if content was successfully loaded
+    successfully_loaded_diffs = Map.keys(loaded_content)
+
+    # Remove successfully loaded diffs from remaining_diffs
+    updated_remaining = socket.assigns.remaining_diffs -- successfully_loaded_diffs
+
     socket =
       socket
       |> assign(
+        loaded_diffs: successfully_loaded_diffs,
         loaded_diff_content: loaded_content,
-        loading: false
+        remaining_diffs: updated_remaining,
+        has_more_diffs: length(updated_remaining) > 0
       )
 
     {:noreply, socket}
