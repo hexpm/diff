@@ -60,7 +60,6 @@ defmodule DiffWeb.DiffComponent do
   defp diff_status(%{from: from, to: to}) when from == to, do: "changed"
   defp diff_status(_), do: "renamed"
 
-  defp line_number(nil), do: ""
   defp line_number(ln), do: to_string(ln)
 
   defp line_id(diff, line) do
