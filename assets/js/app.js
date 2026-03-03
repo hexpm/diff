@@ -87,19 +87,3 @@ lines.forEach(line => {
     }
   })
 })
-
-const fileHeaders = document.querySelectorAll('.ghd-file-header')
-fileHeaders.forEach(header => {
-  header.addEventListener('click', e => {
-    const parent = header.parentNode
-
-    parent.querySelectorAll('.ghd-diff').forEach(diff => {
-      diff.classList.toggle('hidden')
-    })
-    header.classList.toggle('collapsed') && scrollIfNeeded(header)
-  })
-})
-
-const scrollIfNeeded = elem => {
-  elem.getBoundingClientRect().top < 0 && elem.scrollIntoView(true)
-}
