@@ -6,20 +6,15 @@ defmodule DiffWeb.DiffComponent do
     ~H"""
     <div class="ghd-file">
       <div class="ghd-file-header" phx-click={JS.toggle_class("hidden", to: "##{@diff_id}-body")}>
-        <span class={"ghd-file-status ghd-file-status-#{diff_status(@diff)}"}>
-          <%= diff_status(@diff) %>
-        </span>
-        <%= file_header(@diff, diff_status(@diff)) %>
-        <span class="collapse-diff">
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
-            <path fill-rule="evenodd" d="M10 10l-1.5 1.5L5 7.75 1.5 11.5 0 10l5-5 5 5z"/>
-          </svg>
-        </span>
-        <span class="reveal-diff">
-          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
-            <path fill-rule="evenodd" d="M5 11L0 6l1.5-1.5L5 8.25 8.5 4.5 10 6l-5 5z"/>
-          </svg>
-        </span>
+        <div>
+          <span class={"ghd-file-status ghd-file-status-#{diff_status(@diff)}"}>
+            <%= diff_status(@diff) %>
+          </span>
+          <%= file_header(@diff, diff_status(@diff)) %>
+        </div>
+        <svg class="show-hide-diff" xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
+          <path fill-rule="evenodd" d="M10 10l-1.5 1.5L5 7.75 1.5 11.5 0 10l5-5 5 5z"/>
+        </svg>
       </div>
       <div class="ghd-diff" id={"#{@diff_id}-body"}>
         <table class="ghd-diff">
