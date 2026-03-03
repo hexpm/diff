@@ -1,18 +1,27 @@
 defmodule DiffWeb.DiffComponent do
   use DiffWeb, :live_component
+  alias Phoenix.LiveView.JS
 
   def render(assigns) do
     ~H"""
     <div class="ghd-file">
-      <div class="ghd-file-header">
+      <div class="ghd-file-header" phx-click={JS.toggle_class("hidden", to: "##{@diff_id}-body")}>
         <span class={"ghd-file-status ghd-file-status-#{diff_status(@diff)}"}>
           <%= diff_status(@diff) %>
         </span>
         <%= file_header(@diff, diff_status(@diff)) %>
-        <span class="collapse-diff"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16"><path fill-rule="evenodd" d="M10 10l-1.5 1.5L5 7.75 1.5 11.5 0 10l5-5 5 5z"/></svg></span>
-        <span class="reveal-diff"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16"><path fill-rule="evenodd" d="M5 11L0 6l1.5-1.5L5 8.25 8.5 4.5 10 6l-5 5z"/></svg></span>
+        <span class="collapse-diff">
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
+            <path fill-rule="evenodd" d="M10 10l-1.5 1.5L5 7.75 1.5 11.5 0 10l5-5 5 5z"/>
+          </svg>
+        </span>
+        <span class="reveal-diff">
+          <svg xmlns="http://www.w3.org/2000/svg" width="10" height="16" viewBox="0 0 10 16">
+            <path fill-rule="evenodd" d="M5 11L0 6l1.5-1.5L5 8.25 8.5 4.5 10 6l-5 5z"/>
+          </svg>
+        </span>
       </div>
-      <div class="ghd-diff">
+      <div class="ghd-diff" id={"#{@diff_id}-body"}>
         <table class="ghd-diff">
           <%= for chunk <- @diff.chunks do %>
             <tr class="ghd-chunk-header">
@@ -46,31 +55,17 @@ defmodule DiffWeb.DiffComponent do
     """
   end
 
-  defp file_header(diff, status) do
-    from = diff.from
-    to = diff.to
+  defp file_header(%{from: from}, "changed"), do: from
+  defp file_header(%{from: from, to: to}, "renamed"), do: "#{from} -> #{to}"
+  defp file_header(%{from: from}, "removed"), do: from
+  defp file_header(%{to: to}, "added"), do: to
 
-    case status do
-      "changed" -> from
-      "renamed" -> "#{from} -> #{to}"
-      "removed" -> from
-      "added" -> to
-    end
-  end
+  defp diff_status(%{from: nil, to: _to}), do: "added"
+  defp diff_status(%{from: _from, to: nil}), do: "removed"
+  defp diff_status(%{from: from, to: to}) when from == to, do: "changed"
+  defp diff_status(_), do: "renamed"
 
-  defp diff_status(diff) do
-    from = diff.from
-    to = diff.to
-
-    cond do
-      !from -> "added"
-      !to -> "removed"
-      from == to -> "changed"
-      true -> "renamed"
-    end
-  end
-
-  defp line_number(ln) when is_nil(ln), do: ""
+  defp line_number(nil), do: ""
   defp line_number(ln), do: to_string(ln)
 
   defp line_id(diff, line) do
