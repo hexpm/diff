@@ -28,7 +28,7 @@
       </div>
     <% end %>
 
-    <div class="ghd-container" id="diff-list">
+    <div class="ghd-container" id="diff-list" phx-hook="DiffList">
       <%= if @generating do %>
         <div class="loading-spinner">
           Generating diffs...

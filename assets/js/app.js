@@ -60,30 +60,42 @@ window.Hooks.InfiniteScroll = {
   }
 }
 
-let liveSocket = new LiveSocket("/live", Socket, { hooks: window.Hooks })
-liveSocket.connect()
+window.Hooks.DiffList = {
+  mounted() {
+    this.el.addEventListener('click', e => {
+      const lineNumber = e.target.closest('.ghd-line-number')
+      if (!lineNumber) return
 
-/*
-Make it possible to click line numbers to update the address bar to a
-link directly to that line.
-*/
-if (location.hash) {
-  document.getElementById(location.hash.replace('#', '')).classList.add('selected')
+      const parent = lineNumber.parentNode
+      if (parent && parent.id) {
+        this.el.querySelectorAll('.ghd-line.selected').forEach(el => {
+          el.classList.remove('selected')
+        })
+        parent.classList.add('selected')
+        history.replaceState(null, null, '#' + parent.id)
+      }
+    })
+
+    this.selectHash()
+  },
+
+  updated() {
+    this.selectHash()
+  },
+
+  selectHash() {
+    if (location.hash) {
+      const el = document.getElementById(location.hash.replace('#', ''))
+      if (el) {
+        this.el.querySelectorAll('.ghd-line.selected').forEach(el => {
+          el.classList.remove('selected')
+        })
+        el.classList.add('selected')
+        el.scrollIntoView({ block: 'center' })
+      }
+    }
+  }
 }
 
-const lines = document.querySelectorAll('.ghd-line-number')
-lines.forEach(line => {
-  line.addEventListener('click', e => {
-    const parent = line.parentNode
-
-    if (parent && parent.id) {
-      document.querySelectorAll('.ghd-line.selected').forEach(line => {
-        line.classList.remove('selected')
-      })
-
-      parent.classList.add('selected')
-
-      history.replaceState(null, null, '#' + parent.id)
-    }
-  })
-})
+let liveSocket = new LiveSocket("/live", Socket, { hooks: window.Hooks })
+liveSocket.connect()
