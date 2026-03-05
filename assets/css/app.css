@@ -193,35 +193,22 @@ input.search-input:focus {
   position: -webkit-sticky;
   position: sticky;
   top: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   z-index: 1;
 }
 
-.ghd-file-header .reveal-diff {
-  display: none;
-  float: right;
+.ghd-file-header .show-hide-diff {
   color: #999;
 }
 
-.ghd-file-header .reveal-diff path {
+.ghd-file-header .show-hide-diff path {
   fill: #999;
 }
 
-.ghd-file-header.collapsed .reveal-diff {
-  display: block;
-}
-
-.ghd-file-header .collapse-diff {
-  display: block;
-  float: right;
-  color: #999;
-}
-
-.ghd-file-header .collapse-diff path {
-  fill: #999;
-}
-
-.ghd-file-header.collapsed .collapse-diff {
-  display: none;
+.ghd-file:has(.hidden) .show-hide-diff {
+  rotate: 180deg;
 }
 
 .ghd-chunk-header .ghd-line-number {

@@ -21,7 +21,7 @@ defmodule DiffWeb.LiveView do
                 # Take the first diff (should only be one per file)
                 diff = List.first(diffs)
 
-                DiffWeb.DiffComponent.render(%{diff: diff})
+                DiffWeb.DiffComponent.render(%{diff: diff, diff_id: diff_id})
                 |> Phoenix.HTML.Safe.to_iodata()
                 |> IO.iodata_to_binary()
                 |> sanitize_utf8()
