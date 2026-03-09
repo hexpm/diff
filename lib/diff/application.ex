@@ -10,6 +10,7 @@ defmodule Diff.Application do
 
     # List all child processes to be supervised
     children = [
+      Diff.TmpDir,
       goth_spec(),
       {Task.Supervisor, name: Diff.Tasks},
       {Phoenix.PubSub, name: Diff.PubSub},

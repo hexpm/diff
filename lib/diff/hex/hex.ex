@@ -26,14 +26,17 @@ defmodule Diff.Hex do
   end
 
   def get_tarball(package, version) do
-    with {:ok, {200, _, tarball}} <- :hex_repo.get_tarball(@config, package, version) do
-      {:ok, tarball}
-    else
-      {:ok, {403, _, _}} ->
+    path = Diff.TmpDir.tmp_file("tarball")
+
+    case :hex_repo.get_tarball_to_file(@config, package, version, to_charlist(path)) do
+      {:ok, {200, _headers}} ->
+        {:ok, path}
+
+      {:ok, {403, _}} ->
         {:error, :not_found}
 
-      {:ok, {status, _, _}} ->
-        Logger.error("Failed to get package versions. Status: #{status}.")
+      {:ok, {status, _}} ->
+        Logger.error("Failed to get tarball for package: #{package}. Status: #{status}.")
         {:error, :not_found}
 
       {:error, reason} ->
@@ -42,10 +45,9 @@ defmodule Diff.Hex do
     end
   end
 
-  def unpack_tarball(tarball, path) when is_binary(path) do
-    path = to_charlist(path)
-
-    with {:ok, _} <- :hex_tarball.unpack(tarball, path) do
+  def unpack_tarball(tarball_path, output_path) do
+    with {:ok, _} <-
+           :hex_tarball.unpack({:file, to_charlist(tarball_path)}, to_charlist(output_path)) do
       :ok
     end
   end
@@ -73,12 +75,11 @@ defmodule Diff.Hex do
   end
 
   def diff(package, from, to) do
-    path_from = tmp_path("package-#{package}-#{from}-")
-    path_to = tmp_path("package-#{package}-#{to}-")
-
     with {:ok, tarball_from} <- get_tarball(package, from),
+         path_from = Diff.TmpDir.tmp_dir("package-#{package}-#{from}"),
          :ok <- unpack_tarball(tarball_from, path_from),
          {:ok, tarball_to} <- get_tarball(package, to),
+         path_to = Diff.TmpDir.tmp_dir("package-#{package}-#{to}"),
          :ok <- unpack_tarball(tarball_to, path_to) do
       from_files = tree_files(path_from)
       to_files = tree_files(path_to)
@@ -92,8 +93,7 @@ defmodule Diff.Hex do
       all_files = (from_files ++ to_files) |> Enum.uniq() |> Enum.sort()
 
       stream =
-        all_files
-        |> Stream.flat_map(fn file ->
+        Stream.flat_map(all_files, fn file ->
           {path_old, path_new} =
             cond do
               file in new_files -> {"/dev/null", Path.join(path_to, file)}
@@ -120,14 +120,6 @@ defmodule Diff.Hex do
               [{:error, {error, reason}}]
           end
         end)
-        |> Stream.transform(
-          fn -> :ok end,
-          fn elem, :ok -> {[elem], :ok} end,
-          fn :ok ->
-            File.rm_rf(path_from)
-            File.rm_rf(path_to)
-          end
-        )
 
       {:ok, stream}
     else
@@ -165,10 +157,5 @@ defmodule Diff.Hex do
     |> Path.wildcard(match_dot: true)
     |> Enum.filter(&File.regular?(&1, raw: true))
     |> Enum.map(&Path.relative_to(&1, directory))
-  end
-
-  defp tmp_path(prefix) do
-    random_string = Base.encode16(:crypto.strong_rand_bytes(4))
-    Path.join([System.tmp_dir!(), "diff", prefix <> random_string])
   end
 end
