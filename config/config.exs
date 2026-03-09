@@ -9,7 +9,8 @@ import Config
 
 config :diff,
   cache_version: 2,
-  package_store_impl: Diff.Package.DefaultStore
+  package_store_impl: Diff.Package.DefaultStore,
+  repo_url: "https://repo.hex.pm"
 
 # Configures the endpoint
 config :diff, DiffWeb.Endpoint,

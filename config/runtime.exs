@@ -5,7 +5,9 @@ if config_env() == :prod do
     host: System.fetch_env!("DIFF_HOST"),
     hexpm_host: System.fetch_env!("DIFF_HEXPM_HOST"),
     cache_version: String.to_integer(System.fetch_env!("DIFF_CACHE_VERSION")),
-    bucket: System.fetch_env!("DIFF_BUCKET")
+    bucket: System.fetch_env!("DIFF_BUCKET"),
+    repo_url: System.fetch_env!("DIFF_REPO_URL"),
+    repo_public_key: System.fetch_env!("DIFF_REPO_PUBLIC_KEY")
 
   config :diff, DiffWeb.Endpoint,
     http: [port: String.to_integer(System.fetch_env!("DIFF_PORT"))],

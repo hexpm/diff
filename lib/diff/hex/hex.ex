@@ -1,18 +1,27 @@
 defmodule Diff.Hex do
   @behaviour Diff.Hex.Behaviour
 
-  @config %{
-    :hex_core.default_config()
-    | http_adapter: {Diff.Hex.Adapter, %{}},
-      http_user_agent_fragment: "hexpm_diff"
-  }
+  defp config() do
+    config = %{
+      :hex_core.default_config()
+      | http_adapter: {Diff.Hex.Adapter, %{}},
+        http_user_agent_fragment: "hexpm_diff",
+        repo_url: Application.fetch_env!(:diff, :repo_url)
+    }
+
+    if repo_public_key = Application.get_env(:diff, :repo_public_key) do
+      %{config | repo_public_key: repo_public_key}
+    else
+      %{config | repo_verify: false}
+    end
+  end
 
   @max_file_size 1024 * 1024
 
   require Logger
 
   def get_versions() do
-    with {:ok, {200, _, results}} <- :hex_repo.get_versions(@config) do
+    with {:ok, {200, _, results}} <- :hex_repo.get_versions(config()) do
       {:ok, results}
     else
       {:ok, {status, _, _}} ->
@@ -28,7 +37,7 @@ defmodule Diff.Hex do
   def get_tarball(package, version) do
     path = Diff.TmpDir.tmp_file("tarball")
 
-    case :hex_repo.get_tarball_to_file(@config, package, version, to_charlist(path)) do
+    case :hex_repo.get_tarball_to_file(config(), package, version, to_charlist(path)) do
       {:ok, {200, _headers}} ->
         {:ok, path}
 
@@ -53,7 +62,7 @@ defmodule Diff.Hex do
   end
 
   def get_checksums(package, versions) do
-    with {:ok, {200, _, releases}} <- :hex_repo.get_package(@config, package) do
+    with {:ok, {200, _, releases}} <- :hex_repo.get_package(config(), package) do
       checksums =
         for release <- releases.releases, release.version in versions do
           release.outer_checksum
