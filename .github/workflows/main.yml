@@ -88,8 +88,10 @@ jobs:
         if: ${{ github.event_name != 'pull_request' && env.SERVICE_ACCOUNT != '' }}
         run: |
           mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
+          digest="${DIGEST}"
           touch "/tmp/digests/${digest#sha256:}"
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
 
       - name: Upload digest
         if: ${{ github.event_name != 'pull_request' && env.SERVICE_ACCOUNT != '' }}
@@ -142,5 +144,5 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create \
-            -t gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:${{ env.COMMIT_SHORT_SHA }} \
-            $(printf 'gcr.io/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}@sha256:%s ' *)
+            -t gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${COMMIT_SHORT_SHA} \
+            $(printf 'gcr.io/${PROJECT_ID}/${IMAGE_NAME}@sha256:%s ' *)
