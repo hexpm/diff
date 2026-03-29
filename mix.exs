@@ -51,7 +51,7 @@ defmodule Diff.MixProject do
       {:phoenix, "~> 1.6"},
       {:plug_cowboy, "~> 2.1"},
       {:sentry, "~> 12.0"},
-      {:floki, "~> 0.37.0", only: :test},
+      {:floki, "~> 0.38.1", only: :test},
       {:lazy_html, ">= 0.1.0", only: :test}
     ]
   end
