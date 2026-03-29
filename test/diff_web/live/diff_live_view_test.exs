@@ -54,6 +54,9 @@ defmodule DiffWeb.DiffLiveViewTest do
         {:error, :not_found}
       end)
 
+      Diff.HexMock
+      |> stub(:diff, fn "phoenix", "1.4.5", "1.4.9" -> :error end)
+
       {:ok, _view, html} = live(conn, "/diff/phoenix/1.4.5..1.4.9")
 
       # Should show generating state when metadata is not found
