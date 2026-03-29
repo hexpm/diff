@@ -145,4 +145,4 @@ jobs:
         run: |
           docker buildx imagetools create \
             -t gcr.io/${PROJECT_ID}/${IMAGE_NAME}:${COMMIT_SHORT_SHA} \
-            $(printf 'gcr.io/${PROJECT_ID}/${IMAGE_NAME}@sha256:%s ' *)
+            $(printf "gcr.io/${PROJECT_ID}/${IMAGE_NAME}@sha256:%s " *)
