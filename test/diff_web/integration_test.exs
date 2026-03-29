@@ -31,6 +31,9 @@ defmodule DiffWeb.IntegrationTest do
         {:error, :not_found}
       end)
 
+      Diff.HexMock
+      |> stub(:diff, fn "phoenix", "1.4.5", "1.4.9" -> :error end)
+
       {:ok, _view, html} = live(conn, "/diff/phoenix/1.4.5..")
 
       # Should show generating state since we're resolving to latest version
@@ -45,6 +48,9 @@ defmodule DiffWeb.IntegrationTest do
       |> stub(:get_metadata, fn "nonexistent", "1.0.0", "2.0.0" ->
         {:error, :not_found}
       end)
+
+      Diff.HexMock
+      |> stub(:diff, fn "nonexistent", "1.0.0", "2.0.0" -> :error end)
 
       {:ok, _view, html} = live(conn, "/diff/nonexistent/1.0.0..2.0.0")
 
