@@ -22,9 +22,8 @@ defmodule Diff.TmpDirTest do
         send(test_pid, {:paths, file, dir})
       end)
 
-    ref = Process.monitor(task_pid)
     assert_receive {:paths, file, dir}
-    wait_for_cleanup(task_pid, ref)
+    Diff.TmpDir.await_cleanup(task_pid)
 
     refute File.exists?(file)
     refute File.exists?(dir)
@@ -42,9 +41,8 @@ defmodule Diff.TmpDirTest do
         raise "crash"
       end)
 
-    ref = Process.monitor(task_pid)
     assert_receive {:paths, file, dir}
-    wait_for_cleanup(task_pid, ref)
+    Diff.TmpDir.await_cleanup(task_pid)
 
     refute File.exists?(file)
     refute File.exists?(dir)
@@ -65,9 +63,8 @@ defmodule Diff.TmpDirTest do
         send(test_pid, {:paths, paths})
       end)
 
-    ref = Process.monitor(task_pid)
     assert_receive {:paths, paths}
-    wait_for_cleanup(task_pid, ref)
+    Diff.TmpDir.await_cleanup(task_pid)
 
     for {file, dir} <- paths do
       refute File.exists?(file)
@@ -81,11 +78,5 @@ defmodule Diff.TmpDirTest do
 
     assert File.exists?(file)
     assert File.dir?(dir)
-  end
-
-  defp wait_for_cleanup(task_pid, ref) do
-    assert_receive {:DOWN, ^ref, :process, ^task_pid, _}, 5000
-    # Sync with the GenServer to ensure the :DOWN cleanup has been processed
-    :sys.get_state(Diff.TmpDir)
   end
 end

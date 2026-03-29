@@ -32,33 +32,57 @@ defmodule Diff.TmpDir do
     dir
   end
 
+  def await_cleanup(pid) do
+    GenServer.call(__MODULE__, {:await_cleanup, pid}, 5000)
+  end
+
   defp track(path) do
     pid = self()
     :ets.insert(@table, {pid, path})
-    GenServer.cast(__MODULE__, {:monitor, pid})
+    GenServer.call(__MODULE__, {:monitor, pid})
   end
 
   @impl true
   def init(_opts) do
     Process.flag(:trap_exit, true)
     :ets.new(@table, [:named_table, :duplicate_bag, :public])
-    {:ok, %{monitors: MapSet.new()}}
+    {:ok, %{monitors: MapSet.new(), waiters: %{}}}
   end
 
   @impl true
-  def handle_cast({:monitor, pid}, state) do
+  def handle_call({:monitor, pid}, _from, state) do
     if pid in state.monitors do
-      {:noreply, state}
+      {:reply, :ok, state}
     else
       Process.monitor(pid)
-      {:noreply, %{state | monitors: MapSet.put(state.monitors, pid)}}
+      {:reply, :ok, %{state | monitors: MapSet.put(state.monitors, pid)}}
+    end
+  end
+
+  @impl true
+  def handle_call({:await_cleanup, pid}, from, state) do
+    if pid in state.monitors do
+      waiters = Map.update(state.waiters, pid, [from], &[from | &1])
+      {:noreply, %{state | waiters: waiters}}
+    else
+      {:reply, :ok, state}
     end
   end
 
   @impl true
   def handle_info({:DOWN, _ref, :process, pid, _reason}, state) do
     cleanup_pid(pid)
-    {:noreply, %{state | monitors: MapSet.delete(state.monitors, pid)}}
+
+    for from <- Map.get(state.waiters, pid, []) do
+      GenServer.reply(from, :ok)
+    end
+
+    {:noreply,
+     %{
+       state
+       | monitors: MapSet.delete(state.monitors, pid),
+         waiters: Map.delete(state.waiters, pid)
+     }}
   end
 
   @impl true
