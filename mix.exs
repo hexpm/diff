@@ -34,7 +34,7 @@ defmodule Diff.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:gettext, "~> 0.11"},
+      {:gettext, "~> 1.0"},
       {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
       {:goth, "~> 1.0"},
       {:hackney, "~> 1.15"},
