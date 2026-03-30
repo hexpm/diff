@@ -40,7 +40,7 @@ defmodule Diff.MixProject do
       {:hackney, "~> 1.15"},
       {:hex_core, "~> 0.15.0"},
       {:jason, "~> 1.0"},
-      {:logster, "~> 1.0.0"},
+      {:logster, "~> 1.1.1"},
       {:mox, "~> 1.0", only: :test},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_html_helpers, "~> 1.0"},
