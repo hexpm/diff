@@ -32,6 +32,17 @@ defmodule Diff.TmpDir do
     dir
   end
 
+  def cleanup do
+    pid = self()
+    entries = :ets.lookup(@table, pid)
+
+    Enum.each(entries, fn {_pid, path} ->
+      File.rm_rf(path)
+    end)
+
+    :ets.delete(@table, pid)
+  end
+
   def await_cleanup(pid) do
     GenServer.call(__MODULE__, {:await_cleanup, pid}, 5000)
   end
