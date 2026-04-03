@@ -72,6 +72,37 @@ defmodule Diff.TmpDirTest do
     end
   end
 
+  test "cleanup removes paths for calling process" do
+    file = Diff.TmpDir.tmp_file("test")
+    dir = Diff.TmpDir.tmp_dir("test")
+
+    assert File.exists?(file)
+    assert File.dir?(dir)
+
+    Diff.TmpDir.cleanup()
+
+    refute File.exists?(file)
+    refute File.exists?(dir)
+  end
+
+  test "cleanup only removes paths for calling process" do
+    test_pid = self()
+
+    Task.start(fn ->
+      other_file = Diff.TmpDir.tmp_file("other")
+      send(test_pid, {:other_path, other_file})
+      Process.sleep(:infinity)
+    end)
+
+    assert_receive {:other_path, other_file}
+
+    file = Diff.TmpDir.tmp_file("test")
+    Diff.TmpDir.cleanup()
+
+    refute File.exists?(file)
+    assert File.exists?(other_file)
+  end
+
   test "paths persist while process is alive" do
     file = Diff.TmpDir.tmp_file("test")
     dir = Diff.TmpDir.tmp_dir("test")

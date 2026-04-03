@@ -144,40 +144,44 @@ defmodule DiffWeb.DiffLiveView do
   def handle_info({:generate_diff, package, from, to}, socket) do
     hex_impl = Application.get_env(:diff, :hex_impl, Diff.Hex)
 
-    case hex_impl.diff(package, from, to) do
-      {:ok, stream} ->
-        case process_stream_to_diffs(package, from, to, stream) do
-          {:ok, metadata, diff_ids} ->
-            initial_batch_size = 5
-            {initial_diffs, _remaining} = Enum.split(diff_ids, initial_batch_size)
+    try do
+      case hex_impl.diff(package, from, to) do
+        {:ok, stream} ->
+          case process_stream_to_diffs(package, from, to, stream) do
+            {:ok, metadata, diff_ids} ->
+              initial_batch_size = 5
+              {initial_diffs, _remaining} = Enum.split(diff_ids, initial_batch_size)
 
-            socket =
-              socket
-              |> assign(
-                metadata: metadata,
-                all_diff_ids: diff_ids,
-                loaded_diffs: [],
-                loaded_diff_content: %{},
-                remaining_diffs: diff_ids,
-                generating: false,
-                has_more_diffs: length(diff_ids) > 0
-              )
+              socket =
+                socket
+                |> assign(
+                  metadata: metadata,
+                  all_diff_ids: diff_ids,
+                  loaded_diffs: [],
+                  loaded_diff_content: %{},
+                  remaining_diffs: diff_ids,
+                  generating: false,
+                  has_more_diffs: length(diff_ids) > 0
+                )
 
-            send(self(), {:load_diffs, initial_diffs})
+              send(self(), {:load_diffs, initial_diffs})
 
-            {:noreply, socket}
+              {:noreply, socket}
 
-          {:error, reason} ->
-            Logger.error("Failed to generate diff: #{inspect(reason)}")
-            {:noreply, assign(socket, error: "Failed to generate diff", generating: false)}
-        end
+            {:error, reason} ->
+              Logger.error("Failed to generate diff: #{inspect(reason)}")
+              {:noreply, assign(socket, error: "Failed to generate diff", generating: false)}
+          end
 
-      :error ->
-        {:noreply, assign(socket, error: "Failed to generate diff", generating: false)}
+        :error ->
+          {:noreply, assign(socket, error: "Failed to generate diff", generating: false)}
+      end
+    catch
+      :throw, {:diff, :invalid_diff} ->
+        {:noreply, assign(socket, error: "Invalid diff", generating: false)}
+    after
+      Diff.TmpDir.cleanup()
     end
-  catch
-    :throw, {:diff, :invalid_diff} ->
-      {:noreply, assign(socket, error: "Invalid diff", generating: false)}
   end
 
   def handle_info({:load_diffs_and_update, diff_ids}, socket) do
