@@ -1,0 +1,13 @@
+<div class="min-h-screen flex flex-col">
+  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-md">
+    Skip to main content
+  </a>
+
+  <.navbar package={assigns[:package]} from={assigns[:from]} to={assigns[:to]} />
+
+  <main id="main-content" role="main" class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 py-6">
+    <%= @inner_content %>
+  </main>
+
+  <.footer />
+</div>

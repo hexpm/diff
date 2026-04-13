@@ -1,0 +1,67 @@
+<div class="flex-1 flex flex-col">
+  <%= if assigns[:error] do %>
+    <div class="flex flex-col items-center justify-center py-24 text-center">
+      <p class="text-h6 font-semibold text-grey-700 mb-2">Error</p>
+      <p class="text-sm text-grey-400"><%= @error %></p>
+    </div>
+  <% else %>
+    <%= if assigns[:view_mode] == :diffs_list do %>
+      <div class="flex flex-col items-center w-full py-12 px-4">
+        <h1 class="text-h5 font-bold text-grey-800 mb-6">Package Diffs</h1>
+        <div class="w-full max-w-2xl flex flex-col gap-2">
+          <%= for {package, from, to, url} <- @diffs do %>
+            <a href={url} class="flex items-center justify-between px-4 py-3 rounded-lg border border-grey-100 hover:border-primary-300 hover:bg-primary-50 transition-colors group">
+              <span class="font-mono text-sm font-semibold text-grey-700 group-hover:text-primary-700"><%= package %></span>
+              <span class="text-xs text-grey-400 font-mono"><%= from %> → <%= to %></span>
+            </a>
+          <% end %>
+        </div>
+      </div>
+    <% else %>
+      <%= unless @generating do %>
+        <div class="flex flex-row items-center gap-3 py-4 mb-4 border-b border-grey-100">
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-grey-50 border border-grey-200">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-3.5 w-3.5 text-grey-400" aria-hidden="true">
+              <path d="M3.75 2a.75.75 0 0 0-.75.75v10.5a.75.75 0 0 0 1.28.53L8 10.06l3.72 3.72a.75.75 0 0 0 1.28-.53V2.75a.75.75 0 0 0-.75-.75h-8.5Z" />
+            </svg>
+            <span class="text-sm font-semibold text-grey-700 font-mono"><%= @metadata.files_changed %></span>
+            <span class="text-xs text-grey-400"><%= pluralize(@metadata.files_changed, "file", "files") %> changed</span>
+          </div>
+
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-green-50 border border-green-200">
+            <span class="text-sm font-bold text-green-700 font-mono">+<%= @metadata.total_additions %></span>
+            <span class="text-xs text-green-600"><%= pluralize(@metadata.total_additions, "addition", "additions") %></span>
+          </div>
+
+          <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-red-50 border border-red-200">
+            <span class="text-sm font-bold text-red-700 font-mono">-<%= @metadata.total_deletions %></span>
+            <span class="text-xs text-red-600"><%= pluralize(@metadata.total_deletions, "deletion", "deletions") %></span>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="ghd-container" id="diff-list" phx-hook="DiffList">
+        <%= if @generating do %>
+          <div class="loading-spinner" role="status" aria-live="polite">Generating diffs...</div>
+        <% end %>
+
+      <%= for diff_id <- @loaded_diffs do %>
+        <div id={"#{diff_id}-container"}>
+          <%= case Map.get(@loaded_diff_content, diff_id) do %>
+            <% nil -> %>
+              <div class="ghd-diff-error">Failed to load diff</div>
+            <% content -> %>
+              <%= raw(content) %>
+          <% end %>
+        </div>
+      <% end %>
+
+        <%= if @has_more_diffs do %>
+          <div id="loading-trigger" class="loading-spinner" role="status" aria-live="polite" phx-hook="InfiniteScroll" data-loaded={length(@loaded_diffs)}>
+            Loading more diffs...
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

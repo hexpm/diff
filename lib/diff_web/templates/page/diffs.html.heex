@@ -1,0 +1,37 @@
+<div class="flex-1 flex flex-col items-center w-full py-12 px-4">
+  <h1 class="text-h5 font-bold text-grey-800 mb-6">Package Diffs</h1>
+  <div class="w-full max-w-3xl overflow-hidden rounded-xl border border-grey-100">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="bg-grey-50 text-left text-xs font-semibold text-grey-500 uppercase tracking-wider">
+          <th class="px-6 py-3">Package</th>
+          <th class="px-4 py-3">From</th>
+          <th class="px-4 py-3">To</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-grey-100">
+        <%= if Enum.empty?(@diffs) do %>
+          <tr>
+            <td colspan="4" class="px-6 py-8 text-center text-sm text-grey-400">
+              No package diffs available.
+            </td>
+          </tr>
+        <% else %>
+          <%= for {app, from, to, link} <- @diffs do %>
+          <tr class="hover:bg-grey-50 transition-colors">
+            <td class="px-6 py-3">
+              <a href={"https://hex.pm/packages/#{URI.encode(app, &URI.char_unreserved?/1)}/#{URI.encode(to, &URI.char_unreserved?/1)}"} class="font-mono font-semibold text-primary-700 hover:text-primary-900 transition-colors"><%= app %></a>
+            </td>
+            <td class="px-4 py-3 font-mono text-grey-400 text-xs"><%= from %></td>
+            <td class="px-4 py-3 font-mono text-grey-400 text-xs"><%= to %></td>
+            <td class="px-4 py-3 text-right">
+              <a href={link} class="inline-flex items-center px-3 py-1 bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold rounded-md transition-colors">View Diff</a>
+            </td>
+          </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

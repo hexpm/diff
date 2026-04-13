@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Web based diffs of Hex packages">
+    <%= if assigns[:package] && assigns[:from] && assigns[:to] do %>
+      <title><%= @package %> <%= @from %>..<%= @to %> | hexdiff</title>
+    <% else %>
+      <title>hexdiff</title>
+    <% end %>
+
+    <link rel="stylesheet" href={~p"/css/app.css"}/>
+    <script defer type="text/javascript" src={~p"/js/app.js"}></script>
+
+    <%= if host = Application.get_env(:diff, :host) do %>
+      <script async defer src={"https://s.#{host}/js/script.js"}></script>
+    <% end %>
+  </head>
+  <body class="bg-white">
+    <%= @inner_content %>
+  </body>
+</html>

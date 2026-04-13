@@ -37,6 +37,9 @@ defmodule DiffWeb.LiveView do
     end
   end
 
+  def pluralize(1, singular, _plural), do: singular
+  def pluralize(_, _singular, plural), do: plural
+
   def sanitize_utf8(content) when is_binary(content) do
     content
     |> String.chunk(:valid)
