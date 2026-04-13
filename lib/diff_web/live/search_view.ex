@@ -3,57 +3,80 @@ defmodule DiffWeb.SearchLiveView do
 
   def render(assigns) do
     ~H"""
-    <div class="search-area">
-      <form phx-change="search" phx-submit="go" class="search-form">
+    <div class="flex-1 flex flex-col items-center w-full py-16 px-4">
+      <h1 class="text-h5 font-bold text-grey-800 mb-2">Package Diffs</h1>
+      <p class="text-grey-400 text-sm mb-8">Compare any two versions of a Hex package</p>
+
+      <form phx-change="search" phx-submit="go" class="w-full max-w-sm flex flex-col gap-3">
         <input
           autocomplete="off"
           autofocus
-          class="search-input"
+          class="w-full px-4 py-2 border border-grey-200 rounded-lg text-grey-700 placeholder-grey-300 focus:border-primary-400 bg-white text-sm"
           type="text"
           name="q"
           value={@query}
-          placeholder="Search..."
+          placeholder="Search package..."
         />
-        <div class="suggestions">
-          <%= if length(@suggestions) > 0 do %>
-            Did you mean:
+        <%= if @suggestions != [] do %>
+          <div class="flex flex-wrap gap-2 items-center text-sm text-grey-400">
+            <span>Did you mean:</span>
             <%= for suggestion <- @suggestions do %>
-              <span class="suggestion" phx-click={"search_#{suggestion}"} onclick=""><%= suggestion %></span>
+              <button
+                type="button"
+                class="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-md text-xs font-medium hover:bg-primary-200 transition-colors cursor-pointer"
+                phx-click={"search_#{suggestion}"}
+              ><%= suggestion %></button>
             <% end %>
-          <% end %>
-        </div>
+          </div>
+        <% end %>
       </form>
+
       <%= if length(@releases) == 1 do %>
-        The package only has one version so there's nothing to diff with.
+        <p class="mt-6 text-sm text-grey-400">This package only has one version — nothing to diff.</p>
       <% else %>
         <%= if @result do %>
-          <form phx-change="select_version" class="version-form">
-            <div class="version-area">
-              <div class="select-area">
-                <label for="from">From</label>
-                <select name="from">
-                  <%= for release_from <- @from_releases do %>
-                    <option selected={selected(@from, release_from)} value={release_from}><%= release_from %></option>
-                  <% end %>
-                </select>
-                <label for="to">To</label>
-                <select name="to">
-                  <%= for release_to <- @to_releases do %>
-                    <option selected={selected(@to, release_to)} value={release_to}><%= release_to %></option>
-                  <% end %>
-                </select>
+          <form phx-change="select_version" class="w-full max-w-sm mt-6">
+            <div class="flex flex-col gap-4">
+              <div class="grid grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1">
+                  <label for="from-select" class="text-xs font-medium text-grey-500 uppercase tracking-wider">From</label>
+                  <select
+                    name="from"
+                    id="from-select"
+                    class="w-full px-3 py-2 border border-grey-200 rounded-lg text-grey-700 text-sm bg-white focus:border-primary-400"
+                  >
+                    <%= for release_from <- @from_releases do %>
+                      <option selected={selected(@from, release_from)} value={release_from}><%= release_from %></option>
+                    <% end %>
+                  </select>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label for="to-select" class="text-xs font-medium text-grey-500 uppercase tracking-wider">To</label>
+                  <select
+                    name="to"
+                    id="to-select"
+                    class="w-full px-3 py-2 border border-grey-200 rounded-lg text-grey-700 text-sm bg-white focus:border-primary-400"
+                  >
+                    <%= for release_to <- @to_releases do %>
+                      <option selected={selected(@to, release_to)} value={release_to}><%= release_to %></option>
+                    <% end %>
+                  </select>
+                </div>
               </div>
               <button
-                class="diff-button"
                 type="button"
                 disabled={disabled([@from, @to])}
                 phx-click="go"
-              >Diff</button>
+                class="w-full py-2 px-4 bg-primary-600 hover:bg-primary-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+              >View Diff</button>
             </div>
           </form>
         <% end %>
       <% end %>
-      <%= @not_found %>
+
+      <%= if @not_found do %>
+        <p class="mt-6 text-sm text-red-600"><%= @not_found %></p>
+      <% end %>
     </div>
     """
   end

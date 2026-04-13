@@ -7,6 +7,7 @@ defmodule DiffWeb do
 
       use DiffWeb, :controller
       use DiffWeb, :view
+      use DiffWeb, :html
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -25,7 +26,6 @@ defmodule DiffWeb do
 
       import Plug.Conn
       import DiffWeb.Gettext
-      alias DiffWeb.Router.Helpers, as: Routes
     end
   end
 
@@ -35,10 +35,19 @@ defmodule DiffWeb do
         root: "lib/diff_web/templates",
         namespace: DiffWeb
 
-      # Import convenience functions from controllers
-      import Phoenix.Controller, only: [get_flash: 1, get_flash: 2, view_module: 1]
+      import Phoenix.Controller, only: [view_module: 1]
 
       # Include shared imports and aliases for views
+      unquote(view_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      use Phoenix.Component
+
+      import Phoenix.Controller, only: [view_module: 1]
+
       unquote(view_helpers())
     end
   end
@@ -46,7 +55,7 @@ defmodule DiffWeb do
   def live_view do
     quote do
       use Phoenix.LiveView,
-        layout: {DiffWeb.LayoutView, :live}
+        layout: {DiffWeb.LayoutView, :app}
 
       unquote(view_helpers())
     end
@@ -85,6 +94,15 @@ defmodule DiffWeb do
       import Phoenix.HTML.Form
       use PhoenixHTMLHelpers
 
+      # Phoenix.Component for functional components and ~H sigil
+      import Phoenix.Component
+
+      # Verified routes (~p sigil)
+      use Phoenix.VerifiedRoutes,
+        endpoint: DiffWeb.Endpoint,
+        router: DiffWeb.Router,
+        statics: DiffWeb.static_paths()
+
       # Import LiveView helpers (live_render, live_component, live_patch, etc)
       import Phoenix.LiveView.Helpers
 
@@ -93,9 +111,10 @@ defmodule DiffWeb do
 
       import DiffWeb.ErrorHelpers
       import DiffWeb.Gettext
-      alias DiffWeb.Router.Helpers, as: Routes
     end
   end
+
+  def static_paths, do: ~w(css js fonts images favicon.ico robots.txt)
 
   @doc """
   When used, dispatch to the appropriate controller/view/etc.

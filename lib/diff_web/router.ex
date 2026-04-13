@@ -9,7 +9,7 @@ defmodule DiffWeb.Router do
     plug :fetch_session
     plug :fetch_flash
     plug :fetch_live_flash
-    plug :put_root_layout, {DiffWeb.LayoutView, :root}
+    plug :put_root_layout, html: {DiffWeb.LayoutView, :root}
     plug :put_secure_browser_headers
   end
 
