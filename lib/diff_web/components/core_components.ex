@@ -47,7 +47,7 @@ defmodule DiffWeb.CoreComponents do
     <div class="flex items-center gap-3 min-w-0">
       <a
         href="/"
-        class="shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md text-grey-400 hover:text-white hover:bg-grey-700 text-xs font-medium transition-colors"
+        class="shrink-0 flex items-center gap-1.5 px-2 py-1 rounded-md text-grey-200 hover:text-white hover:bg-grey-700 text-xs font-medium transition-colors"
         aria-label="Back to search"
       >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="h-3.5 w-3.5" aria-hidden="true">
@@ -56,15 +56,15 @@ defmodule DiffWeb.CoreComponents do
         Search
       </a>
 
-      <div class="h-4 w-px bg-grey-700 shrink-0"></div>
+      <div class="h-4 w-px bg-grey-600 shrink-0"></div>
 
       <div class="flex items-center gap-2 min-w-0 overflow-hidden">
-        <span class="shrink-0 text-xs font-medium text-grey-500 uppercase tracking-wider">diff</span>
-        <span class="text-primary-300 font-mono text-sm font-semibold truncate"><%= @package %></span>
+        <span class="shrink-0 text-xs font-medium text-grey-400 uppercase tracking-wider">diff</span>
+        <span class="text-primary-100 font-mono text-sm font-semibold truncate"><%= @package %></span>
         <div class="shrink-0 flex items-center gap-1.5 font-mono text-xs">
-          <span class="px-1.5 py-0.5 rounded bg-grey-800 text-grey-300"><%= @from %></span>
-          <span class="text-grey-600">&rarr;</span>
-          <span class="px-1.5 py-0.5 rounded bg-primary-900 text-primary-300"><%= @to %></span>
+          <span class="px-1.5 py-0.5 rounded bg-grey-800 text-grey-200"><%= @from %></span>
+          <span class="text-grey-300">&rarr;</span>
+          <span class="px-1.5 py-0.5 rounded bg-primary-900 text-primary-200"><%= @to %></span>
         </div>
       </div>
     </div>

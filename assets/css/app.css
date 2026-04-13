@@ -151,6 +151,15 @@
     font-family: var(--font-mono);
   }
 
+  select {
+    padding-right: 2rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2361758a'%3E%3Cpath fill-rule='evenodd' d='M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+  }
+
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible,
@@ -214,12 +223,14 @@
 }
 
 .ghd-file-status {
-  color: var(--color-grey-400);
-  border: 1px solid var(--color-grey-300);
-  border-radius: 3px;
-  padding: 0 3px;
+  border-radius: 4px;
+  padding: 1px 6px;
   display: inline-block;
   text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid transparent;
 }
 
 .ghd-line-status {
@@ -228,17 +239,37 @@
 }
 
 .ghd-file-status-removed {
-  color: var(--color-red-600);
-  border-color: var(--color-red-400);
+  color: var(--color-red-700);
+  background-color: var(--color-red-50);
+  border-color: var(--color-red-300);
 }
 
 .ghd-file-status-added {
-  color: var(--color-green-600);
-  border-color: var(--color-green-400);
+  color: var(--color-green-700);
+  background-color: var(--color-green-50);
+  border-color: var(--color-green-300);
 }
 
-.ghd-diff {
-  overflow-y: hidden;
+.ghd-file-status-changed {
+  color: var(--color-primary-700);
+  background-color: var(--color-primary-50);
+  border-color: var(--color-primary-300);
+}
+
+.ghd-file-status-renamed {
+  color: var(--color-yellow-800);
+  background-color: var(--color-yellow-50);
+  border-color: var(--color-yellow-400);
+}
+
+div.ghd-diff {
+  overflow-x: auto;
+}
+
+table.ghd-diff {
+  width: 100%;
+  min-width: max-content;
+  border-collapse: collapse;
 }
 
 .ghd-diff-error {
