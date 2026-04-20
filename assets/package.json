@@ -19,6 +19,6 @@
     "css-minimizer-webpack-plugin": "^8.0.0",
     "mini-css-extract-plugin": "^2.10.2",
     "webpack-cli": "^7.0.2",
-    "webpack": "5.105.4"
+    "webpack": "5.106.1"
   }
 }
