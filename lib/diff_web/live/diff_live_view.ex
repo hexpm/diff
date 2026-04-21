@@ -16,7 +16,7 @@ defmodule DiffWeb.DiffLiveView do
             mount_single_diff(socket, package, resolved_from, resolved_to)
 
           {:error, reason} ->
-            {:ok, assign(socket, error: "Package not found: #{reason}")}
+            {:ok, assign(socket, error: latest_version_error(package, reason))}
         end
 
       :error ->
@@ -117,13 +117,15 @@ defmodule DiffWeb.DiffLiveView do
   defp resolve_latest_version(package, from, to) when to == :latest or to == "latest" do
     case Diff.Package.Store.get_versions(package) do
       {:ok, versions} ->
-        to =
-          versions
-          |> Enum.map(&Version.parse!/1)
-          |> Enum.filter(&(&1.pre == []))
-          |> Enum.max(Version)
+        versions = Enum.map(versions, &Version.parse!/1)
 
-        {:ok, from, to_string(to)}
+        case latest_version(versions) do
+          nil ->
+            {:error, :no_versions}
+
+          to ->
+            {:ok, from, to_string(to)}
+        end
 
       {:error, :not_found} ->
         {:error, :not_found}
@@ -131,6 +133,22 @@ defmodule DiffWeb.DiffLiveView do
   end
 
   defp resolve_latest_version(_package, from, to), do: {:ok, from, to}
+
+  defp latest_version([]), do: nil
+
+  defp latest_version(versions) do
+    stable_versions = Enum.filter(versions, &(&1.pre == []))
+
+    case stable_versions do
+      [] -> Enum.max(versions, Version)
+      stable_versions -> Enum.max(stable_versions, Version)
+    end
+  end
+
+  defp latest_version_error(package, :not_found), do: "Package not found: #{package}"
+
+  defp latest_version_error(package, :no_versions),
+    do: "No versions found for package: #{package}"
 
   def handle_event("load-more", _params, socket) do
     batch_size = 5
