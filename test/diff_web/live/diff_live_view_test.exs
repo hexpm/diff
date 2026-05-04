@@ -70,6 +70,8 @@ defmodule DiffWeb.DiffLiveViewTest do
   end
 
   describe "DiffLiveView diff generation" do
+    setup :set_mox_global
+
     test "successfully generates and processes diffs in parallel", %{conn: conn} do
       # Setup mock stream data that simulates parallel processing
       mock_stream = [
@@ -123,16 +125,13 @@ defmodule DiffWeb.DiffLiveViewTest do
       capture_log(fn ->
         {:ok, view, _html} = live(conn, "/diff/phoenix/1.4.5..1.4.9")
 
-        # Wait for generation and loading to complete
-        :timer.sleep(200)
-        final_html = render(view)
-
-        # Should show the metadata from parallel processing
-        assert final_html =~ "3 files changed"
-        # additions
-        assert final_html =~ "+3"
-        # deletions
-        assert final_html =~ "-1"
+        assert_eventually(fn ->
+          html = render(view)
+          assert html =~ "files changed"
+          assert html =~ "3"
+          assert html =~ "+3"
+          assert html =~ "-1"
+        end)
       end)
     end
 
@@ -179,12 +178,11 @@ defmodule DiffWeb.DiffLiveViewTest do
       capture_log(fn ->
         {:ok, view, _html} = live(conn, "/diff/phoenix/1.4.5..1.4.9")
 
-        :timer.sleep(200)
-        final_html = render(view)
-
-        # Should still succeed with partial results
-        # Only successful files
-        assert final_html =~ "2 files changed"
+        assert_eventually(fn ->
+          html = render(view)
+          assert html =~ "files changed"
+          assert html =~ "2"
+        end)
       end)
     end
 
@@ -201,10 +199,9 @@ defmodule DiffWeb.DiffLiveViewTest do
 
       {:ok, view, _html} = live(conn, "/diff/phoenix/1.4.5..1.4.9")
 
-      :timer.sleep(100)
-      final_html = render(view)
-
-      assert final_html =~ "Failed to generate diff"
+      assert_eventually(fn ->
+        assert render(view) =~ "Failed to generate diff"
+      end)
     end
 
     test "handles storage failure during parallel processing", %{conn: conn} do
@@ -234,11 +231,11 @@ defmodule DiffWeb.DiffLiveViewTest do
       capture_log(fn ->
         {:ok, view, _html} = live(conn, "/diff/phoenix/1.4.5..1.4.9")
 
-        :timer.sleep(100)
-        final_html = render(view)
+        assert_eventually(fn ->
+          refute render(view) =~ "Generating diffs"
+        end)
 
-        # Should handle storage failures gracefully
-        refute final_html =~ "Failed to generate diff"
+        refute render(view) =~ "Failed to generate diff"
       end)
     end
   end

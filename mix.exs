@@ -67,7 +67,12 @@ defmodule Diff.MixProject do
 
   defp aliases() do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets"]
+      setup: ["deps.get", "cmd --cd assets npm install"],
+      "assets.deploy": [
+        "cmd --cd assets npm install",
+        "cmd --cd assets node build.js --deploy",
+        "phx.digest"
+      ]
     ]
   end
 end

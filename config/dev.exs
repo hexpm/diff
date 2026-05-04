@@ -5,7 +5,7 @@ import Config
 #
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
-# with webpack to recompile .js and .css sources.
+# with esbuild and tailwindcss to recompile .js and .css sources.
 config :diff, DiffWeb.Endpoint,
   http: [port: 4004],
   debug_errors: true,
@@ -13,11 +13,8 @@ config :diff, DiffWeb.Endpoint,
   check_origin: false,
   watchers: [
     node: [
-      "node_modules/webpack/bin/webpack.js",
-      "--mode",
-      "development",
+      "build.js",
       "--watch",
-      "--watch-options-stdin",
       cd: Path.expand("../assets", __DIR__)
     ]
   ]

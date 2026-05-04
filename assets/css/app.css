@@ -1,11 +1,11 @@
+/* Google Fonts: Inter + JetBrains Mono */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+
 @import "tailwindcss";
 
 /* Tell Tailwind where to scan for classes */
 @source "../../lib";
 @source "../js";
-
-/* Google Fonts: Inter + JetBrains Mono */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 /*
  * Hexdiff Design System (based on hex.pm)
@@ -50,7 +50,7 @@
   --color-primary-300: #c3b4d1;
   --color-primary-200: #e1d9e8;
   --color-primary-100: #f0edf4;
-  --color-primary-50:  #f7f5f9;
+  --color-primary-50: #f7f5f9;
 
   /* Green Palette (Additions) */
   --color-green-900: #054333;
@@ -62,7 +62,7 @@
   --color-green-300: #a0c8b1;
   --color-green-200: #cfe3d8;
   --color-green-100: #e8f2ec;
-  --color-green-50:  #f3f8f5;
+  --color-green-50: #f3f8f5;
 
   /* Blue Palette (Info/Links) */
   --color-blue-900: #04237d;
@@ -74,7 +74,7 @@
   --color-blue-300: #9fbdef;
   --color-blue-200: #cfdef7;
   --color-blue-100: #e7effc;
-  --color-blue-50:  #f3f6fd;
+  --color-blue-50: #f3f6fd;
 
   /* Yellow Palette (Warning) */
   --color-yellow-900: #8a5912;
@@ -86,7 +86,7 @@
   --color-yellow-300: #f9e2b0;
   --color-yellow-200: #fcf0d8;
   --color-yellow-100: #fef8ec;
-  --color-yellow-50:  #fefbf5;
+  --color-yellow-50: #fefbf5;
 
   /* Red Palette (Deletions/Danger) */
   --color-red-900: #620e32;
@@ -98,7 +98,7 @@
   --color-red-300: #ddabb2;
   --color-red-200: #eed5d9;
   --color-red-100: #f7eaec;
-  --color-red-50:  #faf4f5;
+  --color-red-50: #faf4f5;
 
   /* Grey Palette (Text & UI) */
   --color-grey-900: #030913;
@@ -110,11 +110,15 @@
   --color-grey-300: #91a4b7;
   --color-grey-200: #cad5e0;
   --color-grey-100: #e1e8f0;
-  --color-grey-50:  #f0f5f9;
+  --color-grey-50: #f0f5f9;
 
   /* Diff viewer specific tokens */
   --color-diff-chunk-bg: #f8fafd;
   --color-diff-selection-bg: #fffbc2;
+  --color-diff-addition-bg: #dafbe1;
+  --color-diff-addition-num-bg: #aceebb;
+  --color-diff-deletion-bg: #ffebe9;
+  --color-diff-deletion-num-bg: #ffcecb;
 }
 
 /* ===== GLOBAL BASE STYLES ===== */
@@ -147,7 +151,8 @@
     transition: color 0.2s ease;
   }
 
-  code, pre {
+  code,
+  pre {
     font-family: var(--font-mono);
   }
 
@@ -316,19 +321,19 @@ table.ghd-diff {
 }
 
 .ghd-line-type-add {
-  background-color: var(--color-green-50);
+  background-color: var(--color-diff-addition-bg);
 }
 
 .ghd-line-type-add .ghd-line-number {
-  background-color: var(--color-green-100);
+  background-color: var(--color-diff-addition-num-bg);
 }
 
 .ghd-line-type-remove {
-  background-color: var(--color-red-50);
+  background-color: var(--color-diff-deletion-bg);
 }
 
 .ghd-line-type-remove .ghd-line-number {
-  background-color: var(--color-red-100);
+  background-color: var(--color-diff-deletion-num-bg);
 }
 
 .ghd-line-number div {
@@ -348,8 +353,12 @@ table.ghd-diff {
 
 /* ===== LOADING SPINNER ===== */
 @keyframes spin {
-  0%   { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-spinner {
@@ -364,7 +373,7 @@ table.ghd-diff {
 }
 
 .loading-spinner::before {
-  content: '';
+  content: "";
   width: 20px;
   height: 20px;
   border: 2px solid var(--color-grey-100);

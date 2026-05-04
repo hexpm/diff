@@ -2,8 +2,8 @@
   "repository": {},
   "license": "MIT",
   "scripts": {
-    "deploy": "webpack --mode production",
-    "watch": "webpack --mode development --watch"
+    "deploy": "node build.js --deploy",
+    "watch": "node build.js --watch"
   },
   "dependencies": {
     "phoenix": "file:../deps/phoenix",
@@ -11,18 +11,8 @@
     "phoenix_live_view": "file:../deps/phoenix_live_view"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.2",
-    "@tailwindcss/postcss": "^4.2.2",
-    "babel-loader": "^10.1.1",
-    "copy-webpack-plugin": "^14.0.0",
-    "css-loader": "^7.1.4",
-    "css-minimizer-webpack-plugin": "^8.0.0",
-    "mini-css-extract-plugin": "^2.10.2",
-    "postcss": "^8.5.9",
-    "postcss-loader": "^8.2.1",
-    "tailwindcss": "^4.2.2",
-    "webpack": "5.105.4",
-    "webpack-cli": "^7.0.2"
+    "@tailwindcss/cli": "^4.2.4",
+    "esbuild": "^0.25.0",
+    "tailwindcss": "^4.2.2"
   }
 }

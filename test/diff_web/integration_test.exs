@@ -8,8 +8,8 @@ defmodule DiffWeb.IntegrationTest do
 
     test "root route renders search page", %{conn: conn} do
       {:ok, _view, html} = live(conn, "/")
-      assert html =~ ~s(class="search-input")
-      assert html =~ "Search..."
+      assert html =~ ~s(name="q")
+      assert html =~ "Search package..."
     end
 
     test "/diffs route with query parameters", %{conn: conn} do
