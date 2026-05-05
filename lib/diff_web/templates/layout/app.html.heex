@@ -5,8 +5,10 @@
 
   <.navbar package={assigns[:package]} from={assigns[:from]} to={assigns[:to]} />
 
-  <main id="main-content" role="main" class="flex-1 w-full max-w-7xl mx-auto px-4 lg:px-8 py-6">
-    <%= @inner_content %>
+  <main id="main-content" role="main" class="flex flex-1 flex-col bg-slate-100 dark:bg-grey-950">
+    <div class="flex flex-1 flex-col w-full max-w-7xl mx-auto px-4 lg:px-8 py-6">
+      <%= @inner_content %>
+    </div>
   </main>
 
   <.footer />

@@ -4,26 +4,26 @@ defmodule DiffWeb.SearchLiveView do
   def render(assigns) do
     ~H"""
     <div class="flex-1 flex flex-col items-center w-full py-16 px-4">
-      <h1 class="text-h5 font-bold text-grey-800 mb-2">Package Diffs</h1>
-      <p class="text-grey-400 text-sm mb-8">Compare any two versions of a Hex package</p>
+      <h1 class="text-h5 font-bold text-grey-800 dark:text-grey-100 mb-2">Package Diffs</h1>
+      <p class="text-grey-400 dark:text-grey-300 text-sm mb-8">Compare any two versions of a Hex package</p>
 
       <form phx-change="search" phx-submit="go" class="w-full max-w-sm flex flex-col gap-3">
         <input
           autocomplete="off"
           autofocus
-          class="w-full px-4 py-2 border border-grey-200 rounded-lg text-grey-700 placeholder-grey-300 focus:border-primary-400 bg-white text-sm"
+          class="w-full px-4 py-2 border border-grey-200 dark:border-grey-600 rounded-lg text-grey-700 dark:text-grey-200 placeholder-grey-300 focus:border-primary-400 bg-white dark:bg-grey-800 text-sm"
           type="text"
           name="q"
           value={@query}
           placeholder="Search package..."
         />
         <%= if @suggestions != [] do %>
-          <div class="flex flex-wrap gap-2 items-center text-sm text-grey-400">
+          <div class="flex flex-wrap gap-2 items-center text-sm text-grey-400 dark:text-grey-300">
             <span>Did you mean:</span>
             <%= for suggestion <- @suggestions do %>
               <button
                 type="button"
-                class="px-2 py-0.5 bg-primary-100 text-primary-700 rounded-md text-xs font-medium hover:bg-primary-200 transition-colors cursor-pointer"
+                class="px-2 py-0.5 bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-400 rounded-md text-xs font-medium hover:bg-primary-200 dark:hover:bg-primary-800/50 transition-colors cursor-pointer"
                 phx-click={"search_#{suggestion}"}
               ><%= suggestion %></button>
             <% end %>
@@ -39,11 +39,11 @@ defmodule DiffWeb.SearchLiveView do
             <div class="flex flex-col gap-4">
               <div class="grid grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1">
-                  <label for="from-select" class="text-xs font-medium text-grey-500 uppercase tracking-wider">From</label>
+                  <label for="from-select" class="text-xs font-medium text-grey-500 dark:text-grey-400 uppercase tracking-wider">From</label>
                   <select
                     name="from"
                     id="from-select"
-                    class="w-full px-3 py-2 border border-grey-200 rounded-lg text-grey-700 text-sm bg-white focus:border-primary-400"
+                    class="w-full px-3 py-2 border border-grey-200 dark:border-grey-600 rounded-lg text-grey-700 dark:text-grey-200 text-sm bg-white dark:bg-grey-800 focus:border-primary-400"
                   >
                     <%= for release_from <- @from_releases do %>
                       <option selected={selected(@from, release_from)} value={release_from}><%= release_from %></option>
@@ -51,11 +51,11 @@ defmodule DiffWeb.SearchLiveView do
                   </select>
                 </div>
                 <div class="flex flex-col gap-1">
-                  <label for="to-select" class="text-xs font-medium text-grey-500 uppercase tracking-wider">To</label>
+                  <label for="to-select" class="text-xs font-medium text-grey-500 dark:text-grey-400 uppercase tracking-wider">To</label>
                   <select
                     name="to"
                     id="to-select"
-                    class="w-full px-3 py-2 border border-grey-200 rounded-lg text-grey-700 text-sm bg-white focus:border-primary-400"
+                    class="w-full px-3 py-2 border border-grey-200 dark:border-grey-600 rounded-lg text-grey-700 dark:text-grey-200 text-sm bg-white dark:bg-grey-800 focus:border-primary-400"
                   >
                     <%= for release_to <- @to_releases do %>
                       <option selected={selected(@to, release_to)} value={release_to}><%= release_to %></option>

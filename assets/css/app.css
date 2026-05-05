@@ -2,6 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 
 @import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 /* Tell Tailwind where to scan for classes */
 @source "../../lib";
@@ -101,6 +102,7 @@
   --color-red-50: #faf4f5;
 
   /* Grey Palette (Text & UI) */
+  --color-grey-950: #02060d;
   --color-grey-900: #030913;
   --color-grey-800: #0d1829;
   --color-grey-700: #1c2a3a;
@@ -351,6 +353,123 @@ table.ghd-diff {
   padding: 0 90px;
 }
 
+/* ===== THEME TOGGLE ===== */
+/* All icons hidden by default; only the active preference's icon is shown */
+[data-theme-toggle] [data-theme-icon] {
+  display: none;
+}
+
+html[data-theme-preference="light"] [data-theme-toggle] [data-theme-icon="light"] {
+  display: inline-flex;
+}
+
+html[data-theme-preference="dark"] [data-theme-toggle] [data-theme-icon="dark"] {
+  display: inline-flex;
+}
+
+html[data-theme-preference="system"] [data-theme-toggle] [data-theme-icon="system"] {
+  display: inline-flex;
+}
+
+/* Highlight the active choice in the dropdown */
+[data-theme-menu] [data-theme-choice] {
+  font-weight: normal;
+}
+
+html[data-theme-preference="light"] [data-theme-menu] [data-theme-choice="light"],
+html[data-theme-preference="dark"] [data-theme-menu] [data-theme-choice="dark"],
+html[data-theme-preference="system"] [data-theme-menu] [data-theme-choice="system"] {
+  font-weight: 600;
+}
+
+/* ===== DIFF VIEWER DARK MODE ===== */
+[data-theme=dark] .ghd-file-status-changed {
+  color: var(--color-primary-300);
+  background-color: var(--color-primary-900);
+  border-color: var(--color-primary-700);
+}
+
+[data-theme=dark] .ghd-file-status-added {
+  color: var(--color-green-300);
+  background-color: var(--color-green-900);
+  border-color: var(--color-green-700);
+}
+
+[data-theme=dark] .ghd-file-status-removed {
+  color: var(--color-red-300);
+  background-color: var(--color-red-900);
+  border-color: var(--color-red-700);
+}
+
+[data-theme=dark] .ghd-file-status-renamed {
+  color: var(--color-yellow-300);
+  background-color: var(--color-yellow-900);
+  border-color: var(--color-yellow-700);
+}
+
+[data-theme=dark] .ghd-file {
+  border-color: var(--color-grey-700);
+  background-color: var(--color-grey-900);
+}
+
+[data-theme=dark] .ghd-file-header {
+  background: var(--color-grey-900);
+  border-bottom-color: var(--color-grey-700);
+  color: var(--color-grey-200);
+}
+
+[data-theme=dark] .ghd-file-header .show-hide-diff {
+  color: var(--color-grey-500);
+}
+
+[data-theme=dark] .ghd-file-header .show-hide-diff path {
+  fill: var(--color-grey-500);
+}
+
+[data-theme=dark] .ghd-line-number {
+  background-color: var(--color-grey-900);
+  color: var(--color-grey-500);
+}
+
+[data-theme=dark] .ghd-chunk-header {
+  background-color: var(--color-grey-800);
+  color: var(--color-grey-400);
+}
+
+[data-theme=dark] .ghd-chunk-header .ghd-line-number {
+  background-color: var(--color-grey-800);
+}
+
+[data-theme=dark] .ghd-text-internal,
+[data-theme=dark] .ghd-text-user {
+  color: var(--color-grey-200);
+}
+
+[data-theme=dark] .ghd-line-type-add {
+  background-color: var(--color-green-900);
+}
+
+[data-theme=dark] .ghd-line-type-add .ghd-line-number {
+  background-color: var(--color-green-800);
+}
+
+[data-theme=dark] .ghd-line-type-remove {
+  background-color: var(--color-red-900);
+}
+
+[data-theme=dark] .ghd-line-type-remove .ghd-line-number {
+  background-color: var(--color-red-800);
+}
+
+[data-theme=dark] {
+  --color-diff-selection-bg: #3d3100;
+}
+
+[data-theme=dark] .ghd-line.selected .ghd-line-number,
+[data-theme=dark] .ghd-line.selected .ghd-text {
+  background-color: var(--color-diff-selection-bg);
+}
+
 /* ===== LOADING SPINNER ===== */
 @keyframes spin {
   0% {
@@ -391,4 +510,13 @@ table.ghd-diff {
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 10px;
+}
+
+[data-theme=dark] .loading-spinner {
+  color: var(--color-grey-300);
+}
+
+[data-theme=dark] .loading-spinner::before {
+  border-color: var(--color-grey-700);
+  border-top-color: var(--color-grey-300);
 }

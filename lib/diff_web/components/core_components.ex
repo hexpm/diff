@@ -10,12 +10,13 @@ defmodule DiffWeb.CoreComponents do
 
   def navbar(assigns) do
     ~H"""
-    <nav class="bg-grey-900 w-full font-sans">
+    <nav class="bg-grey-800 w-full font-sans">
       <div class="max-w-7xl mx-auto px-4 lg:px-8">
         <div class="flex items-center h-[72px] gap-8">
 
           <a href="/" class="shrink-0 flex items-center gap-3">
-            <img src="/images/hexdiff.svg" alt="hexdiff" class="h-8 w-auto" />
+            <img src="/images/hex-full.svg" alt="hex logo" class="h-8 w-auto" />
+            <span class="text-white text-2xl font-bold tracking-tight">hexdiff</span>
           </a>
 
           <%= if @package do %>
@@ -24,9 +25,7 @@ defmodule DiffWeb.CoreComponents do
 
           <div class="flex items-center gap-2 ml-auto">
             <.nav_link href="https://hex.pm">hex.pm</.nav_link>
-            <.nav_icon_link href="https://github.com/hexpm/diff" label="GitHub">
-              <.github_icon class="h-5 w-5" />
-            </.nav_icon_link>
+            <.theme_toggle />
           </div>
 
         </div>
@@ -87,19 +86,73 @@ defmodule DiffWeb.CoreComponents do
   end
 
   @doc """
-  Renders an icon-only link in the navbar style.
+  Renders the theme toggle button with a light/dark/system dropdown.
   """
-  attr :href, :string, required: true
-  attr :label, :string, required: true
-  slot :inner_block, required: true
-
-  def nav_icon_link(assigns) do
+  def theme_toggle(assigns) do
     ~H"""
-    <a
-      href={@href}
-      class="p-1.5 rounded-md text-grey-300 hover:text-white hover:bg-grey-700 transition-colors"
-      aria-label={@label}
-    ><%= render_slot(@inner_block) %></a>
+    <div class="relative flex items-center">
+      <button
+        type="button"
+        data-theme-toggle
+        class="inline-flex items-center justify-center h-9 w-9 text-grey-300 hover:text-white transition-colors cursor-pointer rounded-md hover:bg-grey-700"
+        aria-label="Change theme"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        <span class="sr-only">Change color theme</span>
+        <span data-theme-icon="light">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true">
+            <path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.166 17.834a.75.75 0 0 0-1.06 1.06l1.59 1.591a.75.75 0 1 0 1.061-1.06l-1.59-1.591ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.166 6.166a.75.75 0 0 0 1.06 1.06l1.59-1.591a.75.75 0 1 0-1.061-1.06l-1.59 1.591Z" />
+          </svg>
+        </span>
+        <span data-theme-icon="dark">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd" />
+          </svg>
+        </span>
+        <span data-theme-icon="system">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5" aria-hidden="true">
+            <path fill-rule="evenodd" d="M2.25 5.25a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3V15a3 3 0 0 1-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 0 1-.53 1.28h-9a.75.75 0 0 1-.53-1.28l.621-.622a2.25 2.25 0 0 0 .659-1.59V18h-3a3 3 0 0 1-3-3V5.25Zm1.5 0v9.75c0 .83.672 1.5 1.5 1.5h13.5c.828 0 1.5-.672 1.5-1.5V5.25a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5Z" clip-rule="evenodd" />
+          </svg>
+        </span>
+      </button>
+
+      <div
+        data-theme-menu
+        class="hidden absolute right-0 top-full mt-2 w-36 bg-grey-700 border border-grey-600 rounded-lg shadow-lg py-1 z-50"
+      >
+        <button
+          type="button"
+          data-theme-choice="light"
+          class="w-full flex items-center gap-2 px-4 py-2 text-sm text-grey-200 hover:bg-grey-600 transition-colors cursor-pointer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 shrink-0" aria-hidden="true">
+            <path d="M12 2.25a.75.75 0 0 1 .75.75v2.25a.75.75 0 0 1-1.5 0V3a.75.75 0 0 1 .75-.75ZM7.5 12a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM18.894 6.166a.75.75 0 0 0-1.06-1.06l-1.591 1.59a.75.75 0 1 0 1.06 1.061l1.591-1.59ZM21.75 12a.75.75 0 0 1-.75.75h-2.25a.75.75 0 0 1 0-1.5H21a.75.75 0 0 1 .75.75ZM17.834 18.894a.75.75 0 0 0 1.06-1.06l-1.59-1.591a.75.75 0 1 0-1.061 1.06l1.59 1.591ZM12 18a.75.75 0 0 1 .75.75V21a.75.75 0 0 1-1.5 0v-2.25A.75.75 0 0 1 12 18ZM7.166 17.834a.75.75 0 0 0-1.06 1.06l1.59 1.591a.75.75 0 1 0 1.061-1.06l-1.59-1.591ZM6 12a.75.75 0 0 1-.75.75H3a.75.75 0 0 1 0-1.5h2.25A.75.75 0 0 1 6 12ZM6.166 6.166a.75.75 0 0 0 1.06 1.06l1.59-1.591a.75.75 0 1 0-1.061-1.06l-1.59 1.591Z" />
+          </svg>
+          Light
+        </button>
+        <button
+          type="button"
+          data-theme-choice="dark"
+          class="w-full flex items-center gap-2 px-4 py-2 text-sm text-grey-200 hover:bg-grey-600 transition-colors cursor-pointer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 shrink-0" aria-hidden="true">
+            <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.7-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd" />
+          </svg>
+          Dark
+        </button>
+        <button
+          type="button"
+          data-theme-choice="system"
+          class="w-full flex items-center gap-2 px-4 py-2 text-sm text-grey-200 hover:bg-grey-600 transition-colors cursor-pointer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-4 w-4 shrink-0" aria-hidden="true">
+            <path fill-rule="evenodd" d="M2.25 5.25a3 3 0 0 1 3-3h13.5a3 3 0 0 1 3 3V15a3 3 0 0 1-3 3h-3v.257c0 .597.237 1.17.659 1.591l.621.622a.75.75 0 0 1-.53 1.28h-9a.75.75 0 0 1-.53-1.28l.621-.622a2.25 2.25 0 0 0 .659-1.59V18h-3a3 3 0 0 1-3-3V5.25Zm1.5 0v9.75c0 .83.672 1.5 1.5 1.5h13.5c.828 0 1.5-.672 1.5-1.5V5.25a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5Z" clip-rule="evenodd" />
+          </svg>
+          System
+        </button>
+      </div>
+    </div>
     """
   end
 
@@ -108,74 +161,136 @@ defmodule DiffWeb.CoreComponents do
   """
   def footer(assigns) do
     ~H"""
-    <footer class="bg-grey-900 text-grey-300 mt-auto">
-      <div class="max-w-7xl mx-auto px-4 lg:px-8 py-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-
-          <.footer_section title="About Hex">
-            <.footer_link href="https://hex.pm/about">About</.footer_link>
-            <.footer_link href="https://hex.pm/blog">Blog</.footer_link>
-            <.footer_link href="https://hex.pm/sponsors">Sponsors</.footer_link>
-            <.footer_link href="https://github.com/hexpm">GitHub</.footer_link>
-            <.footer_link href="https://twitter.com/hexpm">Twitter</.footer_link>
-          </.footer_section>
-
-          <.footer_section title="Help">
-            <.footer_link href="https://hex.pm/docs">Documentation</.footer_link>
-            <.footer_link href="https://github.com/hexpm/specifications">Specifications</.footer_link>
-            <.footer_link href="https://github.com/hexpm/hex/issues">Report Client Issue</.footer_link>
-            <.footer_link href="https://github.com/hexpm/hexpm/issues">Report General Issue</.footer_link>
-            <.footer_link href="mailto:support@hex.pm">Contact Support</.footer_link>
-          </.footer_section>
-
-          <.footer_section title="Policies">
-            <.footer_link href="https://hex.pm/policies/codeofconduct">Code of Conduct</.footer_link>
-            <.footer_link href="https://hex.pm/policies/termsofservice">Terms of Service</.footer_link>
-            <.footer_link href="https://hex.pm/policies/privacy">Privacy Policy</.footer_link>
-            <.footer_link href="https://hex.pm/policies/copyright">Copyright Policy</.footer_link>
-            <.footer_link href="https://hex.pm/policies/dispute">Dispute Policy</.footer_link>
-          </.footer_section>
-
-          <div class="text-sm">
-            <p class="text-grey-400"><%= Date.utc_today().year %> &copy; Six Colors AB.</p>
-            <p class="mt-2 text-grey-500">
-              Powered by the <a href="https://www.erlang.org/" class="hover:text-white transition-colors">Erlang VM</a>
-              and <a href="https://elixir-lang.org/" class="hover:text-white transition-colors">Elixir</a>.
-            </p>
-          </div>
-
+    <footer class="bg-grey-800 text-grey-200 font-sans">
+      <div class="max-w-7xl mx-auto px-4 pt-12 pb-10 flex flex-col gap-10">
+        <div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:gap-24 xl:gap-28">
+          <.footer_branding />
+          <.footer_links />
         </div>
       </div>
+      <.footer_copyright />
     </footer>
     """
   end
 
-  @doc """
-  Renders a titled section in the footer with a list of links.
-  """
-  attr :title, :string, required: true
-  slot :inner_block, required: true
-
-  def footer_section(assigns) do
+  defp footer_branding(assigns) do
     ~H"""
-    <div>
-      <h4 class="text-white text-sm font-semibold mb-3 uppercase tracking-wider"><%= @title %></h4>
-      <ul class="space-y-2 text-sm">
-        <%= render_slot(@inner_block) %>
-      </ul>
+    <div class="flex w-full items-start justify-between gap-6 lg:w-auto lg:flex-col lg:items-start lg:justify-start lg:gap-6">
+      <div class="flex items-center gap-3">
+        <img src="/images/hex-full.svg" alt="hex logo" class="h-8 w-auto" />
+        <span class="text-white text-2xl font-bold tracking-tight">hexdiff</span>
+      </div>
+      <.footer_social_links />
     </div>
     """
   end
 
-  @doc """
-  Renders a link inside a footer section.
-  """
+  defp footer_social_links(assigns) do
+    ~H"""
+    <div class="flex gap-3 lg:mt-4">
+      <.footer_social_link href="https://github.com/hexpm/diff" label="GitHub">
+        <.github_icon class="h-4 w-4" />
+      </.footer_social_link>
+      <.footer_social_link href="https://x.com/hexpm" label="X">
+        <.twitter_icon class="h-4 w-4" />
+      </.footer_social_link>
+    </div>
+    """
+  end
+
   attr :href, :string, required: true
+  attr :label, :string, required: true
   slot :inner_block, required: true
 
-  def footer_link(assigns) do
+  defp footer_social_link(assigns) do
     ~H"""
-    <li><a href={@href} class="hover:text-white transition-colors"><%= render_slot(@inner_block) %></a></li>
+    <a
+      href={@href}
+      class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-grey-700 text-slate-200 hover:bg-grey-600 transition duration-200"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={@label}
+    >
+      <%= render_slot(@inner_block) %>
+    </a>
+    """
+  end
+
+  defp footer_links(assigns) do
+    ~H"""
+    <div class="flex-1">
+      <div class="grid grid-cols-1 gap-y-10 gap-x-12 md:grid-cols-3 lg:gap-x-16 xl:gap-x-24">
+        <.footer_link_column>
+          <.footer_link href="https://hex.pm/about" label="About" />
+          <.footer_link href="https://hex.pm/blog" label="Blog" />
+          <.footer_link href="https://hex.pm/sponsors" label="Sponsors" />
+          <.footer_link href="https://status.hex.pm" label="Status" external />
+        </.footer_link_column>
+
+        <.footer_link_column>
+          <.footer_link href="https://hex.pm/docs" label="Documentation" />
+          <.footer_link href="https://hex.pm/docs/faq" label="FAQ" />
+          <.footer_link href="https://github.com/hexpm/specifications" label="Specifications" external />
+          <.footer_link href="https://github.com/hexpm/hex/issues" label="Report Client Issue" external />
+          <.footer_link href="https://github.com/hexpm/hexpm/issues" label="Report General Issue" external />
+          <.footer_link href="mailto:security@hex.pm" label="Report Security Issue" />
+          <.footer_link href="mailto:support@hex.pm" label="Contact Support" />
+        </.footer_link_column>
+
+        <.footer_link_column>
+          <.footer_link href="https://hex.pm/policies/codeofconduct" label="Code of Conduct" />
+          <.footer_link href="https://hex.pm/policies/termsofservice" label="Terms of Service" />
+          <.footer_link href="https://hex.pm/policies/privacy" label="Privacy Policy" />
+          <.footer_link href="https://hex.pm/policies/copyright" label="Copyright Policy" />
+          <.footer_link href="https://hex.pm/policies/dispute" label="Dispute Policy" />
+        </.footer_link_column>
+      </div>
+    </div>
+    """
+  end
+
+  slot :inner_block, required: true
+
+  defp footer_link_column(assigns) do
+    ~H"""
+    <div class="flex flex-col gap-3 font-medium leading-4">
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  attr :external, :boolean, default: false
+  attr :href, :string, required: true
+  attr :label, :string, required: true
+
+  defp footer_link(assigns) do
+    ~H"""
+    <a
+      href={@href}
+      class="text-grey-200 hover:text-white transition-colors"
+      target={if @external, do: "_blank"}
+      rel={if @external, do: "noopener noreferrer"}
+    >
+      <%= @label %>
+    </a>
+    """
+  end
+
+  defp footer_copyright(assigns) do
+    ~H"""
+    <div class="bg-grey-700">
+      <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col items-center gap-3 text-sm text-grey-200 md:flex-row md:justify-between">
+        <p class="text-center leading-[14px] md:text-left">
+          Copyright 2015. Six Colors AB.
+        </p>
+        <p class="text-center leading-[18px] md:text-right">
+          Powered by the
+          <a href="https://www.erlang.org/" class="underline hover:text-grey-300">Erlang VM</a>
+          and the
+          <a href="https://elixir-lang.org/" class="underline hover:text-grey-300">Elixir Programming Language</a>
+        </p>
+      </div>
+    </div>
     """
   end
 
@@ -197,6 +312,28 @@ defmodule DiffWeb.CoreComponents do
         fill-rule="evenodd"
         clip-rule="evenodd"
         d="M12 2C6.477 2 2 6.528 2 12.07c0 4.449 2.865 8.222 6.839 9.558.5.095.683-.219.683-.487 0-.24-.01-1.034-.014-1.876-2.782.609-3.369-1.193-3.369-1.193-.454-1.166-1.11-1.477-1.11-1.477-.908-.625.07-.612.07-.612 1.004.071 1.532 1.045 1.532 1.045.893 1.55 2.341 1.103 2.91.844.091-.656.35-1.103.636-1.357-2.22-.257-4.555-1.117-4.555-4.969 0-1.098.388-1.995 1.025-2.698-.103-.259-.445-1.296.098-2.704 0 0 .84-.27 2.75 1.03A9.517 9.517 0 0 1 12 6.844a9.5 9.5 0 0 1 2.5.341c1.91-1.3 2.749-1.03 2.749-1.03.544 1.408.202 2.445.1 2.704.64.703 1.024 1.6 1.024 2.698 0 3.861-2.339 4.708-4.566 4.961.359.313.678.928.678 1.872 0 1.352-.013 2.442-.013 2.775 0 .27.18.586.688.486C19.138 20.287 22 16.517 22 12.07 22 6.528 17.523 2 12 2Z"
+        fill="currentColor"
+      />
+    </svg>
+    """
+  end
+
+  @doc """
+  Renders a Twitter/X icon.
+  """
+  attr :class, :string, default: "h-4 w-4"
+
+  def twitter_icon(assigns) do
+    ~H"""
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      class={@class}
+      aria-hidden="true"
+    >
+      <path
+        d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
         fill="currentColor"
       />
     </svg>

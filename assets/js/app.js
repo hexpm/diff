@@ -1,4 +1,6 @@
 import "phoenix_html"
+import { initializeTheme } from "./theme"
+initializeTheme()
 
 import { Socket } from 'phoenix'
 import { LiveSocket } from "phoenix_live_view"

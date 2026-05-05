@@ -11,6 +11,21 @@
       <title>hexdiff</title>
     <% end %>
 
+    <script>
+      (() => {
+        const key = "hexpm-theme";
+        let stored = null;
+        try { stored = localStorage.getItem(key); } catch (_e) {}
+        const sys = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const pref = stored === "light" || stored === "dark" ? stored : "system";
+        const theme = pref === "system" ? sys : pref;
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-theme-preference", pref);
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+
+    <link rel="icon" type="image/svg+xml" href={~p"/images/hex-full.svg"} />
     <link rel="stylesheet" href={~p"/css/app.css"}/>
     <script defer type="text/javascript" src={~p"/js/app.js"}></script>
 
@@ -18,7 +33,7 @@
       <script async defer src={"https://s.#{host}/js/script.js"}></script>
     <% end %>
   </head>
-  <body class="bg-white">
+  <body>
     <%= @inner_content %>
   </body>
 </html>
