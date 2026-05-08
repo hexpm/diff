@@ -5,8 +5,8 @@ defmodule Diff.Storage.GCS do
 
   @gs_xml_url "https://storage.googleapis.com"
 
-  def get_diff(package, from_version, to_version, diff_id) do
-    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+  def get_diff(package, from_version, to_version, diff_id, opts \\ []) do
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version, opts),
          url = url(diff_key(package, from_version, to_version, hash, diff_id)),
          {:ok, 200, _headers, body} <-
            Diff.HTTP.retry("gs", fn -> Diff.HTTP.get(url, headers()) end) do
@@ -25,8 +25,8 @@ defmodule Diff.Storage.GCS do
     end
   end
 
-  def put_diff(package, from_version, to_version, diff_id, diff_data) do
-    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+  def put_diff(package, from_version, to_version, diff_id, diff_data, opts \\ []) do
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version, opts),
          url = url(diff_key(package, from_version, to_version, hash, diff_id)),
          {:ok, 200, _headers, _body} <-
            Diff.HTTP.retry("gs", fn -> Diff.HTTP.put(url, headers(), diff_data) end) do
@@ -42,10 +42,10 @@ defmodule Diff.Storage.GCS do
     end
   end
 
-  def list_diffs(package, from_version, to_version) do
-    case get_metadata(package, from_version, to_version) do
+  def list_diffs(package, from_version, to_version, opts \\ []) do
+    case get_metadata(package, from_version, to_version, opts) do
       {:ok, %{total_diffs: total_diffs}} ->
-        diff_ids = 0..(total_diffs - 1) |> Enum.map(&"diff-#{&1}")
+        diff_ids = diff_ids(total_diffs)
         {:ok, diff_ids}
 
       {:error, :not_found} ->
@@ -56,8 +56,8 @@ defmodule Diff.Storage.GCS do
     end
   end
 
-  def get_metadata(package, from_version, to_version) do
-    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+  def get_metadata(package, from_version, to_version, opts \\ []) do
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version, opts),
          url = url(metadata_key(package, from_version, to_version, hash)),
          {:ok, 200, _headers, body} <-
            Diff.HTTP.retry("gs", fn -> Diff.HTTP.get(url, headers()) end) do
@@ -79,8 +79,8 @@ defmodule Diff.Storage.GCS do
     end
   end
 
-  def put_metadata(package, from_version, to_version, metadata) do
-    with {:ok, hash} <- combined_checksum(package, from_version, to_version),
+  def put_metadata(package, from_version, to_version, metadata, opts \\ []) do
+    with {:ok, hash} <- combined_checksum(package, from_version, to_version, opts),
          url = url(metadata_key(package, from_version, to_version, hash)),
          {:ok, json} <- Jason.encode(metadata),
          {:ok, 200, _headers, _body} <-
@@ -106,10 +106,16 @@ defmodule Diff.Storage.GCS do
     [{"authorization", "#{token.type} #{token.token}"}]
   end
 
-  def combined_checksum(package, from, to) do
+  def combined_checksum(package, from, to, opts \\ []) do
     with {:ok, checksums} <- Diff.Hex.get_checksums(package, [from, to]) do
-      {:ok, :erlang.phash2({Application.get_env(:diff, :cache_version), checksums})}
+      {:ok, :erlang.phash2(Diff.Storage.cache_key(checksums, opts))}
     end
+  end
+
+  defp diff_ids(0), do: []
+
+  defp diff_ids(total_diffs) do
+    0..(total_diffs - 1) |> Enum.map(&"diff-#{&1}")
   end
 
   defp diff_key(package, from_version, to_version, hash, diff_id) do

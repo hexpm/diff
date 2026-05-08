@@ -27,13 +27,13 @@ defmodule DiffWeb.DiffLiveViewTest do
         })
 
       Diff.StorageMock
-      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:ok, metadata}
       end)
-      |> stub(:list_diffs, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:list_diffs, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:ok, diffs_ids}
       end)
-      |> stub(:get_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id ->
+      |> stub(:get_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id, [] ->
         {:ok, diff_content}
       end)
 
@@ -46,16 +46,41 @@ defmodule DiffWeb.DiffLiveViewTest do
       assert html =~ "8"
       assert html =~ "+45"
       assert html =~ "-12"
+      assert html =~ "Hide whitespace changes"
+      assert html =~ ~s(href="/diff/phoenix/1.4.5..1.4.9?w=1")
+    end
+
+    test "mounts with ignore whitespace query option", %{conn: conn} do
+      metadata = %{
+        total_diffs: 0,
+        total_additions: 0,
+        total_deletions: 0,
+        files_changed: 0
+      }
+
+      Diff.StorageMock
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", ignore_whitespace: true ->
+        {:ok, metadata}
+      end)
+      |> stub(:list_diffs, fn "phoenix", "1.4.5", "1.4.9", ignore_whitespace: true ->
+        {:ok, []}
+      end)
+
+      {:ok, _view, html} = live(conn, "/diff/phoenix/1.4.5..1.4.9?w=1")
+
+      assert html =~ "0 files changed"
+      assert html =~ "Show whitespace changes"
+      assert html =~ ~s(href="/diff/phoenix/1.4.5..1.4.9")
     end
 
     test "shows generating state when metadata not found", %{conn: conn} do
       Diff.StorageMock
-      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:error, :not_found}
       end)
 
       Diff.HexMock
-      |> stub(:diff, fn "phoenix", "1.4.5", "1.4.9" -> :error end)
+      |> stub(:diff, fn "phoenix", "1.4.5", "1.4.9", [] -> :error end)
 
       {:ok, _view, html} = live(conn, "/diff/phoenix/1.4.5..1.4.9")
 
@@ -84,23 +109,23 @@ defmodule DiffWeb.DiffLiveViewTest do
 
       # Mock Diff.Hex to return our test stream
       Diff.HexMock
-      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:ok, mock_stream}
       end)
 
       # Mock storage operations for parallel processing
       Diff.StorageMock
-      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:error, :not_found}
       end)
-      |> expect(:put_diff, 3, fn "phoenix", "1.4.5", "1.4.9", diff_id, data ->
+      |> expect(:put_diff, 3, fn "phoenix", "1.4.5", "1.4.9", diff_id, data, [] ->
         # Verify diff data structure
         assert diff_id =~ ~r/diff-\d+/
         decoded = Jason.decode!(data)
         assert is_map(decoded)
         :ok
       end)
-      |> expect(:put_metadata, fn "phoenix", "1.4.5", "1.4.9", metadata ->
+      |> expect(:put_metadata, fn "phoenix", "1.4.5", "1.4.9", metadata, [] ->
         # Verify aggregated metadata from parallel processing
         assert metadata.total_diffs == 3
         assert metadata.files_changed == 3
@@ -108,10 +133,10 @@ defmodule DiffWeb.DiffLiveViewTest do
         assert metadata.total_deletions > 0
         :ok
       end)
-      |> stub(:list_diffs, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:list_diffs, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:ok, ["diff-0", "diff-1", "diff-2"]}
       end)
-      |> stub(:get_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id ->
+      |> stub(:get_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id, [] ->
         {:ok,
          Jason.encode!(%{
            "diff" => "test diff",
@@ -145,29 +170,29 @@ defmodule DiffWeb.DiffLiveViewTest do
       ]
 
       Diff.HexMock
-      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:ok, mock_stream}
       end)
 
       # Mock storage - only successful elements should be stored
       Diff.StorageMock
-      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:error, :not_found}
       end)
-      |> expect(:put_diff, 2, fn "phoenix", "1.4.5", "1.4.9", _diff_id, _data ->
+      |> expect(:put_diff, 2, fn "phoenix", "1.4.5", "1.4.9", _diff_id, _data, [] ->
         :ok
       end)
-      |> expect(:put_metadata, fn "phoenix", "1.4.5", "1.4.9", metadata ->
+      |> expect(:put_metadata, fn "phoenix", "1.4.5", "1.4.9", metadata, [] ->
         # Only 2 diffs should be stored (error one skipped)
         assert metadata.total_diffs == 2
         assert metadata.files_changed == 2
         :ok
       end)
-      |> stub(:list_diffs, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:list_diffs, fn "phoenix", "1.4.5", "1.4.9", [] ->
         # Skip error element
         {:ok, ["diff-0", "diff-2"]}
       end)
-      |> stub(:get_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id ->
+      |> stub(:get_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id, [] ->
         {:ok,
          Jason.encode!(%{
            "diff" => "test diff",
@@ -190,12 +215,12 @@ defmodule DiffWeb.DiffLiveViewTest do
 
     test "handles hex diff failure", %{conn: conn} do
       Diff.HexMock
-      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9", [] ->
         :error
       end)
 
       Diff.StorageMock
-      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:error, :not_found}
       end)
 
@@ -213,18 +238,18 @@ defmodule DiffWeb.DiffLiveViewTest do
       ]
 
       Diff.HexMock
-      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:ok, mock_stream}
       end)
 
       Diff.StorageMock
-      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:error, :not_found}
       end)
-      |> expect(:put_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id, _data ->
+      |> expect(:put_diff, fn "phoenix", "1.4.5", "1.4.9", _diff_id, _data, [] ->
         {:error, :storage_failed}
       end)
-      |> expect(:put_metadata, fn "phoenix", "1.4.5", "1.4.9", metadata ->
+      |> expect(:put_metadata, fn "phoenix", "1.4.5", "1.4.9", metadata, [] ->
         # Should still try to store metadata even with failed individual diffs
         # No successful diffs
         assert metadata.total_diffs == 0
@@ -239,6 +264,58 @@ defmodule DiffWeb.DiffLiveViewTest do
 
         # Should handle storage failures gracefully
         refute final_html =~ "Failed to generate diff"
+      end)
+    end
+
+    test "passes ignore whitespace option while generating diffs", %{conn: conn} do
+      mock_stream = [
+        {:ok,
+         {"diff --git a/lib/app.ex b/lib/app.ex\n--- a/lib/app.ex\n+++ b/lib/app.ex\n@@ -1 +1 @@\n-old\n+new",
+          "/tmp/from", "/tmp/to"}}
+      ]
+
+      Diff.HexMock
+      |> expect(:diff, fn "phoenix", "1.4.5", "1.4.9", ignore_whitespace: true ->
+        {:ok, mock_stream}
+      end)
+
+      Diff.StorageMock
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", ignore_whitespace: true ->
+        {:error, :not_found}
+      end)
+      |> expect(:put_diff, fn "phoenix",
+                              "1.4.5",
+                              "1.4.9",
+                              "diff-0",
+                              _data,
+                              ignore_whitespace: true ->
+        :ok
+      end)
+      |> expect(:put_metadata, fn "phoenix",
+                                  "1.4.5",
+                                  "1.4.9",
+                                  metadata,
+                                  ignore_whitespace: true ->
+        assert metadata.total_diffs == 1
+        :ok
+      end)
+      |> stub(:get_diff, fn "phoenix", "1.4.5", "1.4.9", "diff-0", ignore_whitespace: true ->
+        {:ok,
+         Jason.encode!(%{
+           "diff" => "test diff",
+           "path_from" => "/tmp/from",
+           "path_to" => "/tmp/to"
+         })}
+      end)
+
+      capture_log(fn ->
+        {:ok, view, _html} = live(conn, "/diff/phoenix/1.4.5..1.4.9?w=1")
+
+        :timer.sleep(100)
+        final_html = render(view)
+
+        assert final_html =~ "1 files changed"
+        assert final_html =~ "Show whitespace changes"
       end)
     end
   end

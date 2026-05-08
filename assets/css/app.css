@@ -395,6 +395,16 @@ table.package-list .button {
   font-weight: 600;
 }
 
+.diff-stats-header .whitespace-toggle {
+  color: #ddd;
+  font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+  font-size: 14px;
+}
+
+.diff-stats-header .whitespace-toggle:hover {
+  color: white;
+}
+
 .loading-spinner {
   height: 60px;
   width: 100%;
