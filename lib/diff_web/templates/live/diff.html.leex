@@ -24,6 +24,9 @@
           <span class="files-changed"><%= @metadata.files_changed %> files changed</span>
           <span class="additions">+<%= @metadata.total_additions %></span>
           <span class="deletions">-<%= @metadata.total_deletions %></span>
+          <a class="whitespace-toggle" href="<%= whitespace_toggle_url(@package, @from, @to, @ignore_whitespace) %>">
+            <%= whitespace_toggle_label(@ignore_whitespace) %>
+          </a>
         </div>
       </div>
     <% end %>

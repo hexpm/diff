@@ -102,7 +102,9 @@ defmodule Diff.Hex do
     end
   end
 
-  def diff(package, from, to) do
+  def diff(package, from, to), do: diff(package, from, to, [])
+
+  def diff(package, from, to, opts) do
     with {:ok, tarball_from} <- get_tarball(package, from),
          path_from = Diff.TmpDir.tmp_dir("package-#{package}-#{from}"),
          :ok <- unpack_tarball(tarball_from, path_from),
@@ -131,7 +133,7 @@ defmodule Diff.Hex do
 
           with {_, true} <- {:file_size_old, file_size_check?(path_old)},
                {_, true} <- {:file_size_new, file_size_check?(path_new)},
-               {_, {:ok, output}} <- {:git_diff, git_diff(path_old, path_new)} do
+               {_, {:ok, output}} <- {:git_diff, git_diff(path_old, path_new, opts)} do
             if output do
               [{:ok, {output, path_from, path_to}}]
             else
@@ -157,22 +159,27 @@ defmodule Diff.Hex do
     end
   end
 
-  defp git_diff(path_from, path_to) do
-    case System.cmd("git", [
-           "-c",
-           "core.quotepath=false",
-           "-c",
-           "diff.algorithm=histogram",
-           "diff",
-           "--no-index",
-           "--no-color",
-           path_from,
-           path_to
-         ]) do
+  defp git_diff(path_from, path_to, opts) do
+    args =
+      [
+        "-c",
+        "core.quotepath=false",
+        "-c",
+        "diff.algorithm=histogram",
+        "diff",
+        "--no-index",
+        "--no-color"
+      ] ++ ignore_whitespace_args(opts) ++ [path_from, path_to]
+
+    case System.cmd("git", args) do
       {"", 0} -> {:ok, nil}
       {output, 1} -> {:ok, output}
       other -> {:error, other}
     end
+  end
+
+  defp ignore_whitespace_args(opts) do
+    if Keyword.get(opts, :ignore_whitespace, false), do: ["-w"], else: []
   end
 
   defp file_size_check?(path) do

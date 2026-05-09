@@ -8,12 +8,14 @@ defmodule DiffWeb.DiffLiveView do
   end
 
   # Mount for single diff view
-  def mount(%{"package" => package, "versions" => versions}, _session, socket) do
+  def mount(%{"package" => package, "versions" => versions} = params, _session, socket) do
+    diff_options = diff_options(params)
+
     case parse_versions(versions) do
       {:ok, from, to} ->
         case resolve_latest_version(package, from, to) do
           {:ok, resolved_from, resolved_to} ->
-            mount_single_diff(socket, package, resolved_from, resolved_to)
+            mount_single_diff(socket, package, resolved_from, resolved_to, diff_options)
 
           {:error, reason} ->
             {:ok, assign(socket, error: latest_version_error(package, reason))}
@@ -53,13 +55,13 @@ defmodule DiffWeb.DiffLiveView do
     end
   end
 
-  defp mount_single_diff(socket, package, from, to) do
-    case Diff.Storage.get_metadata(package, from, to) do
+  defp mount_single_diff(socket, package, from, to, diff_options) do
+    case Diff.Storage.get_metadata(package, from, to, diff_options) do
       {:ok, metadata} ->
-        load_existing_diff(socket, package, from, to, metadata)
+        load_existing_diff(socket, package, from, to, metadata, diff_options)
 
       {:error, :not_found} ->
-        generate_new_diff(socket, package, from, to)
+        generate_new_diff(socket, package, from, to, diff_options)
 
       {:error, reason} ->
         Logger.error("Failed to load diff metadata: #{inspect(reason)}")
@@ -67,8 +69,8 @@ defmodule DiffWeb.DiffLiveView do
     end
   end
 
-  defp load_existing_diff(socket, package, from, to, metadata) do
-    {:ok, diff_ids} = Diff.Storage.list_diffs(package, from, to)
+  defp load_existing_diff(socket, package, from, to, metadata, diff_options) do
+    {:ok, diff_ids} = Diff.Storage.list_diffs(package, from, to, diff_options)
 
     initial_batch_size = 5
     {initial_diffs, _remaining} = Enum.split(diff_ids, initial_batch_size)
@@ -80,6 +82,8 @@ defmodule DiffWeb.DiffLiveView do
         from: from,
         to: to,
         metadata: metadata,
+        diff_options: diff_options,
+        ignore_whitespace: ignore_whitespace?(diff_options),
         all_diff_ids: diff_ids,
         loaded_diffs: [],
         loaded_diff_content: %{},
@@ -93,7 +97,7 @@ defmodule DiffWeb.DiffLiveView do
     {:ok, socket}
   end
 
-  defp generate_new_diff(socket, package, from, to) do
+  defp generate_new_diff(socket, package, from, to, diff_options) do
     socket =
       assign(socket,
         view_mode: :single_diff,
@@ -101,6 +105,8 @@ defmodule DiffWeb.DiffLiveView do
         from: from,
         to: to,
         metadata: %{files_changed: 0, total_additions: 0, total_deletions: 0},
+        diff_options: diff_options,
+        ignore_whitespace: ignore_whitespace?(diff_options),
         all_diff_ids: [],
         loaded_diffs: [],
         loaded_diff_content: %{},
@@ -109,7 +115,7 @@ defmodule DiffWeb.DiffLiveView do
         has_more_diffs: false
       )
 
-    send(self(), {:generate_diff, package, from, to})
+    send(self(), {:generate_diff, package, from, to, diff_options})
 
     {:ok, socket}
   end
@@ -159,14 +165,14 @@ defmodule DiffWeb.DiffLiveView do
     {:noreply, socket}
   end
 
-  def handle_info({:generate_diff, package, from, to}, socket) do
+  def handle_info({:generate_diff, package, from, to, diff_options}, socket) do
     hex_impl = Application.get_env(:diff, :hex_impl, Diff.Hex)
 
     task =
       Task.Supervisor.async(Diff.Tasks, fn ->
-        case hex_impl.diff(package, from, to) do
+        case hex_impl.diff(package, from, to, diff_options) do
           {:ok, stream} ->
-            process_stream_to_diffs(package, from, to, stream)
+            process_stream_to_diffs(package, from, to, stream, diff_options)
 
           :error ->
             :error
@@ -220,6 +226,7 @@ defmodule DiffWeb.DiffLiveView do
         socket.assigns.package,
         socket.assigns.from,
         socket.assigns.to,
+        socket.assigns.diff_options,
         diff_ids
       )
 
@@ -252,6 +259,7 @@ defmodule DiffWeb.DiffLiveView do
         socket.assigns.package,
         socket.assigns.from,
         socket.assigns.to,
+        socket.assigns.diff_options,
         diff_ids
       )
 
@@ -273,7 +281,7 @@ defmodule DiffWeb.DiffLiveView do
     {:noreply, socket}
   end
 
-  defp process_stream_to_diffs(package, from, to, stream) do
+  defp process_stream_to_diffs(package, from, to, stream, diff_options) do
     initial_metadata = %{
       total_diffs: 0,
       total_additions: 0,
@@ -289,7 +297,7 @@ defmodule DiffWeb.DiffLiveView do
         Diff.Tasks,
         indexed_stream,
         fn {element, index} ->
-          process_stream_element(package, from, to, element, index)
+          process_stream_element(package, from, to, element, index, diff_options)
         end,
         max_concurrency: 10,
         timeout: 30_000,
@@ -309,7 +317,7 @@ defmodule DiffWeb.DiffLiveView do
 
     case results do
       {final_metadata, diff_ids} ->
-        case Diff.Storage.put_metadata(package, from, to, final_metadata) do
+        case Diff.Storage.put_metadata(package, from, to, final_metadata, diff_options) do
           :ok ->
             {:ok, final_metadata, diff_ids}
 
@@ -323,7 +331,7 @@ defmodule DiffWeb.DiffLiveView do
       {:error, :invalid_diff}
   end
 
-  defp process_stream_element(package, from, to, element, index) do
+  defp process_stream_element(package, from, to, element, index, diff_options) do
     case element do
       {:ok, {raw_diff, path_from, path_to}} ->
         diff_id = "diff-#{index}"
@@ -335,7 +343,7 @@ defmodule DiffWeb.DiffLiveView do
             "path_to" => path_to
           })
 
-        case Diff.Storage.put_diff(package, from, to, diff_id, diff_data) do
+        case Diff.Storage.put_diff(package, from, to, diff_id, diff_data, diff_options) do
           :ok ->
             # Count additions and deletions from raw diff (exclude +++ and --- headers)
             lines = String.split(raw_diff, "\n")
@@ -368,7 +376,7 @@ defmodule DiffWeb.DiffLiveView do
         diff_id = "diff-#{index}"
         too_large_data = Jason.encode!(%{type: "too_large", file: file_path})
 
-        case Diff.Storage.put_diff(package, from, to, diff_id, too_large_data) do
+        case Diff.Storage.put_diff(package, from, to, diff_id, too_large_data, diff_options) do
           :ok ->
             metadata_update = %{
               total_diffs: 1,
@@ -436,6 +444,11 @@ defmodule DiffWeb.DiffLiveView do
   defp parse_version(""), do: {:ok, :latest}
   defp parse_version(input), do: Version.parse(input)
 
+  defp diff_options(%{"w" => "1"}), do: [ignore_whitespace: true]
+  defp diff_options(_params), do: []
+
+  defp ignore_whitespace?(diff_options), do: Keyword.get(diff_options, :ignore_whitespace, false)
+
   defp parse_diff(diff) do
     case String.split(diff, ":", trim: true) do
       [app, from, to] -> {app, from, to, build_url(app, from, to)}
@@ -445,12 +458,12 @@ defmodule DiffWeb.DiffLiveView do
 
   defp build_url(app, from, to), do: "/diff/#{app}/#{from}..#{to}"
 
-  defp load_diffs_in_parallel(package, from, to, diff_ids) do
+  defp load_diffs_in_parallel(package, from, to, diff_options, diff_ids) do
     Task.Supervisor.async_stream(
       Diff.Tasks,
       diff_ids,
       fn diff_id ->
-        {diff_id, DiffWeb.LiveView.load_diff_content(package, from, to, diff_id)}
+        {diff_id, DiffWeb.LiveView.load_diff_content(package, from, to, diff_id, diff_options)}
       end,
       max_concurrency: 10,
       timeout: 30_000

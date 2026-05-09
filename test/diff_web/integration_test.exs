@@ -27,12 +27,12 @@ defmodule DiffWeb.IntegrationTest do
       |> stub(:get_versions, fn "phoenix" -> {:ok, versions} end)
 
       Diff.StorageMock
-      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9" ->
+      |> stub(:get_metadata, fn "phoenix", "1.4.5", "1.4.9", [] ->
         {:error, :not_found}
       end)
 
       Diff.HexMock
-      |> stub(:diff, fn "phoenix", "1.4.5", "1.4.9" -> :error end)
+      |> stub(:diff, fn "phoenix", "1.4.5", "1.4.9", [] -> :error end)
 
       {:ok, _view, html} = live(conn, "/diff/phoenix/1.4.5..")
 
@@ -47,12 +47,12 @@ defmodule DiffWeb.IntegrationTest do
       end)
 
       Diff.StorageMock
-      |> stub(:get_metadata, fn "prerelease_only", "0.1.0", "1.0.0-rc.2" ->
+      |> stub(:get_metadata, fn "prerelease_only", "0.1.0", "1.0.0-rc.2", [] ->
         {:error, :not_found}
       end)
 
       Diff.HexMock
-      |> stub(:diff, fn "prerelease_only", "0.1.0", "1.0.0-rc.2" -> :error end)
+      |> stub(:diff, fn "prerelease_only", "0.1.0", "1.0.0-rc.2", [] -> :error end)
 
       {:ok, _view, html} = live(conn, "/diff/prerelease_only/0.1.0..")
 
@@ -73,12 +73,12 @@ defmodule DiffWeb.IntegrationTest do
       |> stub(:get_versions, fn "nonexistent" -> {:error, :not_found} end)
 
       Diff.StorageMock
-      |> stub(:get_metadata, fn "nonexistent", "1.0.0", "2.0.0" ->
+      |> stub(:get_metadata, fn "nonexistent", "1.0.0", "2.0.0", [] ->
         {:error, :not_found}
       end)
 
       Diff.HexMock
-      |> stub(:diff, fn "nonexistent", "1.0.0", "2.0.0" -> :error end)
+      |> stub(:diff, fn "nonexistent", "1.0.0", "2.0.0", [] -> :error end)
 
       {:ok, _view, html} = live(conn, "/diff/nonexistent/1.0.0..2.0.0")
 

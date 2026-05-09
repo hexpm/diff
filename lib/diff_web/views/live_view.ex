@@ -2,8 +2,8 @@ defmodule DiffWeb.LiveView do
   use DiffWeb, :view
   require Logger
 
-  def load_diff_content(package, from, to, diff_id) do
-    case Diff.Storage.get_diff(package, from, to, diff_id) do
+  def load_diff_content(package, from, to, diff_id, opts \\ []) do
+    case Diff.Storage.get_diff(package, from, to, diff_id, opts) do
       {:ok, raw_content} ->
         # Parse the stored content based on format
         case Jason.decode(raw_content) do
@@ -49,4 +49,13 @@ defmodule DiffWeb.LiveView do
     end)
     |> Enum.join("")
   end
+
+  def whitespace_toggle_label(true), do: "Show whitespace changes"
+  def whitespace_toggle_label(false), do: "Hide whitespace changes"
+
+  def whitespace_toggle_url(package, from, to, true), do: diff_url(package, from, to)
+
+  def whitespace_toggle_url(package, from, to, false), do: diff_url(package, from, to) <> "?w=1"
+
+  defp diff_url(package, from, to), do: "/diff/#{package}/#{from}..#{to}"
 end
