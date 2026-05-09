@@ -14,6 +14,7 @@ config :diff,
 
 # Configures the endpoint
 config :diff, DiffWeb.Endpoint,
+  adapter: Bandit.PhoenixAdapter,
   url: [host: "localhost"],
   secret_key_base: "sCQPp27jGUACmECgpI4vEwAJUrryxT7+d2IzxkbUv/57paSo723fbsED+EmRcvfj",
   render_errors: [
