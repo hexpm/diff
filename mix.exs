@@ -50,7 +50,7 @@ defmodule Diff.MixProject do
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_view, "~> 2.0"},
       {:phoenix, "~> 1.6"},
-      {:sentry, "~> 12.0"},
+      {:sentry, "~> 13.0"},
       {:floki, "~> 0.38.1", only: :test},
       {:lazy_html, ">= 0.1.0", only: :test}
     ]
