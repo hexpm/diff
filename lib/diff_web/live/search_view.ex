@@ -11,7 +11,7 @@ defmodule DiffWeb.SearchLiveView do
         <input
           autocomplete="off"
           autofocus
-          class="w-full px-4 py-2 border border-grey-200 dark:border-grey-600 rounded-lg text-grey-700 dark:text-grey-200 placeholder-grey-300 focus:border-primary-400 bg-white dark:bg-grey-800 text-sm"
+          class="w-full px-4 py-2 border border-grey-200 dark:border-grey-600 rounded-lg text-grey-700 dark:text-grey-200 placeholder:text-grey-300 focus:border-primary-400 bg-white dark:bg-grey-800 text-sm"
           type="text"
           name="q"
           value={@query}

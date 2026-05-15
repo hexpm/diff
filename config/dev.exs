@@ -46,7 +46,7 @@ config :diff, DiffWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/diff_web/{live,views}/.*(ex)$",
+      ~r"lib/diff_web/{components,live,views}/.*(ex)$",
       ~r"lib/diff_web/templates/.*(eex)$"
     ]
   ]

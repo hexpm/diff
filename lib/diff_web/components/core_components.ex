@@ -222,7 +222,7 @@ defmodule DiffWeb.CoreComponents do
     ~H"""
     <a
       href={@href}
-      class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-grey-700 text-slate-200 hover:bg-grey-600 transition duration-200"
+      class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-grey-700 text-grey-200 hover:bg-grey-600 transition duration-200"
       target="_blank"
       rel="noopener noreferrer"
       aria-label={@label}
@@ -297,7 +297,7 @@ defmodule DiffWeb.CoreComponents do
     <div class="bg-grey-700">
       <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col items-center gap-3 text-sm text-grey-200 md:flex-row md:justify-between">
         <p class="text-center leading-[14px] md:text-left">
-          Copyright 2015. Six Colors AB.
+          <%= Date.utc_today().year %> © Six Colors AB.
         </p>
         <p class="text-center leading-[18px] md:text-right">
           Powered by the
