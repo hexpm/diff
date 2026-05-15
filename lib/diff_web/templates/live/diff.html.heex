@@ -37,6 +37,11 @@
             <span class="text-sm font-bold text-red-700 dark:text-red-400 font-mono">-<%= @metadata.total_deletions %></span>
             <span class="text-xs text-red-600 dark:text-red-400"><%= pluralize(@metadata.total_deletions, "deletion", "deletions") %></span>
           </div>
+
+          <a
+            href={whitespace_toggle_url(@package, @from, @to, @ignore_whitespace)}
+            class="ml-auto text-xs font-medium text-grey-500 dark:text-grey-400 hover:text-primary-700 dark:hover:text-primary-400 transition-colors"
+          ><%= whitespace_toggle_label(@ignore_whitespace) %></a>
         </div>
       <% end %>
 

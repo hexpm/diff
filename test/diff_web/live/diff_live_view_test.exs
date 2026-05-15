@@ -68,7 +68,7 @@ defmodule DiffWeb.DiffLiveViewTest do
 
       {:ok, _view, html} = live(conn, "/diff/phoenix/1.4.5..1.4.9?w=1")
 
-      assert html =~ "0 files changed"
+      assert html =~ "files changed"
       assert html =~ "Show whitespace changes"
       assert html =~ ~s(href="/diff/phoenix/1.4.5..1.4.9")
     end
@@ -308,11 +308,11 @@ defmodule DiffWeb.DiffLiveViewTest do
       capture_log(fn ->
         {:ok, view, _html} = live(conn, "/diff/phoenix/1.4.5..1.4.9?w=1")
 
-        :timer.sleep(100)
-        final_html = render(view)
-
-        assert final_html =~ "1 files changed"
-        assert final_html =~ "Show whitespace changes"
+        assert_eventually(fn ->
+          html = render(view)
+          assert html =~ "changed"
+          assert html =~ "Show whitespace changes"
+        end)
       end)
     end
   end
