@@ -25,6 +25,25 @@ config :diff, DiffWeb.Endpoint,
   pubsub_server: Diff.PubSub,
   live_view: [signing_salt: "Bmk5Cupu"]
 
+config :esbuild,
+  version: "0.25.0",
+  diff: [
+    args:
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+config :tailwind,
+  version: "4.1.11",
+  default: [
+    args: ~w(
+      --input=./assets/css/app.css
+      --output=./priv/static/assets/app.css
+    ),
+    cd: Path.expand("..", __DIR__)
+  ]
+
 # Configures Elixir's Logger
 config :logger, :default_formatter, format: "$metadata[$level] $message\n"
 

@@ -9,14 +9,8 @@ ENV LANG=C.UTF-8
 # install build dependencies
 RUN apt update && \
     apt upgrade -y && \
-    apt install -y --no-install-recommends git build-essential curl ca-certificates gnupg && \
-    mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
-    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list && \
-    apt update && \
-    apt install -y --no-install-recommends nodejs && \
-    apt clean -y && rm -rf /var/lib/apt/lists/* && \
-    npm install -g yarn
+    apt install -y --no-install-recommends git build-essential ca-certificates && \
+    apt clean -y && rm -rf /var/lib/apt/lists/*
 
 # prepare build dir
 RUN mkdir /app
@@ -36,12 +30,13 @@ RUN mix deps.get
 RUN mix deps.compile
 
 # build assets
+COPY priv priv
 COPY assets assets
-RUN cd assets && yarn install && yarn run webpack --mode production
-RUN mix phx.digest
+RUN mix esbuild.install --if-missing
+RUN mix tailwind.install --if-missing
+RUN mix assets.deploy
 
 # build project
-COPY priv priv
 COPY lib lib
 RUN mix compile
 

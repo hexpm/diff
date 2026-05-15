@@ -114,7 +114,7 @@ defmodule DiffWeb do
     end
   end
 
-  def static_paths, do: ~w(css js fonts images favicon.ico robots.txt)
+  def static_paths, do: ~w(assets fonts images robots.txt)
 
   @doc """
   When used, dispatch to the appropriate controller/view/etc.
