@@ -328,6 +328,7 @@ table.ghd-diff {
 
 .ghd-line-type-add .ghd-line-number {
   background-color: var(--color-diff-addition-num-bg);
+  color: var(--color-green-700);
 }
 
 .ghd-line-type-remove {
@@ -336,6 +337,7 @@ table.ghd-diff {
 
 .ghd-line-type-remove .ghd-line-number {
   background-color: var(--color-diff-deletion-num-bg);
+  color: var(--color-red-700);
 }
 
 .ghd-line-number div {
@@ -451,6 +453,7 @@ html[data-theme-preference="system"] [data-theme-menu] [data-theme-choice="syste
 
 [data-theme=dark] .ghd-line-type-add .ghd-line-number {
   background-color: var(--color-green-800);
+  color: var(--color-green-100);
 }
 
 [data-theme=dark] .ghd-line-type-remove {
@@ -459,6 +462,7 @@ html[data-theme-preference="system"] [data-theme-menu] [data-theme-choice="syste
 
 [data-theme=dark] .ghd-line-type-remove .ghd-line-number {
   background-color: var(--color-red-800);
+  color: var(--color-red-100);
 }
 
 [data-theme=dark] {
