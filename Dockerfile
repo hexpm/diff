@@ -32,12 +32,12 @@ RUN mix deps.compile
 # build assets
 COPY priv priv
 COPY assets assets
+COPY lib lib
 RUN mix esbuild.install --if-missing
 RUN mix tailwind.install --if-missing
 RUN mix assets.deploy
 
 # build project
-COPY lib lib
 RUN mix compile
 
 # build release
