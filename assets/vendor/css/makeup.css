@@ -1,11 +1,12 @@
 /*
- * Makeup syntax highlighting theme: GitHub Dark
- * Based on GitHub's dark code theme colors
+ * Makeup syntax highlighting theme: GitHub Light (default) + GitHub Dark
+ * (via [data-theme=dark]). Token classes are the standard Pygments names
+ * emitted by Makeup so this file works with any Makeup lexer.
  */
 
 .highlight {
-  background: #0d1117;
-  color: #c9d1d9;
+  background: #f6f8fa;
+  color: #1f2328;
   border-radius: 0.5rem;
   padding: 1rem;
   overflow-x: auto;
@@ -20,87 +21,169 @@
   user-select: none;
 }
 
-.highlight .hll { background-color: #161b22; }
+.highlight .hll { background-color: #fff8c5; }
 
 /* Keywords */
-.highlight .k  { color: #ff7b72; }
-.highlight .kc { color: #ff7b72; }
-.highlight .kd { color: #ff7b72; }
-.highlight .kn { color: #ff7b72; }
-.highlight .kp { color: #ff7b72; }
-.highlight .kr { color: #ff7b72; }
-.highlight .kt { color: #ff7b72; }
+.highlight .k  { color: #cf222e; }
+.highlight .kc { color: #cf222e; }
+.highlight .kd { color: #cf222e; }
+.highlight .kn { color: #cf222e; }
+.highlight .kp { color: #cf222e; }
+.highlight .kr { color: #cf222e; }
+.highlight .kt { color: #cf222e; }
 
 /* Names */
-.highlight .nc { color: #d2a8ff; }
-.highlight .nd { color: #d2a8ff; }
-.highlight .ne { color: #d2a8ff; }
-.highlight .nf { color: #d2a8ff; }
-.highlight .fm { color: #d2a8ff; }
-.highlight .nb { color: #ffa657; }
-.highlight .bp { color: #ffa657; }
-.highlight .na { color: #79c0ff; }
-.highlight .ni { color: #c9d1d9; }
-.highlight .nl { color: #79c0ff; }
-.highlight .nn { color: #c9d1d9; }
-.highlight .no { color: #79c0ff; }
-.highlight .nt { color: #7ee787; }
-.highlight .nv { color: #79c0ff; }
-.highlight .vc { color: #79c0ff; }
-.highlight .vg { color: #79c0ff; }
-.highlight .vi { color: #79c0ff; }
-.highlight .vm { color: #79c0ff; }
+.highlight .nc { color: #6639ba; }
+.highlight .nd { color: #6639ba; }
+.highlight .ne { color: #6639ba; }
+.highlight .nf { color: #6639ba; }
+.highlight .fm { color: #6639ba; }
+.highlight .nb { color: #953800; }
+.highlight .bp { color: #953800; }
+.highlight .na { color: #0550ae; }
+.highlight .ni { color: #1f2328; }
+.highlight .nl { color: #0550ae; }
+.highlight .nn { color: #1f2328; }
+.highlight .no { color: #0550ae; }
+.highlight .nt { color: #116329; }
+.highlight .nv { color: #0550ae; }
+.highlight .vc { color: #0550ae; }
+.highlight .vg { color: #0550ae; }
+.highlight .vi { color: #0550ae; }
+.highlight .vm { color: #0550ae; }
 
 /* Strings */
-.highlight .s  { color: #a5d6ff; }
-.highlight .s1 { color: #a5d6ff; }
-.highlight .s2 { color: #a5d6ff; }
-.highlight .sa { color: #a5d6ff; }
-.highlight .sb { color: #a5d6ff; }
-.highlight .sc { color: #a5d6ff; }
-.highlight .sd { color: #a5d6ff; }
-.highlight .se { color: #79c0ff; }
-.highlight .sh { color: #a5d6ff; }
-.highlight .si { color: #a5d6ff; }
-.highlight .sr { color: #a5d6ff; }
-.highlight .ss { color: #79c0ff; }
-.highlight .sx { color: #a5d6ff; }
-.highlight .dl { color: #a5d6ff; }
+.highlight .s  { color: #0a3069; }
+.highlight .s1 { color: #0a3069; }
+.highlight .s2 { color: #0a3069; }
+.highlight .sa { color: #0a3069; }
+.highlight .sb { color: #0a3069; }
+.highlight .sc { color: #0a3069; }
+.highlight .sd { color: #0a3069; }
+.highlight .se { color: #0550ae; }
+.highlight .sh { color: #0a3069; }
+.highlight .si { color: #0a3069; }
+.highlight .sr { color: #0a3069; }
+.highlight .ss { color: #0550ae; }
+.highlight .sx { color: #0a3069; }
+.highlight .dl { color: #0a3069; }
 
 /* Numbers */
-.highlight .m  { color: #79c0ff; }
-.highlight .mb { color: #79c0ff; }
-.highlight .mf { color: #79c0ff; }
-.highlight .mh { color: #79c0ff; }
-.highlight .mi { color: #79c0ff; }
-.highlight .mo { color: #79c0ff; }
-.highlight .il { color: #79c0ff; }
+.highlight .m  { color: #0550ae; }
+.highlight .mb { color: #0550ae; }
+.highlight .mf { color: #0550ae; }
+.highlight .mh { color: #0550ae; }
+.highlight .mi { color: #0550ae; }
+.highlight .mo { color: #0550ae; }
+.highlight .il { color: #0550ae; }
 
 /* Operators */
-.highlight .o  { color: #ff7b72; }
-.highlight .ow { color: #ff7b72; }
-.highlight .p  { color: #c9d1d9; }
+.highlight .o  { color: #cf222e; }
+.highlight .ow { color: #cf222e; }
+.highlight .p  { color: #1f2328; }
 
 /* Comments */
-.highlight .c  { color: #8b949e; font-style: italic; }
-.highlight .c1 { color: #8b949e; font-style: italic; }
-.highlight .ch { color: #8b949e; font-style: italic; }
-.highlight .cm { color: #8b949e; font-style: italic; }
-.highlight .cp { color: #8b949e; font-style: italic; }
-.highlight .cpf { color: #8b949e; font-style: italic; }
-.highlight .cs { color: #8b949e; font-style: italic; }
+.highlight .c  { color: #6e7781; font-style: italic; }
+.highlight .c1 { color: #6e7781; font-style: italic; }
+.highlight .ch { color: #6e7781; font-style: italic; }
+.highlight .cm { color: #6e7781; font-style: italic; }
+.highlight .cp { color: #6e7781; font-style: italic; }
+.highlight .cpf { color: #6e7781; font-style: italic; }
+.highlight .cs { color: #6e7781; font-style: italic; }
 
 /* Generic (diffs, etc.) */
-.highlight .gd { color: #ffdcd7; background-color: #67060c; }
-.highlight .gi { color: #aff5b4; background-color: #033a16; }
+.highlight .gd { color: #82071e; background-color: #ffebe9; }
+.highlight .gi { color: #116329; background-color: #dafbe1; }
 .highlight .ge { font-style: italic; }
 .highlight .gs { font-weight: bold; }
-.highlight .gh { color: #1f6feb; font-weight: bold; }
-.highlight .gu { color: #1f6feb; }
-.highlight .go { color: #8b949e; }
-.highlight .gp { color: #8b949e; }
-.highlight .gr { color: #ffa657; }
-.highlight .gt { color: #ffa657; }
+.highlight .gh { color: #0550ae; font-weight: bold; }
+.highlight .gu { color: #0550ae; }
+.highlight .go { color: #6e7781; }
+.highlight .gp { color: #6e7781; }
+.highlight .gr { color: #cf222e; }
+.highlight .gt { color: #cf222e; }
 
 /* Errors */
-.highlight .err { color: #ffa657; }
+.highlight .err { color: #cf222e; }
+
+/* ===== Dark theme (GitHub Dark) ===== */
+
+[data-theme=dark] .highlight {
+  background: #0d1117;
+  color: #c9d1d9;
+}
+
+[data-theme=dark] .highlight .hll { background-color: #161b22; }
+
+[data-theme=dark] .highlight .k,
+[data-theme=dark] .highlight .kc,
+[data-theme=dark] .highlight .kd,
+[data-theme=dark] .highlight .kn,
+[data-theme=dark] .highlight .kp,
+[data-theme=dark] .highlight .kr,
+[data-theme=dark] .highlight .kt { color: #ff7b72; }
+
+[data-theme=dark] .highlight .nc,
+[data-theme=dark] .highlight .nd,
+[data-theme=dark] .highlight .ne,
+[data-theme=dark] .highlight .nf,
+[data-theme=dark] .highlight .fm { color: #d2a8ff; }
+[data-theme=dark] .highlight .nb,
+[data-theme=dark] .highlight .bp { color: #ffa657; }
+[data-theme=dark] .highlight .na,
+[data-theme=dark] .highlight .nl,
+[data-theme=dark] .highlight .no,
+[data-theme=dark] .highlight .nv,
+[data-theme=dark] .highlight .vc,
+[data-theme=dark] .highlight .vg,
+[data-theme=dark] .highlight .vi,
+[data-theme=dark] .highlight .vm { color: #79c0ff; }
+[data-theme=dark] .highlight .ni,
+[data-theme=dark] .highlight .nn { color: #c9d1d9; }
+[data-theme=dark] .highlight .nt { color: #7ee787; }
+
+[data-theme=dark] .highlight .s,
+[data-theme=dark] .highlight .s1,
+[data-theme=dark] .highlight .s2,
+[data-theme=dark] .highlight .sa,
+[data-theme=dark] .highlight .sb,
+[data-theme=dark] .highlight .sc,
+[data-theme=dark] .highlight .sd,
+[data-theme=dark] .highlight .sh,
+[data-theme=dark] .highlight .si,
+[data-theme=dark] .highlight .sr,
+[data-theme=dark] .highlight .sx,
+[data-theme=dark] .highlight .dl { color: #a5d6ff; }
+[data-theme=dark] .highlight .se,
+[data-theme=dark] .highlight .ss { color: #79c0ff; }
+
+[data-theme=dark] .highlight .m,
+[data-theme=dark] .highlight .mb,
+[data-theme=dark] .highlight .mf,
+[data-theme=dark] .highlight .mh,
+[data-theme=dark] .highlight .mi,
+[data-theme=dark] .highlight .mo,
+[data-theme=dark] .highlight .il { color: #79c0ff; }
+
+[data-theme=dark] .highlight .o,
+[data-theme=dark] .highlight .ow { color: #ff7b72; }
+[data-theme=dark] .highlight .p  { color: #c9d1d9; }
+
+[data-theme=dark] .highlight .c,
+[data-theme=dark] .highlight .c1,
+[data-theme=dark] .highlight .ch,
+[data-theme=dark] .highlight .cm,
+[data-theme=dark] .highlight .cp,
+[data-theme=dark] .highlight .cpf,
+[data-theme=dark] .highlight .cs { color: #8b949e; }
+
+[data-theme=dark] .highlight .gd { color: #ffdcd7; background-color: #67060c; }
+[data-theme=dark] .highlight .gi { color: #aff5b4; background-color: #033a16; }
+[data-theme=dark] .highlight .gh,
+[data-theme=dark] .highlight .gu { color: #1f6feb; }
+[data-theme=dark] .highlight .go,
+[data-theme=dark] .highlight .gp { color: #8b949e; }
+[data-theme=dark] .highlight .gr,
+[data-theme=dark] .highlight .gt { color: #ffa657; }
+
+[data-theme=dark] .highlight .err { color: #ffa657; }
