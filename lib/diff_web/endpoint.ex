@@ -14,7 +14,11 @@ defmodule DiffWeb.Endpoint do
     at: "/",
     from: :diff,
     gzip: true,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: DiffWeb.static_paths()
+
+  if Mix.env() == :dev do
+    plug Tidewave
+  end
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.

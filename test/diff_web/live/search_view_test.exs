@@ -8,7 +8,7 @@ defmodule DiffWeb.SearchLiveViewTest do
 
     test "connected mount", %{conn: conn} do
       {:ok, _view, html} = live(conn, "/")
-      assert html =~ ~s(class="search-input")
+      assert html =~ ~s(name="q")
     end
 
     test "searching for packages that don't exist", %{conn: conn} do
@@ -24,8 +24,7 @@ defmodule DiffWeb.SearchLiveViewTest do
       refute rendered =~ ~s(<select name="from")
       refute rendered =~ ~s(<select name="to")
 
-      refute rendered =~
-               ~s(<button class="diff-button" type="button" phx-click="go">Diff</button>)
+      refute rendered =~ "View Diff"
 
       assert rendered =~ ~s(Did you mean:)
       assert rendered =~ ~s(Package p not found.)
@@ -47,8 +46,8 @@ defmodule DiffWeb.SearchLiveViewTest do
       assert rendered =~ ~s(<option selected="" value="1.4.11">1.4.11</option>)
       assert rendered =~ ~s(Did you mean:)
 
-      assert rendered =~
-               ~s(<button class="diff-button" type="button" phx-click="go">Diff</button>)
+      assert rendered =~ ~s(phx-click="go")
+      assert rendered =~ "View Diff"
 
       refute rendered =~ ~s(Package phoenix not found.)
     end
@@ -80,7 +79,7 @@ defmodule DiffWeb.SearchLiveViewTest do
 
       send(view.pid, {:search, "html_sa"})
       rendered = render(view)
-      assert [_] = :binary.matches(rendered, "html_sanitize_ex</span>")
+      assert [_] = :binary.matches(rendered, "html_sanitize_ex</button>")
     end
   end
 end

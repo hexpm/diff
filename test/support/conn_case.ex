@@ -20,11 +20,33 @@ defmodule DiffWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
+      import DiffWeb.ConnCase
       alias DiffWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint DiffWeb.Endpoint
     end
+  end
+
+  @doc """
+  Retries `fun` every `interval_ms` until it passes or `timeout_ms` is exhausted.
+  Raises the last assertion error if the timeout is reached.
+  """
+  def assert_eventually(fun, timeout_ms \\ 1000, interval_ms \\ 50) do
+    deadline = System.monotonic_time(:millisecond) + timeout_ms
+    do_assert_eventually(fun, deadline, interval_ms)
+  end
+
+  defp do_assert_eventually(fun, deadline, interval_ms) do
+    fun.()
+  rescue
+    e in ExUnit.AssertionError ->
+      if System.monotonic_time(:millisecond) < deadline do
+        Process.sleep(interval_ms)
+        do_assert_eventually(fun, deadline, interval_ms)
+      else
+        reraise e, __STACKTRACE__
+      end
   end
 
   setup _tags do

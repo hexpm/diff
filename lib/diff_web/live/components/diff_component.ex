@@ -4,6 +4,7 @@ defmodule DiffWeb.DiffComponent do
 
   def render(assigns) do
     ~H"""
+    <% lexer = lexer_for(@diff) %>
     <div class="ghd-file">
       <div class="ghd-file-header" phx-click={JS.toggle_class("hidden", to: "##{@diff_id}-body")}>
         <div>
@@ -39,7 +40,7 @@ defmodule DiffWeb.DiffComponent do
                   </div>
                 </td>
                 <td class="ghd-text">
-                  <div class="ghd-text-user"><%= line_text(line.text) %></div>
+                  <div class="ghd-text-user highlight"><%= line_text(line.text, lexer) %></div>
                 </td>
               </tr>
             <% end %>
@@ -70,14 +71,54 @@ defmodule DiffWeb.DiffComponent do
 
   defp line_type(line), do: to_string(line.type)
 
-  defp line_text("+" <> text),
-    do: [content_tag(:span, "+ ", class: "ghd-line-status"), content_tag(:span, text)]
+  defp line_text("+" <> text, lexer), do: [status_span("+ "), code_span(text, lexer)]
+  defp line_text("-" <> text, lexer), do: [status_span("- "), code_span(text, lexer)]
+  defp line_text(" " <> text, lexer), do: [status_span("  "), code_span(text, lexer)]
+  defp line_text(text, lexer), do: [code_span(text, lexer)]
 
-  defp line_text("-" <> text),
-    do: [content_tag(:span, "- ", class: "ghd-line-status"), content_tag(:span, text)]
+  defp status_span(text), do: content_tag(:span, text, class: "ghd-line-status")
 
-  defp line_text(" " <> text),
-    do: [content_tag(:span, "  ", class: "ghd-line-status"), content_tag(:span, text)]
+  defp code_span(text, nil), do: content_tag(:span, text)
+  defp code_span("", _lexer), do: content_tag(:span, "")
 
-  defp line_text(text), do: [content_tag(:span, text)]
+  defp code_span(text, {lexer, opts}) do
+    Phoenix.HTML.raw([
+      "<span>",
+      Makeup.highlight_inner_html(text, lexer: lexer, lexer_options: opts),
+      "</span>"
+    ])
+  rescue
+    _ -> content_tag(:span, text)
+  end
+
+  defp lexer_for(%{from: nil, to: to}), do: lexer_for_path(to)
+  defp lexer_for(%{to: nil, from: from}), do: lexer_for_path(from)
+  defp lexer_for(%{to: to}) when is_binary(to), do: lexer_for_path(to)
+  defp lexer_for(_), do: nil
+
+  defp lexer_for_path(path) when is_binary(path) do
+    filename = Path.basename(path)
+
+    cond do
+      filename in ["rebar.config", "rebar.config.script"] ->
+        {Makeup.Lexers.ErlangLexer, []}
+
+      String.ends_with?(filename, ".app.src") ->
+        {Makeup.Lexers.ErlangLexer, []}
+
+      true ->
+        case Path.extname(filename) do
+          "." <> ext ->
+            case Makeup.Registry.fetch_lexer_by_extension(ext) do
+              {:ok, lexer_and_opts} -> lexer_and_opts
+              :error -> nil
+            end
+
+          _ ->
+            nil
+        end
+    end
+  end
+
+  defp lexer_for_path(_), do: nil
 end

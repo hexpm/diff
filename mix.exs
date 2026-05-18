@@ -35,6 +35,8 @@ defmodule Diff.MixProject do
   defp deps do
     [
       {:bandit, "~> 1.0"},
+      {:tidewave, "~> 0.5", only: [:dev]},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:gettext, "~> 1.0"},
       {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
       {:goth, "~> 1.0"},
@@ -42,6 +44,11 @@ defmodule Diff.MixProject do
       {:hex_core, "~> 0.15.0"},
       {:jason, "~> 1.0"},
       {:logster, "~> 1.1.1"},
+      {:makeup, "~> 1.2"},
+      {:makeup_elixir, "~> 1.0"},
+      {:makeup_erlang, "~> 1.0"},
+      {:makeup_gleam, "~> 1.0"},
+      {:makeup_syntect, "~> 0.1"},
       {:mox, "~> 1.0", only: :test},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_html_helpers, "~> 1.0"},
@@ -51,6 +58,7 @@ defmodule Diff.MixProject do
       {:phoenix_view, "~> 2.0"},
       {:phoenix, "~> 1.6"},
       {:sentry, "~> 13.0"},
+      {:tailwind, "~> 0.4", runtime: Mix.env() == :dev},
       {:floki, "~> 0.38.1", only: :test},
       {:lazy_html, ">= 0.1.0", only: :test}
     ]
@@ -67,7 +75,12 @@ defmodule Diff.MixProject do
 
   defp aliases() do
     [
-      setup: ["deps.get", "cmd npm install --prefix assets"]
+      setup: ["deps.get", "esbuild.install", "tailwind.install"],
+      "assets.deploy": [
+        "esbuild diff --minify",
+        "tailwind default --minify",
+        "phx.digest"
+      ]
     ]
   end
 end
