@@ -105,6 +105,7 @@
 }
 
 @import "tailwindcss";
+@import "../vendor/css/makeup.css";
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 /* Tell Tailwind where to scan for classes */
@@ -456,6 +457,17 @@ table.ghd-diff {
 .ghd-text-user {
   white-space: pre;
   padding: 0 90px;
+}
+
+/* Neutralize the wrapper styles bundled with the GitHub-Dark Makeup theme so
+ * the inline `.highlight` element on each diff line keeps the surrounding
+ * diff layout — only the token color rules (`.highlight .k`, …) should apply. */
+.ghd-text-user.highlight {
+  background: transparent;
+  color: inherit;
+  border-radius: 0;
+  padding: 0 90px;
+  overflow: visible;
 }
 
 /* ===== THEME TOGGLE ===== */
