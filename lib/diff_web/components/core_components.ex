@@ -16,7 +16,7 @@ defmodule DiffWeb.CoreComponents do
 
           <a href="/" class="shrink-0 flex items-center gap-3">
             <img src="/images/hex-full.svg" alt="hex logo" class="h-8 w-auto" />
-            <span class="text-white text-2xl font-bold tracking-tight">hexdiff</span>
+            <span class="text-white text-2xl tracking-tight"><span class="font-bold">hex</span>diff</span>
           </a>
 
           <%= if @package do %>
@@ -194,7 +194,7 @@ defmodule DiffWeb.CoreComponents do
     <div class="flex w-full items-start justify-between gap-6 lg:w-auto lg:flex-col lg:items-start lg:justify-start lg:gap-6">
       <div class="flex items-center gap-3">
         <img src="/images/hex-full.svg" alt="hex logo" class="h-8 w-auto" />
-        <span class="text-white text-2xl font-bold tracking-tight">hexdiff</span>
+        <span class="text-white text-2xl tracking-tight"><span class="font-bold">hex</span>diff</span>
       </div>
       <.footer_social_links />
     </div>
