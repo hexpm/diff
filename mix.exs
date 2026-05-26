@@ -41,7 +41,7 @@ defmodule Diff.MixProject do
       {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
       {:goth, "~> 1.0"},
       {:hackney, "~> 1.15"},
-      {:hex_core, "~> 0.15.0"},
+      {:hex_core, "~> 0.16.0"},
       {:jason, "~> 1.0"},
       {:logster, "~> 1.1.1"},
       {:makeup, "~> 1.2"},
