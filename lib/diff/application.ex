@@ -14,7 +14,8 @@ defmodule Diff.Application do
       goth_spec(),
       {Task.Supervisor, name: Diff.Tasks},
       {Phoenix.PubSub, name: Diff.PubSub},
-      {Finch, name: Diff.Finch, pools: %{default: [size: 50, count: 1, conn_max_idle_time: 10_000]}},
+      {Finch,
+       name: Diff.Finch, pools: %{default: [size: 50, count: 1, conn_max_idle_time: 10_000]}},
       Diff.Package.Supervisor,
       DiffWeb.Endpoint
     ]

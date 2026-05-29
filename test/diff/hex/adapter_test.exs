@@ -77,7 +77,14 @@ defmodule Diff.Hex.AdapterTest do
       end)
 
       assert {:ok, {200, _headers}} =
-               Diff.Hex.Adapter.request_to_file(:get, base <> "/tar", %{}, :undefined, filename, %{})
+               Diff.Hex.Adapter.request_to_file(
+                 :get,
+                 base <> "/tar",
+                 %{},
+                 :undefined,
+                 filename,
+                 %{}
+               )
 
       assert File.read!(filename) == "tarball-bytes"
     end
@@ -93,7 +100,14 @@ defmodule Diff.Hex.AdapterTest do
       end)
 
       assert {:ok, {404, _headers}} =
-               Diff.Hex.Adapter.request_to_file(:get, base <> "/tar", %{}, :undefined, filename, %{})
+               Diff.Hex.Adapter.request_to_file(
+                 :get,
+                 base <> "/tar",
+                 %{},
+                 :undefined,
+                 filename,
+                 %{}
+               )
 
       refute File.exists?(filename)
     end
@@ -113,7 +127,14 @@ defmodule Diff.Hex.AdapterTest do
       end)
 
       assert {:ok, {200, _headers}} =
-               Diff.Hex.Adapter.request_to_file(:get, base <> "/r", %{}, :undefined, filename, %{})
+               Diff.Hex.Adapter.request_to_file(
+                 :get,
+                 base <> "/r",
+                 %{},
+                 :undefined,
+                 filename,
+                 %{}
+               )
 
       assert File.read!(filename) == "after-redirect"
     end

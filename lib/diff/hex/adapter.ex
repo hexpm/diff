@@ -24,7 +24,8 @@ defmodule Diff.Hex.Adapter do
     req = Finch.build(method, uri, headers, body)
 
     case Finch.request(req, Diff.Finch) do
-      {:ok, %Finch.Response{status: status, headers: resp_headers}} when status in @redirect_statuses ->
+      {:ok, %Finch.Response{status: status, headers: resp_headers}}
+      when status in @redirect_statuses ->
         case follow(status, method, body, uri, resp_headers, redirects_left) do
           {:follow, m, u, b, left} -> do_request(m, u, headers, b, left)
           :no_location -> {:ok, {status, Map.new(resp_headers), <<>>}}
@@ -45,7 +46,8 @@ defmodule Diff.Hex.Adapter do
     acc = %{status: nil, headers: [], file: nil}
 
     case Finch.stream(req, Diff.Finch, acc, &stream_collect(&1, &2, filename)) do
-      {:ok, %{status: status, headers: resp_headers, file: file}} when status in @redirect_statuses ->
+      {:ok, %{status: status, headers: resp_headers, file: file}}
+      when status in @redirect_statuses ->
         if file, do: File.close(file)
 
         case follow(status, method, body, uri, resp_headers, redirects_left) do
