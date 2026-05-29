@@ -21,7 +21,7 @@ defmodule Diff.MixProject do
   def application do
     [
       mod: {Diff.Application, []},
-      extra_applications: [:logger, :inets, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -42,7 +42,6 @@ defmodule Diff.MixProject do
       {:gettext, "~> 1.0"},
       {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
       {:goth, "~> 1.0"},
-      {:hackney, "~> 1.15"},
       {:hex_core, "~> 0.16.0"},
       {:jason, "~> 1.0"},
       {:logster, "~> 1.1.1"},
