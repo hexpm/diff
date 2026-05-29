@@ -35,6 +35,7 @@ defmodule Diff.MixProject do
   defp deps do
     [
       {:bandit, "~> 1.0"},
+      {:bypass, "~> 2.1", only: :test},
       {:tidewave, "~> 0.5", only: [:dev]},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:finch, "~> 0.22.0"},
