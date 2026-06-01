@@ -5,62 +5,26 @@ defmodule Diff.HTTP do
   require Logger
 
   def get(url, headers) do
-    :hackney.get(url, headers)
-    |> read_response()
+    req = Finch.build(:get, url, headers)
+
+    case Finch.request(req, Diff.Finch) do
+      {:ok, %Finch.Response{status: status, headers: headers, body: body}} ->
+        {:ok, status, headers, body}
+
+      {:error, exception} ->
+        {:error, exception}
+    end
   end
 
   def put(url, headers, body) do
-    :hackney.put(url, headers, body)
-    |> read_response()
-  end
+    req = Finch.build(:put, url, headers, body)
 
-  def get_stream(url, headers) do
-    case :hackney.get(url, headers) do
-      {:ok, status, headers, ref} ->
-        stream =
-          Stream.unfold(:ok, fn :ok ->
-            case :hackney.stream_body(ref) do
-              :done ->
-                nil
+    case Finch.request(req, Diff.Finch) do
+      {:ok, %Finch.Response{status: status, headers: headers, body: body}} ->
+        {:ok, status, headers, body}
 
-              {:ok, data} ->
-                {data, :ok}
-
-              {:error, reason} ->
-                raise "failed to stream body of #{url}, reason: #{inspect(reason)}"
-            end
-          end)
-
-        {:ok, status, headers, stream}
-
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
-
-  def put_stream(url, headers, stream) do
-    case :hackney.put(url, headers, :stream) do
-      {:ok, ref} ->
-        Enum.reduce_while(stream, :ok, fn chunk, :ok ->
-          case :hackney.send_body(ref, chunk) do
-            :ok -> {:cont, :ok}
-            {:error, reason} -> {:halt, {:error, reason}}
-          end
-        end)
-
-        ref
-        |> :hackney.start_response()
-        |> read_response()
-
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
-
-  defp read_response(result) do
-    with {:ok, status, headers, ref} <- result,
-         {:ok, body} <- :hackney.body(ref) do
-      {:ok, status, headers, body}
+      {:error, exception} ->
+        {:error, exception}
     end
   end
 
