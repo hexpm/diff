@@ -49,7 +49,6 @@ defmodule Diff.MixProject do
       {:makeup_elixir, "~> 1.0"},
       {:makeup_erlang, "~> 1.0"},
       {:makeup_gleam, "~> 1.0"},
-      {:makeup_syntect, "~> 0.1"},
       {:mox, "~> 1.0", only: :test},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_html_helpers, "~> 1.0"},
