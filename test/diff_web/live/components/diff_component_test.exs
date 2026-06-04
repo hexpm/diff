@@ -117,5 +117,32 @@ defmodule DiffWeb.DiffComponentTest do
       assert html =~ "removed"
       assert html =~ "added"
     end
+
+    test "highlights BEAM-language source" do
+      diff = %GitDiff.Patch{
+        from: "lib/app.ex",
+        to: "lib/app.ex",
+        chunks: [chunk([line(text: " x = 1")])]
+      }
+
+      html = render_component(diff, "diff-ex")
+
+      # Highlighting wraps each token in its own <span>, so the source text is
+      # no longer contiguous in the output.
+      refute html =~ "x = 1"
+    end
+
+    test "renders non-BEAM files as plain text" do
+      diff = %GitDiff.Patch{
+        from: "config/data.json",
+        to: "config/data.json",
+        chunks: [chunk([line(text: " [1, 2, 3]")])]
+      }
+
+      html = render_component(diff, "diff-json")
+
+      # JSON is not highlighted, so the contents stay intact.
+      assert html =~ "[1, 2, 3]"
+    end
   end
 end
