@@ -132,6 +132,20 @@ defmodule DiffWeb.DiffComponentTest do
       refute html =~ "x = 1"
     end
 
+    test "highlights HEEx templates" do
+      diff = %GitDiff.Patch{
+        from: "lib/page.html.heex",
+        to: "lib/page.html.heex",
+        chunks: [chunk([line(text: " <div></div>")])]
+      }
+
+      html = render_component(diff, "diff-heex")
+
+      # The HEEx lexer requires makeup_html to be registered; with it the
+      # source is tokenized into spans.
+      assert html =~ ~s|<span class="nt">div</span>|
+    end
+
     test "renders non-BEAM files as plain text" do
       diff = %GitDiff.Patch{
         from: "config/data.json",
