@@ -38,7 +38,7 @@ defmodule Diff.MixProject do
       {:bypass, "~> 2.1", only: :test},
       {:tidewave, "~> 0.5", only: [:dev]},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
-      {:finch, "~> 0.22.0"},
+      {:finch, "~> 0.23.0"},
       {:gettext, "~> 1.0"},
       {:git_diff, github: "ericmj/git_diff", branch: "ericmj/fix-modes"},
       {:goth, "~> 1.0"},
